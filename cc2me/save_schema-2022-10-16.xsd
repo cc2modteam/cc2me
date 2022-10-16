@@ -1,0 +1,927 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="meta">
+    <xs:complexType>
+      <xs:attribute name="save_version" type="xs:unsignedByte" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="scene">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="tiles">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="tiles">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="t">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="bounds">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="min">
+                                  <xs:complexType>
+                                    <xs:attribute name="x" type="xs:double" use="required" />
+                                    <xs:attribute name="y" type="xs:float" use="required" />
+                                    <xs:attribute name="z" type="xs:double" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="max">
+                                  <xs:complexType>
+                                    <xs:attribute name="x" type="xs:double" use="required" />
+                                    <xs:attribute name="y" type="xs:float" use="required" />
+                                    <xs:attribute name="z" type="xs:double" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="world_position">
+                            <xs:complexType>
+                              <xs:attribute name="x" type="xs:double" use="required" />
+                              <xs:attribute name="y" type="xs:float" use="required" />
+                              <xs:attribute name="z" type="xs:double" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="facility">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="queue" />
+                                <xs:element name="inventory">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="quantities">
+                                        <xs:complexType>
+                                          <xs:sequence minOccurs="0">
+                                            <xs:element maxOccurs="unbounded" name="q">
+                                              <xs:complexType>
+                                                <xs:attribute name="i" type="xs:unsignedByte" use="required" />
+                                                <xs:attribute name="q" type="xs:unsignedShort" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="size" type="xs:unsignedByte" use="required" />
+                                    <xs:attribute name="weight_capacity" type="xs:unsignedInt" use="required" />
+                                    <xs:attribute name="total_weight" type="xs:unsignedInt" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="category" type="xs:unsignedByte" use="required" />
+                              <xs:attribute name="fitting" type="xs:unsignedByte" use="required" />
+                              <xs:attribute name="production_timer" type="xs:unsignedInt" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="spawn_data">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="vehicles">
+                                  <xs:complexType>
+                                    <xs:sequence minOccurs="0">
+                                      <xs:element maxOccurs="unbounded" name="v">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="data">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="attachments">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element maxOccurs="unbounded" name="a">
+                                                          <xs:complexType>
+                                                            <xs:attribute name="definition_index" type="xs:unsignedByte" use="required" />
+                                                            <xs:attribute name="attachment_type" type="xs:unsignedByte" use="required" />
+                                                            <xs:attribute name="ammo" type="xs:unsignedShort" use="required" />
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="world_position">
+                                                    <xs:complexType>
+                                                      <xs:attribute name="x" type="xs:double" use="required" />
+                                                      <xs:attribute name="y" type="xs:double" use="required" />
+                                                      <xs:attribute name="z" type="xs:double" use="required" />
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute name="respawn_id" type="xs:unsignedShort" use="required" />
+                                                <xs:attribute name="definition_index" type="xs:unsignedByte" use="required" />
+                                                <xs:attribute name="hitpoints" type="xs:unsignedShort" use="required" />
+                                                <xs:attribute name="orientation" type="xs:float" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute name="spawn_type" type="xs:unsignedByte" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="team_id" type="xs:unsignedByte" use="required" />
+                              <xs:attribute name="is_set" type="xs:boolean" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="blueprint_unlocks">
+                            <xs:complexType>
+                              <xs:sequence minOccurs="0">
+                                <xs:element maxOccurs="unbounded" name="b">
+                                  <xs:complexType>
+                                    <xs:attribute name="value" type="xs:unsignedByte" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element minOccurs="0" name="airfield_state">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="hangar_states">
+                                  <xs:complexType>
+                                    <xs:sequence minOccurs="0">
+                                      <xs:element name="h">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="value">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="docking_queue">
+                                                    <xs:complexType>
+                                                      <xs:sequence minOccurs="0">
+                                                        <xs:element name="d">
+                                                          <xs:complexType>
+                                                            <xs:attribute name="value" type="xs:unsignedByte" use="required" />
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="undocking_queue" />
+                                                  <xs:element name="path">
+                                                    <xs:complexType>
+                                                      <xs:sequence minOccurs="0">
+                                                        <xs:element maxOccurs="unbounded" name="p">
+                                                          <xs:complexType>
+                                                            <xs:attribute name="value" type="xs:unsignedByte" use="required" />
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="hangar_vehicle_ids">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element maxOccurs="unbounded" name="i">
+                                                          <xs:complexType>
+                                                            <xs:attribute name="value" type="xs:unsignedByte" use="required" />
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute name="mode" type="xs:unsignedByte" use="required" />
+                                                <xs:attribute name="mode_priority" type="xs:unsignedByte" use="required" />
+                                                <xs:attribute name="runway_state" type="xs:unsignedByte" use="required" />
+                                                <xs:attribute name="vehicle_id_runway" type="xs:unsignedInt" use="required" />
+                                                <xs:attribute name="selected_hangar" type="xs:unsignedInt" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="size" type="xs:unsignedByte" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="is_set" type="xs:boolean" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="id" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="index" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="seed" type="xs:unsignedShort" use="required" />
+                        <xs:attribute name="difficulty_factor" type="xs:double" use="required" />
+                        <xs:attribute name="biome_type" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="team_control" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="team_capture" type="xs:unsignedInt" use="required" />
+                        <xs:attribute name="team_capture_progress" type="xs:float" use="required" />
+                        <xs:attribute name="last_captured_tick" type="xs:unsignedInt" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="id_counter" type="xs:unsignedByte" use="required" />
+            <xs:attribute name="world_seed" type="xs:unsignedShort" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="teams">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="teams">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="t">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="vision_data">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="observation_data">
+                                  <xs:complexType>
+                                    <xs:sequence minOccurs="0">
+                                      <xs:element maxOccurs="unbounded" name="o">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="position_history">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="position_history" />
+                                                  <xs:element name="last_added_position">
+                                                    <xs:complexType>
+                                                      <xs:attribute name="x" type="xs:double" use="required" />
+                                                      <xs:attribute name="y" type="xs:double" use="required" />
+                                                      <xs:attribute name="z" type="xs:double" use="required" />
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="last_added_velocity">
+                                                    <xs:complexType>
+                                                      <xs:attribute name="x" type="xs:double" use="required" />
+                                                      <xs:attribute name="y" type="xs:double" use="required" />
+                                                      <xs:attribute name="z" type="xs:double" use="required" />
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute name="last_update_tick" type="xs:unsignedInt" use="required" />
+                                                <xs:attribute name="last_added_tick" type="xs:unsignedInt" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute name="vehicle_id" type="xs:unsignedShort" use="required" />
+                                          <xs:attribute name="observe_amount" type="xs:float" use="required" />
+                                          <xs:attribute name="factor" type="xs:float" use="required" />
+                                          <xs:attribute name="data_leve" type="xs:unsignedByte" use="required" />
+                                          <xs:attribute name="ticks_since_observed" type="xs:unsignedInt" use="required" />
+                                          <xs:attribute name="ticks_since_visible" type="xs:unsignedByte" use="required" />
+                                          <xs:attribute name="is_visible" type="xs:boolean" use="required" />
+                                          <xs:attribute name="is_observed" type="xs:boolean" use="required" />
+                                          <xs:attribute name="is_destroyed" type="xs:boolean" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="observation_data_missiles" />
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="weapon_targets">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="targets" />
+                                <xs:element name="target_consumers">
+                                  <xs:complexType>
+                                    <xs:sequence minOccurs="0">
+                                      <xs:element maxOccurs="unbounded" name="t">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="position">
+                                              <xs:complexType>
+                                                <xs:attribute name="x" type="xs:double" use="required" />
+                                                <xs:attribute name="y" type="xs:double" use="required" />
+                                                <xs:attribute name="z" type="xs:double" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute name="is_updated" type="xs:boolean" use="required" />
+                                          <xs:attribute name="type" type="xs:unsignedByte" use="required" />
+                                          <xs:attribute name="id" type="xs:unsignedByte" use="required" />
+                                          <xs:attribute name="attachment_index" type="xs:unsignedByte" use="required" />
+                                          <xs:attribute name="weapon_type" type="xs:unsignedByte" use="required" />
+                                          <xs:attribute name="range" type="xs:float" use="required" />
+                                          <xs:attribute name="is_ammo" type="xs:boolean" use="required" />
+                                          <xs:attribute name="is_powered" type="xs:boolean" use="required" />
+                                          <xs:attribute name="is_damaged" type="xs:boolean" use="required" />
+                                          <xs:attribute name="is_busy" type="xs:boolean" use="required" />
+                                          <xs:attribute name="is_destroyed" type="xs:boolean" use="required" />
+                                          <xs:attribute name="is_active" type="xs:boolean" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="id_counter" type="xs:unsignedShort" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="respawn_position">
+                            <xs:complexType>
+                              <xs:attribute name="x" type="xs:double" use="required" />
+                              <xs:attribute name="y" type="xs:float" use="required" />
+                              <xs:attribute name="z" type="xs:double" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="destroyed_position">
+                            <xs:complexType>
+                              <xs:attribute name="x" type="xs:float" use="required" />
+                              <xs:attribute name="y" type="xs:float" use="required" />
+                              <xs:attribute name="z" type="xs:float" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="notifications_holomap">
+                            <xs:complexType>
+                              <xs:sequence minOccurs="0">
+                                <xs:element maxOccurs="unbounded" name="n">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="blueprints" />
+                                    </xs:sequence>
+                                    <xs:attribute name="type" type="xs:unsignedByte" use="required" />
+                                    <xs:attribute name="value_0" type="xs:unsignedByte" use="required" />
+                                    <xs:attribute name="value_1" type="xs:unsignedByte" use="required" />
+                                    <xs:attribute name="value_2" type="xs:unsignedByte" use="required" />
+                                    <xs:attribute name="time" type="xs:unsignedShort" use="required" />
+                                    <xs:attribute name="display_name" type="xs:string" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="unlocked_blueprints">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="bytes">
+                                  <xs:complexType>
+                                    <xs:sequence minOccurs="0">
+                                      <xs:element maxOccurs="unbounded" name="b">
+                                        <xs:complexType>
+                                          <xs:attribute name="value" type="xs:unsignedByte" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="size" type="xs:unsignedByte" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="currency_account">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="accounts">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element maxOccurs="unbounded" name="a">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="value">
+                                              <xs:complexType>
+                                                <xs:attribute name="id" type="xs:unsignedByte" use="required" />
+                                                <xs:attribute name="currency_start" type="xs:unsignedShort" use="required" />
+                                                <xs:attribute name="currency_end" type="xs:unsignedShort" use="required" />
+                                                <xs:attribute name="currency_captured_islands" type="xs:unsignedShort" use="required" />
+                                                <xs:attribute name="currency_island_captures" type="xs:unsignedShort" use="required" />
+                                                <xs:attribute name="currency_facility_production" type="xs:short" use="required" />
+                                                <xs:attribute name="currency_destroyed_vehicles" type="xs:unsignedShort" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="size" type="xs:unsignedByte" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="id_counter" type="xs:unsignedByte" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element name="barge_manager">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="barges">
+                                  <xs:complexType>
+                                    <xs:sequence minOccurs="0">
+                                      <xs:element maxOccurs="unbounded" name="b">
+                                        <xs:complexType>
+                                          <xs:attribute name="id" type="xs:unsignedShort" use="required" />
+                                          <xs:attribute name="state" type="xs:unsignedByte" use="required" />
+                                          <xs:attribute name="target_tile_id" type="xs:unsignedByte" use="required" />
+                                          <xs:attribute name="state_tick" type="xs:unsignedByte" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="carrier_order">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="item_quantities">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element maxOccurs="unbounded" name="q">
+                                              <xs:complexType>
+                                                <xs:attribute name="value" type="xs:unsignedByte" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute name="size" type="xs:unsignedByte" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element minOccurs="0" name="carrier_ai">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="data">
+                                  <xs:complexType>
+                                    <xs:attribute name="aggression_state" type="xs:unsignedByte" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="controller_pseudo">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element name="carrier">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="vehicles">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element maxOccurs="unbounded" name="v">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="attachments">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element maxOccurs="unbounded" name="a">
+                                                                <xs:complexType>
+                                                                  <xs:attribute name="definition_index" type="xs:unsignedByte" use="required" />
+                                                                  <xs:attribute name="attachment_type" type="xs:unsignedByte" use="required" />
+                                                                  <xs:attribute name="ammo" type="xs:unsignedInt" use="required" />
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                        <xs:element name="world_position">
+                                                          <xs:complexType>
+                                                            <xs:attribute name="x" type="xs:float" use="required" />
+                                                            <xs:attribute name="y" type="xs:float" use="required" />
+                                                            <xs:attribute name="z" type="xs:float" use="required" />
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                      <xs:attribute name="respawn_id" type="xs:unsignedByte" use="required" />
+                                                      <xs:attribute name="definition_index" type="xs:unsignedByte" use="required" />
+                                                      <xs:attribute name="hitpoints" type="xs:unsignedInt" use="required" />
+                                                      <xs:attribute name="orientation" type="xs:float" use="required" />
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="world_position">
+                                              <xs:complexType>
+                                                <xs:attribute name="x" type="xs:double" use="required" />
+                                                <xs:attribute name="y" type="xs:float" use="required" />
+                                                <xs:attribute name="z" type="xs:double" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute name="hitpoints" type="xs:unsignedInt" use="required" />
+                                          <xs:attribute name="orientation" type="xs:double" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="state_lurk">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="target_position">
+                                              <xs:complexType>
+                                                <xs:attribute name="x" type="xs:float" use="required" />
+                                                <xs:attribute name="y" type="xs:float" use="required" />
+                                                <xs:attribute name="z" type="xs:float" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="wait_timer">
+                                              <xs:complexType>
+                                                <xs:attribute name="ticks" type="xs:unsignedByte" use="required" />
+                                                <xs:attribute name="duration" type="xs:unsignedByte" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute name="is_waiting" type="xs:boolean" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="state_travel_to_island">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="tile_position">
+                                              <xs:complexType>
+                                                <xs:attribute name="x" type="xs:double" use="required" />
+                                                <xs:attribute name="y" type="xs:float" use="required" />
+                                                <xs:attribute name="z" type="xs:double" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute name="node_id" type="xs:unsignedByte" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="state_capture_island">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="phase_timer">
+                                              <xs:complexType>
+                                                <xs:attribute name="ticks" type="xs:unsignedShort" use="required" />
+                                                <xs:attribute name="duration" type="xs:unsignedShort" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="tile_position">
+                                              <xs:complexType>
+                                                <xs:attribute name="x" type="xs:double" use="required" />
+                                                <xs:attribute name="y" type="xs:float" use="required" />
+                                                <xs:attribute name="z" type="xs:double" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                          <xs:attribute name="node_id" type="xs:unsignedByte" use="required" />
+                                          <xs:attribute name="capture_phase" type="xs:unsignedByte" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                      <xs:element name="rearm_timer">
+                                        <xs:complexType>
+                                          <xs:attribute name="ticks" type="xs:unsignedShort" use="required" />
+                                          <xs:attribute name="duration" type="xs:unsignedShort" use="required" />
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="state" type="xs:unsignedByte" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="despawn_timer" type="xs:unsignedByte" use="required" />
+                              <xs:attribute name="state" type="xs:unsignedByte" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                          <xs:element minOccurs="0" name="ship_fleet_ai">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="vehicles">
+                                  <xs:complexType>
+                                    <xs:sequence>
+                                      <xs:element maxOccurs="unbounded" name="v">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="data">
+                                              <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="pseudo_data">
+                                                    <xs:complexType>
+                                                      <xs:sequence>
+                                                        <xs:element name="attachments">
+                                                          <xs:complexType>
+                                                            <xs:sequence>
+                                                              <xs:element name="a">
+                                                                <xs:complexType>
+                                                                  <xs:attribute name="definition_index" type="xs:unsignedByte" use="required" />
+                                                                  <xs:attribute name="attachment_type" type="xs:unsignedByte" use="required" />
+                                                                  <xs:attribute name="ammo" type="xs:unsignedInt" use="required" />
+                                                                </xs:complexType>
+                                                              </xs:element>
+                                                            </xs:sequence>
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                        <xs:element name="world_position">
+                                                          <xs:complexType>
+                                                            <xs:attribute name="x" type="xs:double" use="required" />
+                                                            <xs:attribute name="y" type="xs:float" use="required" />
+                                                            <xs:attribute name="z" type="xs:double" use="required" />
+                                                          </xs:complexType>
+                                                        </xs:element>
+                                                      </xs:sequence>
+                                                      <xs:attribute name="respawn_id" type="xs:unsignedByte" use="required" />
+                                                      <xs:attribute name="definition_index" type="xs:unsignedByte" use="required" />
+                                                      <xs:attribute name="hitpoints" type="xs:unsignedInt" use="required" />
+                                                      <xs:attribute name="orientation" type="xs:double" use="required" />
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="target_position">
+                                                    <xs:complexType>
+                                                      <xs:attribute name="x" type="xs:double" use="required" />
+                                                      <xs:attribute name="y" type="xs:float" use="required" />
+                                                      <xs:attribute name="z" type="xs:double" use="required" />
+                                                    </xs:complexType>
+                                                  </xs:element>
+                                                </xs:sequence>
+                                                <xs:attribute name="simulation_state" type="xs:unsignedByte" use="required" />
+                                                <xs:attribute name="behaviour" type="xs:unsignedByte" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="production_timer">
+                                  <xs:complexType>
+                                    <xs:attribute name="ticks" type="xs:unsignedShort" use="required" />
+                                    <xs:attribute name="duration" type="xs:unsignedShort" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="production_cooldown">
+                                  <xs:complexType>
+                                    <xs:attribute name="ticks" type="xs:unsignedByte" use="required" />
+                                    <xs:attribute name="duration" type="xs:unsignedShort" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="production_tile" type="xs:unsignedByte" use="required" />
+                              <xs:attribute name="production_item" type="xs:unsignedByte" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="id" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="pattern_index" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="is_ai_controlled" type="xs:boolean" use="required" />
+                        <xs:attribute name="is_neutral" type="xs:boolean" use="required" />
+                        <xs:attribute name="transmissions_unlocked" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="transmissions_unread" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="start_tile_id" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="is_destroyed" type="xs:boolean" use="required" />
+                        <xs:attribute name="currency" type="xs:unsignedShort" use="required" />
+                        <xs:attribute name="total_successful_island_captures" type="xs:unsignedByte" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ocean" />
+        <xs:element name="weather">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="velocity">
+                <xs:complexType>
+                  <xs:attribute name="size_x" type="xs:unsignedShort" use="required" />
+                  <xs:attribute name="size_y" type="xs:unsignedShort" use="required" />
+                  <xs:attribute name="data" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="pressure">
+                <xs:complexType>
+                  <xs:attribute name="size_x" type="xs:unsignedShort" use="required" />
+                  <xs:attribute name="size_y" type="xs:unsignedShort" use="required" />
+                  <xs:attribute name="data" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="properties">
+                <xs:complexType>
+                  <xs:attribute name="size_x" type="xs:unsignedShort" use="required" />
+                  <xs:attribute name="size_y" type="xs:unsignedShort" use="required" />
+                  <xs:attribute name="data" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="drivers">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="d">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="value">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="v">
+                                  <xs:complexType>
+                                    <xs:attribute name="x" type="xs:double" use="required" />
+                                    <xs:attribute name="y" type="xs:double" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="p">
+                                  <xs:complexType>
+                                    <xs:attribute name="x" type="xs:double" use="required" />
+                                    <xs:attribute name="y" type="xs:double" use="required" />
+                                    <xs:attribute name="z" type="xs:double" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="x" type="xs:unsignedByte" use="required" />
+                              <xs:attribute name="y" type="xs:unsignedByte" use="required" />
+                              <xs:attribute name="s" type="xs:unsignedByte" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="size" type="xs:unsignedByte" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="rng_state" type="xs:unsignedInt" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="vehicles">
+          <xs:complexType>
+            <xs:attribute name="id_counter" type="xs:unsignedShort" use="required" />
+            <xs:attribute name="is_invulnerable" type="xs:boolean" use="required" />
+            <xs:attribute name="is_infinite_ammo" type="xs:boolean" use="required" />
+            <xs:attribute name="is_infinite_fuel" type="xs:boolean" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="missiles">
+          <xs:complexType>
+            <xs:attribute name="id_counter" type="xs:unsignedByte" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="world_seed" type="xs:unsignedShort" use="required" />
+      <xs:attribute name="is_triggered_game_end" type="xs:boolean" use="required" />
+      <xs:attribute name="logic_tick" type="xs:unsignedInt" use="required" />
+      <xs:attribute name="time_of_day" type="xs:double" use="required" />
+      <xs:attribute name="tick_time_of_day" type="xs:boolean" use="required" />
+      <xs:attribute name="is_campaign" type="xs:boolean" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="vehicles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="vehicles">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="v">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="transform">
+                      <xs:complexType>
+                        <xs:attribute name="m00" type="xs:double" use="required" />
+                        <xs:attribute name="m01" type="xs:double" use="required" />
+                        <xs:attribute name="m02" type="xs:double" use="required" />
+                        <xs:attribute name="m10" type="xs:double" use="required" />
+                        <xs:attribute name="m11" type="xs:double" use="required" />
+                        <xs:attribute name="m12" type="xs:double" use="required" />
+                        <xs:attribute name="m20" type="xs:double" use="required" />
+                        <xs:attribute name="m21" type="xs:double" use="required" />
+                        <xs:attribute name="m22" type="xs:double" use="required" />
+                        <xs:attribute name="tx" type="xs:double" use="required" />
+                        <xs:attribute name="ty" type="xs:double" use="required" />
+                        <xs:attribute name="tz" type="xs:double" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="attachments">
+                      <xs:complexType>
+                        <xs:sequence minOccurs="0">
+                          <xs:element maxOccurs="unbounded" name="a">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="bodies">
+                                  <xs:complexType>
+                                    <xs:sequence minOccurs="0">
+                                      <xs:element name="b">
+                                        <xs:complexType>
+                                          <xs:sequence>
+                                            <xs:element name="transform">
+                                              <xs:complexType>
+                                                <xs:attribute name="m00" type="xs:double" use="required" />
+                                                <xs:attribute name="m01" type="xs:double" use="required" />
+                                                <xs:attribute name="m02" type="xs:double" use="required" />
+                                                <xs:attribute name="m10" type="xs:double" use="required" />
+                                                <xs:attribute name="m11" type="xs:double" use="required" />
+                                                <xs:attribute name="m12" type="xs:double" use="required" />
+                                                <xs:attribute name="m20" type="xs:double" use="required" />
+                                                <xs:attribute name="m21" type="xs:double" use="required" />
+                                                <xs:attribute name="m22" type="xs:double" use="required" />
+                                                <xs:attribute name="tx" type="xs:double" use="required" />
+                                                <xs:attribute name="ty" type="xs:double" use="required" />
+                                                <xs:attribute name="tz" type="xs:double" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="linear_velocity">
+                                              <xs:complexType>
+                                                <xs:attribute name="x" type="xs:double" use="required" />
+                                                <xs:attribute name="y" type="xs:double" use="required" />
+                                                <xs:attribute name="z" type="xs:double" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                            <xs:element name="angular_velocity">
+                                              <xs:complexType>
+                                                <xs:attribute name="x" type="xs:double" use="required" />
+                                                <xs:attribute name="y" type="xs:double" use="required" />
+                                                <xs:attribute name="z" type="xs:double" use="required" />
+                                              </xs:complexType>
+                                            </xs:element>
+                                          </xs:sequence>
+                                        </xs:complexType>
+                                      </xs:element>
+                                    </xs:sequence>
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                              <xs:attribute name="definition_index" type="xs:unsignedByte" use="required" />
+                              <xs:attribute name="attachment_index" type="xs:unsignedByte" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="bodies">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element maxOccurs="unbounded" name="b">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="transform">
+                                  <xs:complexType>
+                                    <xs:attribute name="m00" type="xs:double" use="required" />
+                                    <xs:attribute name="m01" type="xs:double" use="required" />
+                                    <xs:attribute name="m02" type="xs:double" use="required" />
+                                    <xs:attribute name="m10" type="xs:double" use="required" />
+                                    <xs:attribute name="m11" type="xs:double" use="required" />
+                                    <xs:attribute name="m12" type="xs:double" use="required" />
+                                    <xs:attribute name="m20" type="xs:double" use="required" />
+                                    <xs:attribute name="m21" type="xs:double" use="required" />
+                                    <xs:attribute name="m22" type="xs:double" use="required" />
+                                    <xs:attribute name="tx" type="xs:double" use="required" />
+                                    <xs:attribute name="ty" type="xs:double" use="required" />
+                                    <xs:attribute name="tz" type="xs:double" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="linear_velocity">
+                                  <xs:complexType>
+                                    <xs:attribute name="x" type="xs:double" use="required" />
+                                    <xs:attribute name="y" type="xs:double" use="required" />
+                                    <xs:attribute name="z" type="xs:double" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                                <xs:element name="angular_velocity">
+                                  <xs:complexType>
+                                    <xs:attribute name="x" type="xs:double" use="required" />
+                                    <xs:attribute name="y" type="xs:double" use="required" />
+                                    <xs:attribute name="z" type="xs:double" use="required" />
+                                  </xs:complexType>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="id" type="xs:unsignedShort" use="required" />
+                  <xs:attribute name="definition_index" type="xs:unsignedByte" use="required" />
+                  <xs:attribute name="team_id" type="xs:unsignedByte" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="vehicle_states">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="v">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="attachments">
+                      <xs:complexType>
+                        <xs:sequence minOccurs="0">
+                          <xs:element maxOccurs="unbounded" name="a">
+                            <xs:complexType>
+                              <xs:attribute name="attachment_index" type="xs:unsignedByte" use="required" />
+                              <xs:attribute name="state" type="xs:string" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="id" type="xs:unsignedShort" use="required" />
+                  <xs:attribute name="state" type="xs:string" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="missiles">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="missiles" />
+        <xs:element name="missiles_states" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
