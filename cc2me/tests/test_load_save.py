@@ -8,7 +8,7 @@ HERE = Path(__file__).parent
 
 
 def test_read_save():
-    cc2 = load_save_file(str(HERE / "basic-save.xml"))
+    cc2 = load_save_file(str(HERE / "canned_aves" / "save.xml"))
     assert len(cc2.tiles) == 4
 
     assert len(cc2.teams) == 3

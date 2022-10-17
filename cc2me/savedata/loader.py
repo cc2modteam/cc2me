@@ -7,6 +7,7 @@ import re
 from xml.etree import ElementTree
 from io import StringIO
 
+from .types.teams import Team
 from .types.tiles import Tile
 from ..paths import SCHEMA
 from .logging import logger
@@ -108,15 +109,19 @@ class CC2XMLSave:
         self.roots = {}
 
     @property
-    def tiles(self) -> List[Element]:
+    def _tiles(self) -> List[Element]:
         return self.roots[SCENE_ROOT].getroot().findall("./tiles/tiles/t")
+
+    @property
+    def tiles(self) -> List[Tile]:
+        return [Tile(x) for x in self._tiles]
 
     def tile(self, tile_id: int) -> Tile:
         """Get a tile by ID"""
         for item in self.tiles:
-            t = Tile(item)
-            if t.id == tile_id:
-                return t
+            if item.id == tile_id:
+                return item
+
         raise KeyError(tile_id)
 
     def new_tile(self) -> Tile:
@@ -134,8 +139,19 @@ class CC2XMLSave:
         return tile
 
     @property
-    def teams(self) -> List[Element]:
+    def _teams(self) -> List[Element]:
         return self.roots[SCENE_ROOT].getroot().findall("./teams/teams/t")
+
+    @property
+    def teams(self) -> List[Team]:
+        return [Team(x) for x in self._teams]
+
+    def team(self, teamid: int) -> Team:
+        """Get a team by ID"""
+        for x in self.teams:
+            if x.id == teamid:
+                return x
+        raise KeyError(teamid)
 
     @property
     def vehicles(self) -> List[Element]:
@@ -143,7 +159,7 @@ class CC2XMLSave:
 
     def next_tile_attrib_integer(self, name: str) -> str:
         last_index = 0
-        for item in self.tiles:
+        for item in self._tiles:
             value = int(item.attrib.get(name, "0"))
             last_index = max(value, last_index)
         return str(last_index + 1)
