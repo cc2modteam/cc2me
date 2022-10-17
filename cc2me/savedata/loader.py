@@ -10,6 +10,7 @@ from io import StringIO
 from .types.tiles import Tile
 from ..paths import SCHEMA
 from .logging import logger
+from .constants import MIN_TILE_SEED, MAX_TILE_SEED, POS_Y_SEABOTTOM, BIOME_GREEN
 
 XML_START = '<?xml version="1.0" encoding="UTF-8"?>'
 META_ROOT = "meta"
@@ -123,13 +124,12 @@ class CC2XMLSave:
         tiles_parent = self.roots[SCENE_ROOT].getroot().findall("./tiles")[0]
         tile_container = self.roots[SCENE_ROOT].getroot().findall("./tiles/tiles")[0]
         tile = Tile(None)
-        tile.biome_type = 3
+        tile.biome_type = BIOME_GREEN
         tile.id = self.next_tile_attrib_integer("id")
         tile.index = self.next_tile_attrib_integer("index")
-        tile.seed = random.randint(1, 8192)
         tiles_parent.attrib.update(id_counter=str(tile.id))
         tile_container.append(tile.element)
-        tile.set_position(x=0, z=0, y=-1)
+        tile.set_position(x=0, z=0, y=POS_Y_SEABOTTOM)
 
         return tile
 

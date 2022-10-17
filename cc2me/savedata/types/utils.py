@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Any, List, cast, Callable
+from typing import Optional, Any, List, cast
 from xml.etree.ElementTree import Element
-
-MAX_INTEGER = 4294967295
 
 
 class ElementAttributeProxy(ABC):

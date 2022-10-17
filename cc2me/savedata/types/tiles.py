@@ -7,7 +7,8 @@ from .utils import (ElementProxy,
                     Bounds,
                     WorldPosition,
                     IsSetMixin,
-                    MAX_INTEGER, e_property)
+                    e_property)
+from ..constants import MAX_INTEGER, MIN_TILE_SEED, MAX_TILE_SEED
 
 
 class Facility(ElementProxy):
@@ -54,10 +55,9 @@ class Tile(ElementProxy):
         self.spawn_data.team_id = value
 
     def defaults(self):
-        self.seed = random.randint(10000, 22000)
+        self.seed = random.randint(MIN_TILE_SEED, MAX_TILE_SEED)
         self.biome_type = random.randint(1, 7)
         self.team_capture_progress = 0.0
-        self.team_capture = 4294967295
         self.difficulty_factor = 0.0
         assert self.bounds
         assert self.facility
