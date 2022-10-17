@@ -655,7 +655,7 @@
 					</carrier_order>
 				</barge_manager>
 			</t>
-			<t id="1" pattern_index="5" is_ai_controlled="false" is_neutral="false" transmissions_unlocked="0" transmissions_unread="0" start_tile_id="1" is_destroyed="false" currency="0" total_successful_island_captures="0">
+			<t id="1" pattern_index="5" is_ai_controlled="false" is_neutral="false" transmissions_unlocked="0" transmissions_unread="0" start_tile_id="1" is_destroyed="false" currency="50000" total_successful_island_captures="0">
 				<vision_data>
 					<observation_data/>
 					<observation_data_missiles/>

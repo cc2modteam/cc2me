@@ -129,12 +129,6 @@ class CC2XMLSave:
         tile.seed = random.randint(1, 8192)
         tiles_parent.attrib.update(id_counter=str(tile.id))
         tile_container.append(tile.element)
-        tile.bounds.max.x = 2000
-        tile.bounds.max.y = 1000
-        tile.bounds.max.z = 2000
-        tile.bounds.min.x = -2000
-        tile.bounds.min.y = -1000
-        tile.bounds.min.z = -2000
         tile.set_position(x=0, z=0, y=-1)
 
         return tile

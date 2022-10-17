@@ -78,9 +78,19 @@ class Point3D(ElementProxy):
 class Min(Point3D):
     tag = "min"
 
+    def defaults(self):
+        self.x = -2000
+        self.y = -1000
+        self.z = -2000
+
 
 class Max(Point3D):
     tag = "max"
+
+    def defaults(self):
+        self.x = 2000
+        self.y = 1000
+        self.z = 2000
 
 
 class WorldPosition(Point3D):
@@ -90,6 +100,10 @@ class WorldPosition(Point3D):
 class Bounds(ElementProxy):
     tag = "bounds"
 
+    def defaults(self):
+        assert self.max
+        assert self.min
+
     @property
     def min(self) -> Min:
         return cast(Min, self.get_default_child_by_tag(Min))
@@ -97,3 +111,14 @@ class Bounds(ElementProxy):
     @property
     def max(self):
         return cast(Max, self.get_default_child_by_tag(Max))
+
+
+class IsSetMixin:
+
+    @property
+    def is_set(self) -> bool:
+        return bool(self.get("is_set", "false").title())
+
+    @is_set.setter
+    def is_set(self, value: bool):
+        self.set("is_set", str(value is True).lower())

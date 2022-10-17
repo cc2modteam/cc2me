@@ -19,7 +19,6 @@ def test_read_save():
     island2 = cc2.new_tile()
     island2.biome_type = 3
     island2.team_control = 1
-    island2.seed = 31
     island2.set_position(x=6500, z=5000)
 
     # move the team 1 (player) carrier right on top of the island
@@ -29,6 +28,7 @@ def test_read_save():
             if v.attrib.get("definition_index") == "0":
                 # carrier
                 transfm = v.findall("transform")[0]
+                break
 
 
     saved = cc2.export()
