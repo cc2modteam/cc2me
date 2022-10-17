@@ -4,7 +4,6 @@ from typing import Optional, cast
 from .utils import (ElementProxy,
                     IntAttribute,
                     FloatAttribute,
-                    BoolAttribute,
                     Bounds,
                     WorldPosition,
                     IsSetMixin,
@@ -14,10 +13,10 @@ from .utils import (ElementProxy,
 class Facility(ElementProxy):
     tag = "facility"
 
-    category = IntAttribute("category", default_value=1)
-    fitting = IntAttribute("fitting", default_value=60)
-    production_timer = IntAttribute("production_timer", default_value=MAX_INTEGER)
-    production_timer_defense = IntAttribute("production_timer_defense", default_value=MAX_INTEGER)
+    category = e_property(IntAttribute("category", default_value=1))
+    fitting = e_property(IntAttribute("fitting", default_value=60))
+    production_timer = e_property(IntAttribute("production_timer", default_value=MAX_INTEGER))
+    production_timer_defense = e_property(IntAttribute("production_timer_defense", default_value=MAX_INTEGER))
 
     def defaults(self):
         self.category = random.randint(1, 7)
@@ -42,6 +41,17 @@ class Tile(ElementProxy):
     team_capture = e_property(IntAttribute("team_capture", default_value=MAX_INTEGER))
     team_capture_progress = e_property(FloatAttribute("team_capture_progress"))
     difficulty_factor = e_property(FloatAttribute("difficulty_factor"))
+
+    _team_control = e_property(IntAttribute("team_control"))
+
+    @property
+    def team_control(self):
+        return self._team_control
+
+    @team_control.setter
+    def team_control(self, value):
+        self._team_control = value
+        self.spawn_data.team_id = value
 
     def defaults(self):
         self.seed = random.randint(10000, 22000)

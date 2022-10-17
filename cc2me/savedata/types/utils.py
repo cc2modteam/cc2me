@@ -172,4 +172,4 @@ class Bounds(ElementProxy):
 
 
 class IsSetMixin:
-    is_set = BoolAttribute("is_set", default_value=False)
+    is_set = e_property(BoolAttribute("is_set", default_value=False))
