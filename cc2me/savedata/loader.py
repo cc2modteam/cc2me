@@ -9,9 +9,10 @@ from io import StringIO
 
 from .types.teams import Team
 from .types.tiles import Tile
+from .types.vehicles.vehicle import Vehicle
 from ..paths import SCHEMA
 from .logging import logger
-from .constants import MIN_TILE_SEED, MAX_TILE_SEED, POS_Y_SEABOTTOM, BIOME_GREEN
+from .constants import POS_Y_SEABOTTOM, BIOME_SANDY_PINES
 
 XML_START = '<?xml version="1.0" encoding="UTF-8"?>'
 META_ROOT = "meta"
@@ -124,12 +125,23 @@ class CC2XMLSave:
 
         raise KeyError(tile_id)
 
+    def find_vehicles_by_definition(self, definition_id: int):
+        return [
+            x for x in self.vehicles if x.definition_index == definition_id
+        ]
+
+    def vehicle(self, vid: int):
+        for x in self.vehicles:
+            if x.id == vid:
+                return x
+        raise KeyError(vid)
+
     def new_tile(self) -> Tile:
         """Create a new tile"""
         tiles_parent = self.roots[SCENE_ROOT].getroot().findall("./tiles")[0]
         tile_container = self.roots[SCENE_ROOT].getroot().findall("./tiles/tiles")[0]
         tile = Tile(None)
-        tile.biome_type = BIOME_GREEN
+        tile.biome_type = BIOME_SANDY_PINES
         tile.id = self.next_tile_attrib_integer("id")
         tile.index = self.next_tile_attrib_integer("index")
         tiles_parent.attrib.update(id_counter=str(tile.id))
@@ -154,8 +166,12 @@ class CC2XMLSave:
         raise KeyError(teamid)
 
     @property
-    def vehicles(self) -> List[Element]:
+    def _vehicles(self) -> List[Element]:
         return self.roots[VEHICLES_ROOT].getroot().findall(f"./{VEHICLES_ROOT}/v")
+
+    @property
+    def vehicles(self) -> List[Vehicle]:
+        return [Vehicle(x) for x in self._vehicles]
 
     def next_tile_attrib_integer(self, name: str) -> str:
         last_index = 0

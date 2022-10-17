@@ -171,3 +171,59 @@ class Bounds(ElementProxy):
 
 class IsSetMixin:
     is_set = e_property(BoolAttribute("is_set", default_value=False))
+
+
+class Transform(ElementProxy):
+    """
+    Movement and rotation of an object/body
+    <transform m00="9.99983729e-01" m01="5.36093389e-03" m02="1.95000893e-03" m10="-5.40422454e-03" m11="9.99722757e-01" m12="2.29173339e-02" m20="-1.82660999e-03" m21="-2.29274993e-02" m22="9.99735462e-01" tx="8.82208525e+03" ty="-2.19774270e+00" tz="5.10294861e+03"/>
+    """
+    tag = "transform"
+
+    # I have no idea what these do, perhaps it is 3d a rotation matrix?
+    m00 = e_property(FloatAttribute("m00"))
+    m01 = e_property(FloatAttribute("m01"))
+    m02 = e_property(FloatAttribute("m02"))
+    m10 = e_property(FloatAttribute("m10"))
+    m11 = e_property(FloatAttribute("m11"))
+    m12 = e_property(FloatAttribute("m12"))
+    m20 = e_property(FloatAttribute("m20"))
+    m21 = e_property(FloatAttribute("m21"))
+    m22 = e_property(FloatAttribute("m22"))
+
+    # location transform / position
+    tx = e_property(FloatAttribute("tx"))
+    ty = e_property(FloatAttribute("ty"))
+    tz = e_property(FloatAttribute("tz"))
+
+
+class LinearVelocity(Point3D):
+    tag = "linear_velocity"
+
+
+class AngularVelocity(Point3D):
+    tag = "angular_velocity"
+
+
+class Bodies(ElementProxy):
+    tag = "bodies"
+
+    def items(self) -> List["Body"]:
+        return [Body(x) for x in self.children()]
+
+
+class Body(ElementProxy):
+    tag = "b"
+
+    @property
+    def linear_velocity(self) -> LinearVelocity:
+        return cast(LinearVelocity, self.get_default_child_by_tag(LinearVelocity))
+
+    @property
+    def angular_velocity(self) -> AngularVelocity:
+        return cast(AngularVelocity, self.get_default_child_by_tag(AngularVelocity))
+
+    @property
+    def transform(self) -> Transform:
+        return cast(Transform, self.get_default_child_by_tag(Transform))
+

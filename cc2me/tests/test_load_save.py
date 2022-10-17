@@ -1,14 +1,13 @@
 from pathlib import Path
-from io import StringIO
 
-from ..savedata.constants import BIOME_GREEN
+from ..savedata.constants import VEHICLE_DEF_CARRIER
 from ..savedata.loader import load_save_file
 
 HERE = Path(__file__).parent
 
 
 def test_read_save():
-    cc2 = load_save_file(str(HERE / "canned_aves" / "save.xml"))
+    cc2 = load_save_file(str(HERE / "canned_saves" / "save.xml"))
     assert len(cc2.tiles) == 4
 
     assert len(cc2.teams) == 3
@@ -24,14 +23,11 @@ def test_read_save():
         island.team_control = 1
         island.set_position(x=7000, z=6000 + (3000 * i))
 
-    # move the team 1 (player) carrier right on top of the island
-    vehicles = cc2.vehicles
-    for v in vehicles:
-        if v.attrib.get("team_id") == "1":
-            if v.attrib.get("definition_index") == "0":
-                # carrier
-                transfm = v.findall("transform")[0]
-                break
+    # move the team 1 (player) carrier
+    carriers = cc2.find_vehicles_by_definition(VEHICLE_DEF_CARRIER)
+    team1_carrier = [x for x in carriers if x.team_id == 1][0]
+    # put the carrier near to the first island
+    team1_carrier.set_location(x=first_tile.world_position.x + first_tile.bounds.max.x, z=first_tile.world_position.z)
 
     saved = cc2.export()
     assert saved
