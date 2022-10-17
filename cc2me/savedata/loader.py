@@ -136,19 +136,35 @@ class CC2XMLSave:
                 return x
         raise KeyError(vid)
 
+    @property
+    def tiles_parent(self) -> Element:
+        return self.roots[SCENE_ROOT].getroot().findall("./tiles")[0]
+
+    @property
+    def tiles_container(self) -> Element:
+        return self.roots[SCENE_ROOT].getroot().findall("./tiles/tiles")[0]
+
     def new_tile(self) -> Tile:
         """Create a new tile"""
-        tiles_parent = self.roots[SCENE_ROOT].getroot().findall("./tiles")[0]
-        tile_container = self.roots[SCENE_ROOT].getroot().findall("./tiles/tiles")[0]
         tile = Tile(None)
         tile.biome_type = BIOME_SANDY_PINES
         tile.id = self.next_tile_attrib_integer("id")
         tile.index = self.next_tile_attrib_integer("index")
-        tiles_parent.attrib.update(id_counter=str(tile.id))
-        tile_container.append(tile.element)
+        self.tiles_parent.attrib.update(id_counter=str(tile.id))
+        self.tiles_container.append(tile.element)
         tile.set_position(x=0, z=0, y=POS_Y_SEABOTTOM)
-
         return tile
+
+    def remove_tile(self, tile: Tile):
+        """Delete a tile"""
+        # find the tile element, remove it, then re-compute the id and index values
+        self.tiles_container.remove(tile.element)
+        index_value = 0
+        for tile in self.tiles:
+            tile.id = index_value + 1
+            tile.index = index_value
+            index_value += 1
+        self.tiles_parent.attrib.update(id_counter=str(index_value))
 
     @property
     def _teams(self) -> List[Element]:
@@ -181,6 +197,10 @@ class CC2XMLSave:
         return str(last_index + 1)
 
     def export(self) -> str:
+
+        while len(self.tiles) > 63:
+            self.remove_tile(self.tiles[-1])
+
         buf = StringIO()
         buf.write(XML_START)
         for root in ROOT_ORDER:
