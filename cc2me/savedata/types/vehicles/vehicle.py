@@ -1,7 +1,13 @@
 from typing import cast, List, Optional
+from ... import constants
+from ..utils import (ElementProxy, e_property, IntAttribute, Transform, Bodies,
+                     LocationMixin, Location, MovableLocationMixin)
 
-from ..utils import ElementProxy, e_property, IntAttribute, FloatAttribute, BoolAttribute, Transform, Bodies, \
-    LocationMixin, Location, MovableLocationMixin
+
+def vehicle_definition_name(defid: int) -> str:
+    if constants.VEHICLE_DEF_CARRIER == defid:
+        return "Carrier"
+    return f"Unknown ({defid})"
 
 
 class Attachment(ElementProxy):
@@ -27,6 +33,10 @@ class Vehicle(ElementProxy, LocationMixin, MovableLocationMixin):
     id = e_property(IntAttribute("id"))
     definition_index = e_property(IntAttribute("definition_index"))
     team_id = e_property(IntAttribute("team_id"))
+
+    @property
+    def chassis(self) -> str:
+        return vehicle_definition_name(self.definition_index)
 
     @property
     def transform(self) -> Transform:

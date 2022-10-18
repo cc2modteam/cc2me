@@ -4,6 +4,8 @@ VERSION = "0.0.1"
 
 requirements = [
     "xmlschema==2.1.1",
+    "tkintermapview==1.15",
+    "pillow==9.2.0",
 ]
 
 setup(

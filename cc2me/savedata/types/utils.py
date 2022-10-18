@@ -158,8 +158,8 @@ class Location:
 
 
 class LocationMixin(ABC):
-    @abstractmethod
     @property
+    @abstractmethod
     def loc(self) -> Location:
         pass
 

@@ -224,6 +224,7 @@ def load_save_file(filename: str) -> CC2XMLSave:
     resp = {}
     xs = xmlschema.XMLSchema(SCHEMA)
     buf = StoppableStringIO()
+    logger.info(f"open {filename}")
     with open(filename, "r") as original:
         # read as one big string so we can use the offset
         full_content = original.read()
@@ -231,6 +232,7 @@ def load_save_file(filename: str) -> CC2XMLSave:
     buf.seek(0, os.SEEK_SET)
 
     for root in xs.root_elements:
+        logger.info(f"parsing {root.name}")
         pre_feed = None
         if buf.tell() != 0:
             pre_feed = XML_START
@@ -238,7 +240,7 @@ def load_save_file(filename: str) -> CC2XMLSave:
         element = CC2ElementTree(buf, root.name, pre_feed=pre_feed).cc2parse(buf.tell())
         tree = ElementTree.ElementTree(element=element)
         resp[root.name] = tree
-
+    logger.info("loaded")
     doc = CC2XMLSave()
     doc.roots = resp
     return doc
