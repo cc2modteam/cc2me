@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Optional, Any, List, cast
 from xml.etree.ElementTree import Element
 
@@ -147,6 +148,26 @@ class Max(Point3D):
         self.x = 2000
         self.y = 1000
         self.z = 2000
+
+
+@dataclass
+class Location:
+    x: float = 0
+    y: float = 0
+    z: float = 0
+
+
+class LocationMixin(ABC):
+    @abstractmethod
+    @property
+    def loc(self) -> Location:
+        pass
+
+
+class MovableLocationMixin(ABC):
+    @abstractmethod
+    def move(self, x: float, y: float, z: float) -> None:
+        pass
 
 
 class WorldPosition(Point3D):

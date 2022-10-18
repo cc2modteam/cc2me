@@ -7,7 +7,7 @@ from .utils import (ElementProxy,
                     Bounds,
                     WorldPosition,
                     IsSetMixin,
-                    e_property)
+                    e_property, LocationMixin, Location, MovableLocationMixin)
 from ..constants import MAX_INTEGER, MIN_TILE_SEED, MAX_TILE_SEED
 
 
@@ -32,7 +32,7 @@ class SpawnData(ElementProxy, IsSetMixin):
         self.is_set = False
 
 
-class Tile(ElementProxy):
+class Tile(ElementProxy, LocationMixin, MovableLocationMixin):
     tag = "t"
 
     id = e_property(IntAttribute("id", default_value=0))
@@ -91,3 +91,9 @@ class Tile(ElementProxy):
         if z is not None:
             self.world_position.z = z
 
+    def move(self, x: float, y: float, z: float) -> None:
+        self.set_position(x, y, z)
+
+    @property
+    def loc(self) -> Location:
+        return Location(self.world_position.x, self.world_position.y, self.world_position.z)

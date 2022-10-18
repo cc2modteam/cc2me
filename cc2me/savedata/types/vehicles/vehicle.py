@@ -1,6 +1,7 @@
 from typing import cast, List, Optional
 
-from ..utils import ElementProxy, e_property, IntAttribute, FloatAttribute, BoolAttribute, Transform, Bodies
+from ..utils import ElementProxy, e_property, IntAttribute, FloatAttribute, BoolAttribute, Transform, Bodies, \
+    LocationMixin, Location, MovableLocationMixin
 
 
 class Attachment(ElementProxy):
@@ -20,7 +21,7 @@ class Attachments(ElementProxy):
         return [Attachment(x) for x in self.children()]
 
 
-class Vehicle(ElementProxy):
+class Vehicle(ElementProxy, LocationMixin, MovableLocationMixin):
     tag = "v"
 
     id = e_property(IntAttribute("id"))
@@ -72,3 +73,10 @@ class Vehicle(ElementProxy):
             body.transform.tx += dx
             body.transform.ty += dy
             body.transform.tz += dz
+
+    def move(self, x: float, y: float, z: float) -> None:
+        self.set_location(x, y, z)
+
+    @property
+    def loc(self) -> Location:
+        return Location(self.transform.tx, self.transform.ty, self.transform.tz)
