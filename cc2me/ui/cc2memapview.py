@@ -1,4 +1,5 @@
 import tkinter
+from random import randrange
 from typing import Tuple, Dict, Callable
 
 from PIL.ImageTk import PhotoImage, Image
@@ -8,6 +9,21 @@ from ..savedata.logging import logger
 from ..savedata.types.objects import CC2MapItem, Island
 
 TILE_SIZE = 256
+
+TEAM_COLORS = {
+    0: "#990000",
+    1: "#0066FF",
+    2: "#FFCC00",
+    3: "#66FF33",
+    4: "#FF00FF",
+}
+
+
+def get_team_color(team: int) -> str:
+    if team not in TEAM_COLORS:
+        r, g, b = randrange(0, 255), randrange(0, 255), randrange(0, 255)
+        TEAM_COLORS[team] = "#{:02X}{:02X}{:02X}".format(r, g, b)
+    return TEAM_COLORS[team]
 
 
 def generate_sea_tile() -> PhotoImage:
@@ -53,7 +69,7 @@ class Marker(CanvasPositionMarker):
                  text_color: str = "#652A22",
                  command: Callable = None,
                  data: any = None,
-                 box_width: int = 32,
+                 box_width: int = 64,
                  ):
         super(Marker, self).__init__(map_widget, position,
                                      text=text,
@@ -148,4 +164,5 @@ class CC2DataMarker(Marker):
 class IslandMarker(CC2DataMarker):
     def __init__(self, map_widget: "TkinterMapView", cc2obj: Island):
         super(IslandMarker, self).__init__(map_widget, cc2obj)
+        self.marker_color_outside = get_team_color(cc2obj.tile().team_control)
 

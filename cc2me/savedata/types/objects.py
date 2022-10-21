@@ -27,7 +27,13 @@ class Island(CC2MapItem):
     def __init__(self, tile: Tile):
         super(Island, self).__init__(tile)
 
+    def tile(self) -> Tile:
+        return cast(Tile, self.object)
+
 
 class Carrier(CC2MapItem):
     def __init__(self, carrier: Vehicle):
         super(Carrier, self).__init__(carrier)
+
+    def carrier(self) -> Vehicle:
+        return cast(Vehicle, self.object)
