@@ -9,6 +9,7 @@ class CanvasShape:
         self.kwargs = kwargs
         self.canvas_id = -1
         self.bindable = True
+        self.min_zoom = 1
 
     def get_coords(self, x: float, y: float, zoom: float) -> List[float]:
         coords = []
@@ -17,11 +18,12 @@ class CanvasShape:
             coords.append(y + self.coords[i + 1] * zoom)
         return coords
 
-    def render(self, x: float, y: float, zoom: float) -> int:
+    def render(self, x: float, y: float, zoom: float) -> None:
+        if zoom < self.min_zoom:
+            return             
         coords = self.get_coords(x, y, zoom)
         if self.canvas_id == -1:
             self.canvas_id = self.func(*coords, **self.kwargs)
-        return self.canvas_id
 
     def update(self, canvas: tkinter.Canvas, x: float, y: float, zoom: float):
         if self.canvas_id != -1:
@@ -32,5 +34,4 @@ class CanvasShape:
         if self.canvas_id != -1:
             canvas.delete(self.canvas_id)
             self.canvas_id = -1
-
 

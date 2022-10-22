@@ -3,10 +3,9 @@ from typing import Optional, Callable, List
 
 from tkintermapview.canvas_position_marker import CanvasPositionMarker
 
-from cc2me.savedata.types.objects import CC2MapItem, Island
-from cc2me.ui.cc2memapview import get_team_color
-
-from cc2me.ui.mapshapes import CanvasShape
+from .cc2constants import get_team_color
+from .mapshapes import CanvasShape
+from ..savedata.types.objects import CC2MapItem, Island
 
 
 class Marker(CanvasPositionMarker, ABC):
