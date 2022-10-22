@@ -7,7 +7,8 @@ from tkinter import filedialog
 from typing import Optional, List
 
 from cc2me.savedata.types.objects import Island
-from .cc2memapview import CC2MeMapView, IslandMarker
+from .cc2memapview import CC2MeMapView
+from cc2me.ui.mapmarkers import IslandMarker
 from ..savedata.loader import CC2XMLSave, load_save_file
 
 APP_NAME = "cc2me.ui.tool"
