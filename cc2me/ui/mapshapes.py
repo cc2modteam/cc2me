@@ -1,5 +1,5 @@
 import tkinter
-from typing import List
+from typing import List, Optional
 
 
 class CanvasShape:
@@ -10,6 +10,7 @@ class CanvasShape:
         self.canvas_id = -1
         self.bindable = True
         self.min_zoom = 1
+        self.on_left_mouse: Optional[callable] = None
 
     def get_coords(self, x: float, y: float, zoom: float) -> List[float]:
         coords = []
@@ -20,7 +21,7 @@ class CanvasShape:
 
     def render(self, x: float, y: float, zoom: float) -> None:
         if zoom < self.min_zoom:
-            return             
+            return
         coords = self.get_coords(x, y, zoom)
         if self.canvas_id == -1:
             self.canvas_id = self.func(*coords, **self.kwargs)
@@ -29,6 +30,7 @@ class CanvasShape:
         if self.canvas_id != -1:
             coords = self.get_coords(x, y, zoom)
             canvas.coords(self.canvas_id, *coords)
+            canvas.tag_bind(self.canvas_id, "<Button-1>", self.on_left_mouse)
 
     def delete(self, canvas: tkinter.Canvas):
         if self.canvas_id != -1:

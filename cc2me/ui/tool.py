@@ -1,5 +1,6 @@
 """GUI for cc2me mission editor"""
 import argparse
+import os
 import sys
 import tkinter
 import tkinter.messagebox
@@ -23,6 +24,7 @@ class App(tkinter.Tk):
 
     def __init__(self, *args, **kwargs):
         tkinter.Tk.__init__(self, *args, **kwargs)
+        self.save_filename: Optional[str] = None
         self.cc2me: Optional[CC2XMLSave] = None
         self.islands: List[IslandMarker] = []
 
@@ -43,7 +45,7 @@ class App(tkinter.Tk):
         self.open_button = tkinter.Button(master=self, width=6, text="Open", command=self.open_file)
         self.open_button.grid(row=0, column=0, pady=10, padx=5)
 
-        self.save_button = tkinter.Button(master=self, width=6, text="Save", command=None)
+        self.save_button = tkinter.Button(master=self, width=6, text="Save", command=self.save_file)
         self.save_button.grid(row=0, column=1, pady=10, padx=5)
 
         self.map_widget = CC2MeMapView(width=self.WIDTH,
@@ -63,8 +65,12 @@ class App(tkinter.Tk):
     def start(self):
         self.mainloop()
 
-    def open_file(self):
+    def save_file(self):
+        if self.save_filename:
+            with open(self.save_filename, "w") as fd:
+                fd.write(self.cc2me.export())
 
+    def open_file(self):
         # remove existing items
         for island in self.islands:
             island.delete()
@@ -72,13 +78,17 @@ class App(tkinter.Tk):
 
         filename = filedialog.askopenfilename(title="Open CC2 Save",
                                               filetypes=(("XML Files", "*.xml"),))
-        self.cc2me = load_save_file(filename)
+        if filename and os.path.exists(filename):
+            self.cc2me = load_save_file(filename)
         self.islands.clear()
+
+        def island_clicked(shape):
+            print(f"island clicked {shape}")
 
         # islands
         for island_tile in self.cc2me.tiles:
             island = Island(island_tile)
-            marker = IslandMarker(self.map_widget, island)
+            marker = IslandMarker(self.map_widget, island, on_click=island_clicked)
             marker.text = f"Island {island_tile.id}"
             self.map_widget.add_marker(marker)
             self.islands.append(marker)

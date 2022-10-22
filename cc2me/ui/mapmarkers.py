@@ -1,3 +1,4 @@
+import tkinter
 from abc import ABC, abstractmethod
 from typing import Optional, Callable, List
 
@@ -44,11 +45,16 @@ class ShapeMarker(Marker, ABC):
             text_color=text_color,
             command=command,
             data=data)
+        self.label: Optional[CanvasShape] = None
         self._shapes: List[CanvasShape] = []
         self._zoom_scale_factor = zoom_scale
 
-    def add_shape(self, shape: CanvasShape):
-        self._shapes.append(shape)
+    def show_label(self) -> bool:
+        return self.label is not None and self.map_widget.zoom > 5
+
+    def add_shapes(self, *shapes: CanvasShape):
+        for shape in shapes:
+            self._shapes.append(shape)
 
     def render(self, event=None):
         if self.is_visible():
@@ -57,6 +63,9 @@ class ShapeMarker(Marker, ABC):
                 if shape.canvas_id == -1:
                     shape.render(x, y, self.map_widget.zoom * self._zoom_scale_factor)
                 shape.update(self.map_widget.canvas, x, y, self.map_widget.zoom * self._zoom_scale_factor)
+            if self.show_label():
+                if self.label and self.label.canvas_id != -1:
+                    self.map_widget.canvas.itemconfig(self.label.canvas_id, text=self.text)
             self.bind_commands()
         else:
             for shape in self._shapes:
@@ -80,17 +89,30 @@ class CC2DataMarker(ShapeMarker):
 
 
 class IslandMarker(CC2DataMarker):
-    def __init__(self, map_widget: "TkinterMapView", cc2obj: Island):
+    def __init__(self, map_widget: "TkinterMapView", cc2obj: Island, on_click: Optional[callable] = None):
         super(IslandMarker, self).__init__(map_widget, cc2obj)
         self.marker_color_outside = get_team_color(cc2obj.tile().team_control)
+        self._text = None
+        self.command = on_click
         # add the shape
-        self.add_shape(
-            CanvasShape(map_widget.canvas.create_rectangle,
-                        -2, -2,
-                        2, 2,
-                        fill=self.marker_color_outside,
-                        width=1,
-                        outline=self.marker_color_outside,
-                        tag="island marker"
-                        )
-        )
+        island = CanvasShape(map_widget.canvas.create_rectangle,
+                             -2, -2,
+                             2, 2,
+                             fill=self.marker_color_outside,
+                             width=1,
+                             outline=self.marker_color_outside,
+                             tag="island marker",
+                             )
+        island.on_left_mouse = self.click
+        self.label = CanvasShape(map_widget.canvas.create_text,
+                                 0, -3,
+                                 text=self.text,
+                                 fill="#990000",
+                                 font=self.font,
+                                 anchor=tkinter.S,
+                                 tag="marker text"
+                                 )
+        self.add_shapes(island, self.label)
+
+    def click(self, event=None):
+        self.command(self)
