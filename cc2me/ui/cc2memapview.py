@@ -29,10 +29,10 @@ class CC2MeMapView(TkinterMapView):
         super().set_zoom(zoom, relative_pointer_x, relative_pointer_y)
 
     def request_image(self, zoom: int, x: int, y: int, db_cursor=None) -> PhotoImage:
-        return self.empty_tile_image
-        #if self.sea_tile_image is None:
-        #    self.sea_tile_image = generate_sea_tile()
-        #return self.sea_tile_image
+        #return self.empty_tile_image
+        if self.sea_tile_image is None:
+            self.sea_tile_image = generate_sea_tile()
+        return self.sea_tile_image
 
     def add_marker(self, marker: CanvasPositionMarker):
         marker.draw()

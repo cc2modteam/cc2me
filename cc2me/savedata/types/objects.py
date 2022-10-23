@@ -31,9 +31,17 @@ class Island(CC2MapItem):
         return cast(Tile, self.object)
 
 
-class Carrier(CC2MapItem):
+class Unit(CC2MapItem):
+    def __init__(self, unit: Vehicle):
+        super(Unit, self).__init__(unit)
+
+    def vehicle(self) -> Vehicle:
+        return cast(Vehicle, self.object)
+
+
+class Carrier(Unit):
     def __init__(self, carrier: Vehicle):
         super(Carrier, self).__init__(carrier)
 
     def carrier(self) -> Vehicle:
-        return cast(Vehicle, self.object)
+        return self.vehicle()

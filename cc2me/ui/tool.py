@@ -7,9 +7,10 @@ import tkinter.messagebox
 from tkinter import filedialog
 from typing import Optional, List
 
-from cc2me.savedata.types.objects import Island
+from cc2me.savedata.types.objects import Island, Unit
+from cc2me.savedata.types.vehicles.vehicle import Vehicle
 from .cc2memapview import CC2MeMapView
-from cc2me.ui.mapmarkers import IslandMarker
+from cc2me.ui.mapmarkers import IslandMarker, UnitMarker
 from ..savedata.loader import CC2XMLSave, load_save_file
 
 APP_NAME = "cc2me.ui.tool"
@@ -27,6 +28,7 @@ class App(tkinter.Tk):
         self.save_filename: Optional[str] = None
         self.cc2me: Optional[CC2XMLSave] = None
         self.islands: List[IslandMarker] = []
+        self.units: List[UnitMarker] = []
 
         self.title(APP_NAME)
         self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
@@ -72,9 +74,11 @@ class App(tkinter.Tk):
 
     def open_file(self):
         # remove existing items
-        for island in self.islands:
-            island.delete()
+        for x in self.islands + self.units:
+            x.delete()
         self.map_widget.canvas_marker_list = []
+        self.islands.clear()
+        self.units.clear()
 
         filename = filedialog.askopenfilename(title="Open CC2 Save",
                                               filetypes=(("XML Files", "*.xml"),))
@@ -85,13 +89,21 @@ class App(tkinter.Tk):
         def island_clicked(shape):
             print(f"island clicked {shape}")
 
-        # islands
-        for island_tile in self.cc2me.tiles:
-            island = Island(island_tile)
-            marker = IslandMarker(self.map_widget, island, on_click=island_clicked)
-            marker.text = f"Island {island_tile.id}"
-            self.map_widget.add_marker(marker)
-            self.islands.append(marker)
+        if self.cc2me:
+            # islands
+            for island_tile in self.cc2me.tiles:
+                island = Island(island_tile)
+                marker = IslandMarker(self.map_widget, island, on_click=island_clicked)
+                marker.text = f"Island {island_tile.id}"
+                self.map_widget.add_marker(marker)
+                self.islands.append(marker)
+
+            # units
+            for veh in self.cc2me.vehicles:
+                u = Unit(veh)
+                marker = UnitMarker(self.map_widget, u)
+                self.map_widget.add_marker(marker)
+                self.units.append(marker)
 
 
 def run(args=None):
