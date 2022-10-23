@@ -5,7 +5,7 @@ import sys
 import tkinter
 import tkinter.messagebox
 from tkinter import filedialog
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 from cc2me.savedata.types.objects import Island, Unit
 from cc2me.savedata.types.vehicles.vehicle import Vehicle
@@ -56,9 +56,28 @@ class App(tkinter.Tk):
         self.map_widget.grid(row=1, column=0, columnspan=4, sticky="nsew")
         self.map_widget.set_position(0, 0)
         self.map_widget.set_zoom(1)
+        self.map_widget.add_right_click_menu_command(label="Select Units",
+                                                     command=self.start_selection_units,
+                                                     pass_coords=False)
+        self.map_widget.on_select_box = self.on_selection
 
-    def clear(self):
-        pass
+    def start_selection_units(self):
+        self.map_widget.selection_mode = "units"
+
+    def on_selection(self, mode, nw, se):
+        # format is NW[y], NW[x], SW[y], SW[x]
+        print(f"{mode} {nw[0]} {nw[1]} -> {se[0]} {se[1]}")
+        # find everything in the box
+        selected = []
+        if mode == "units":
+            for u in self.units:
+                u.selected = False
+                if se[0] < u.position[0] < nw[0]:
+                    if se[1] > u.position[1] > nw[1]:
+                        selected.append(u)
+                        u.selected = True
+
+        print(f"selected {len(selected)} {mode}")
 
     def on_closing(self, event=0):
         self.destroy()
@@ -72,13 +91,19 @@ class App(tkinter.Tk):
             with open(self.save_filename, "w") as fd:
                 fd.write(self.cc2me.export())
 
-    def open_file(self):
+    def clear(self):
         # remove existing items
         for x in self.islands + self.units:
             x.delete()
         self.map_widget.canvas_marker_list = []
         self.islands.clear()
         self.units.clear()
+        self.map_widget.canvas.delete("all")
+        self.cc2me = None
+        self.map_widget.set_zoom(1, 0.0, 0.0)
+
+    def open_file(self):
+        self.clear()
 
         filename = filedialog.askopenfilename(title="Open CC2 Save",
                                               filetypes=(("XML Files", "*.xml"),))

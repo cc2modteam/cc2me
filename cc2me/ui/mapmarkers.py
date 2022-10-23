@@ -88,21 +88,43 @@ class CC2DataMarker(ShapeMarker):
                                             position=cc2obj.loc,
                                             text=cc2obj.text)
         self.object = cc2obj
+        self.selected = False
+        self._color = "#ff0000"
+
+    @property
+    def color(self) -> str:
+        if self.selected:
+            return "#ffffff"
+
+        return self._color
+
+    @color.setter
+    def color(self, c: str):
+        self._color = c
+
+    def select(self):
+        self.selected = True
+
+    def unselect(self):
+        self.selected = False
+
+    def click(self, event=None):
+        print(self.position)
 
 
 class IslandMarker(CC2DataMarker):
     def __init__(self, map_widget: "TkinterMapView", cc2obj: Island, on_click: Optional[callable] = None):
         super(IslandMarker, self).__init__(map_widget, cc2obj)
-        self.marker_color_outside = get_team_color(cc2obj.tile().team_control)
+        self.color = get_team_color(cc2obj.tile().team_control)
         self._text = None
         self.command = on_click
         # add the shape
         island = CanvasShape(map_widget.canvas.create_rectangle,
                              -2, -2,
                              2, 2,
-                             fill=self.marker_color_outside,
+                             fill=self.color,
                              width=1,
-                             outline=self.marker_color_outside,
+                             outline=self.color,
                              tag="island marker",
                              )
         island.on_left_mouse = self.click
@@ -136,7 +158,7 @@ class UnitMarker(CC2DataMarker):
 
     def __init__(self, map_widget: "TkinterMapView", cc2obj: Unit, on_click: Optional[callable] = None):
         super(UnitMarker, self).__init__(map_widget, cc2obj)
-        self.marker_color_outside = get_team_color(cc2obj.vehicle().team_id)
+        self.color = get_team_color(cc2obj.vehicle().team_id)
 
         unit = CanvasShape(map_widget.canvas.create_polygon,
                            -1 * self.size, 0,
@@ -145,7 +167,7 @@ class UnitMarker(CC2DataMarker):
                            0, self.size,
                            fill="",
                            width=1,
-                           outline=self.marker_color_outside,
+                           outline=self.color,
                            tag="vehicle marker",
                            )
         self.add_shapes(unit)
