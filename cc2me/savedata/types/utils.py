@@ -189,6 +189,9 @@ class Bounds(ElementProxy):
     def max(self):
         return cast(Max, self.get_default_child_by_tag(Max))
 
+    def __str__(self):
+        return f"{self.min.x}, {self.min.y} => {self.max.x}, {self.max.y}"
+
 
 class IsSetMixin:
     is_set = e_property(BoolAttribute("is_set", default_value=False))

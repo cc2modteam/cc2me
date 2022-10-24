@@ -3,12 +3,13 @@ from abc import ABC, abstractmethod
 from typing import Optional, Callable, List, cast
 
 from tkintermapview.canvas_position_marker import CanvasPositionMarker
+from tkintermapview import TkinterMapView
 
 from .cc2constants import get_team_color
 from .mapshapes import CanvasShape
-from ..savedata.constants import VEHICLE_DEF_CARRIER
+from ..savedata.constants import VehicleTypes
 from ..savedata.types.objects import CC2MapItem, Island, Unit
-from ..savedata.types.vehicles.vehicle import Vehicle
+from ..savedata.types.tiles import Tile
 
 
 class Marker(CanvasPositionMarker, ABC):
@@ -93,20 +94,21 @@ class CC2DataMarker(ShapeMarker):
 
     @property
     def color(self) -> str:
-        if self.selected:
-            return "#ffffff"
-
         return self._color
 
     @color.setter
-    def color(self, c: str):
-        self._color = c
+    def color(self, value: str):
+        self._color = value
 
     def select(self):
         self.selected = True
+        for shape in self._shapes:
+            shape.select()
 
     def unselect(self):
         self.selected = False
+        for shape in self._shapes:
+            shape.unselect()
 
     def click(self, event=None):
         print(self.position)
@@ -118,17 +120,34 @@ class IslandMarker(CC2DataMarker):
         self.color = get_team_color(cc2obj.tile().team_control)
         self._text = None
         self.command = on_click
-        # add the shape
-        island = CanvasShape(map_widget.canvas.create_rectangle,
-                             -2, -2,
-                             2, 2,
-                             fill=self.color,
-                             width=1,
-                             outline=self.color,
-                             tag="island marker",
-                             )
-        island.on_left_mouse = self.click
-        self.label = CanvasShape(map_widget.canvas.create_text,
+        self.polygon = None
+        tile = cast(Tile, self.object.object)
+        # add the island polygon
+        self.polygon = map_widget.set_polygon(
+            [
+                (self.object.loc[0] + tile.bounds.min.z / 1000, self.object.loc[1] + tile.bounds.min.x / 1000),
+                (self.object.loc[0] + tile.bounds.min.z / 1000, self.object.loc[1] + tile.bounds.max.x / 1000),
+                (self.object.loc[0] + tile.bounds.max.z / 1000, self.object.loc[1] + tile.bounds.max.x / 1000),
+                (self.object.loc[0] + tile.bounds.max.z / 1000, self.object.loc[1] + tile.bounds.min.x / 1000),
+            ],
+            outline_color=self.color,
+            border_width=1,
+            fill_color=None,
+        )
+
+        # add the shape/icon
+        production = CanvasShape(map_widget.canvas,
+                                 map_widget.canvas.create_rectangle,
+                                 -2, -2,
+                                 2, 2,
+                                 fill=self.color,
+                                 width=1,
+                                 outline=self.color,
+                                 tag="island marker",
+                                 )
+        production.on_left_mouse = self.click
+        self.label = CanvasShape(map_widget.canvas,
+                                 map_widget.canvas.create_text,
                                  0, -3,
                                  text=self.text,
                                  fill="#990000",
@@ -136,7 +155,7 @@ class IslandMarker(CC2DataMarker):
                                  anchor=tkinter.S,
                                  tag="marker text"
                                  )
-        self.add_shapes(island, self.label)
+        self.add_shapes(production, self.label)
 
     def click(self, event=None):
         self.command(self)
@@ -151,16 +170,27 @@ class UnitMarker(CC2DataMarker):
     @property
     def size(self) -> float:
         v = self.unit.vehicle()
-        if v.definition_index == VEHICLE_DEF_CARRIER:  # carrier
+        if v.definition_index == VehicleTypes.Carrier.int:  # carrier
             return 1.5
 
         return 0.5
 
-    def __init__(self, map_widget: "TkinterMapView", cc2obj: Unit, on_click: Optional[callable] = None):
+    def __init__(self, map_widget: TkinterMapView, cc2obj: Unit, on_click: Optional[callable] = None):
         super(UnitMarker, self).__init__(map_widget, cc2obj)
         self.color = get_team_color(cc2obj.vehicle().team_id)
-
-        unit = CanvasShape(map_widget.canvas.create_polygon,
+        back = CanvasShape(map_widget.canvas,
+                           map_widget.canvas.create_polygon,
+                           -1 * self.size, 0,
+                           0, -1 * self.size,
+                           self.size, 0,
+                           0, self.size,
+                           fill="",
+                           width=3,
+                           outline="#000000",
+                           tag="vehicle marker",
+                           )
+        unit = CanvasShape(map_widget.canvas,
+                           map_widget.canvas.create_polygon,
                            -1 * self.size, 0,
                            0, -1 * self.size,
                            self.size, 0,
@@ -170,4 +200,5 @@ class UnitMarker(CC2DataMarker):
                            outline=self.color,
                            tag="vehicle marker",
                            )
-        self.add_shapes(unit)
+
+        self.add_shapes(back, unit)

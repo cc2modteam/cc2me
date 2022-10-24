@@ -25,6 +25,18 @@ class App(tkinter.Tk):
 
     def __init__(self, *args, **kwargs):
         tkinter.Tk.__init__(self, *args, **kwargs)
+        self.menubar = tkinter.Menu()
+        self.filemenu = tkinter.Menu()
+        self.editmenu = tkinter.Menu()
+        self.menubar.add_cascade(label="File", menu=self.filemenu)
+        self.filemenu.add_command(label="Open", command=self.open_file)
+        self.filemenu.add_command(label="Save", command=self.save_file)
+        self.filemenu.add_separator()
+        self.filemenu.add_command(label="Exit", command=self.on_closing)
+        self.menubar.add_cascade(label="Edit", menu=self.editmenu)
+        self.editmenu.add_command(label="Select None", command=self.select_none)
+        self.configure(menu=self.menubar)
+
         self.save_filename: Optional[str] = None
         self.cc2me: Optional[CC2XMLSave] = None
         self.islands: List[IslandMarker] = []
@@ -64,18 +76,24 @@ class App(tkinter.Tk):
     def start_selection_units(self):
         self.map_widget.selection_mode = "units"
 
+    def select_none(self):
+        for item in self.units:
+            item.unselect()
+        for item in self.islands:
+            item.unselect()
+
     def on_selection(self, mode, nw, se):
         # format is NW[y], NW[x], SW[y], SW[x]
         print(f"{mode} {nw[0]} {nw[1]} -> {se[0]} {se[1]}")
         # find everything in the box
         selected = []
+        self.select_none()
         if mode == "units":
             for u in self.units:
-                u.selected = False
                 if se[0] < u.position[0] < nw[0]:
                     if se[1] > u.position[1] > nw[1]:
                         selected.append(u)
-                        u.selected = True
+                        u.select()
 
         print(f"selected {len(selected)} {mode}")
 
@@ -101,6 +119,7 @@ class App(tkinter.Tk):
         self.map_widget.canvas.delete("all")
         self.cc2me = None
         self.map_widget.set_zoom(1, 0.0, 0.0)
+        self.map_widget.update()
 
     def open_file(self):
         self.clear()
@@ -110,6 +129,7 @@ class App(tkinter.Tk):
         if filename and os.path.exists(filename):
             self.cc2me = load_save_file(filename)
         self.islands.clear()
+        self.map_widget.update()
 
         def island_clicked(shape):
             print(f"island clicked {shape}")
@@ -129,7 +149,7 @@ class App(tkinter.Tk):
                 marker = UnitMarker(self.map_widget, u)
                 self.map_widget.add_marker(marker)
                 self.units.append(marker)
-
+        self.map_widget.canvas.update_idletasks()
 
 def run(args=None):
     parser.parse_args(args)

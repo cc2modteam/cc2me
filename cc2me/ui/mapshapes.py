@@ -3,7 +3,8 @@ from typing import List, Optional
 
 
 class CanvasShape:
-    def __init__(self, func: callable, *coords, **kwargs):
+    def __init__(self, canvas: tkinter.Canvas, func: callable, *coords, **kwargs):
+        self.canvas = canvas
         self.func = func
         self.coords = coords
         self.kwargs = kwargs
@@ -11,6 +12,25 @@ class CanvasShape:
         self.bindable = True
         self.min_zoom = 1
         self.on_left_mouse: Optional[callable] = None
+        self.selected = False
+        self.selected_outline_color = "#ffffff"
+        self._normal_outline_color = None
+
+    def select(self):
+        if not self.selected:
+            self.selected = True
+            self._normal_outline_color = self.kwargs.get("outline", None)
+            if self._normal_outline_color is not None:
+                self.kwargs["outline"] = self.selected_outline_color
+                self.canvas.itemconfig(self.canvas_id, outline=self.kwargs["outline"])
+
+    def unselect(self):
+        if self.selected:
+            self.selected = False
+            if self._normal_outline_color is not None:
+                self.kwargs["outline"] = self._normal_outline_color
+                self._normal_outline_color = None
+                self.canvas.itemconfig(self.canvas_id, outline=self.kwargs["outline"])
 
     def get_coords(self, x: float, y: float, zoom: float) -> List[float]:
         coords = []

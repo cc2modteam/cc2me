@@ -19,7 +19,8 @@ class CC2MapItem:
     def loc(self) -> Optional[Tuple[float, float]]:
         if isinstance(self.object, LocationMixin):
             temp = cast(LocationMixin, self.object)
-            return temp.loc.x / LOC_SCALE_FACTOR, temp.loc.z / LOC_SCALE_FACTOR
+            # map uses lat+long (y, then x) remember to swap!
+            return temp.loc.z / LOC_SCALE_FACTOR, temp.loc.x / LOC_SCALE_FACTOR
         return None
 
 

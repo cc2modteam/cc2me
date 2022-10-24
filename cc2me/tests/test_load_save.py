@@ -1,7 +1,7 @@
 from pathlib import Path
 import random
 
-from ..savedata.constants import VEHICLE_DEF_CARRIER, BIOME_DARK_MESAS
+from ..savedata.constants import BIOME_DARK_MESAS, VehicleTypes
 from ..savedata.loader import load_save_file
 
 HERE = Path(__file__).parent
@@ -28,7 +28,7 @@ def test_read_save():
             island.set_position(x=7000 + (spread * j), z=6000 + (spread * i))
 
     # move the team 1 (player) carrier
-    carriers = cc2.find_vehicles_by_definition(VEHICLE_DEF_CARRIER)
+    carriers = cc2.find_vehicles_by_definition(VehicleTypes.Carrier.int)
     team1_carrier = [x for x in carriers if x.team_id == 1][0]
     # put the carrier near to the first island
     team1_carrier.set_location(x=first_tile.world_position.x + first_tile.bounds.max.x, z=first_tile.world_position.z)
