@@ -25,7 +25,20 @@ class IntEnum(Enum):
 
 class VehicleTypes(IntEnum):
     Carrier = 0
+    Walrus = 4
+    Seal = 2
+    Bear = 6
+    Albatross = 8
+    Manta = 10
+    Razorbill = 12
+    Petrel = 14
     Barge = 16
+    Lifeboat = 57
+    Turret = 59
+    Jetty = 64
+    Needlefish = 77
+    Swordfish = 79
+    Mule = 88
 
 
 class IslandTypes(IntEnum):
@@ -56,9 +69,10 @@ def get_island_name(island_id: int) -> str:
     except IndexError:
         return "Island {island_id}"
 
+
 def get_vehicle_name(definition_index: int) -> str:
     for item in VehicleTypes:
         if item.value == definition_index:
             return item.name
 
-    return "***"
+    return f"*** ({definition_index}) "

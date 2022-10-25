@@ -102,9 +102,14 @@ class App(tkinter.Tk):
                 if se[0] < u.position[0] < nw[0]:
                     if se[1] > u.position[1] > nw[1]:
                         selected.append(u)
-                        u.select()
 
+        self.select_markers(selected)
         print(f"selected {len(selected)} {mode}")
+
+    def select_markers(self, markers):
+        self.select_none()
+        for item in markers:
+            item.select()
 
     def on_closing(self, event=0):
         self.destroy()
@@ -132,6 +137,9 @@ class App(tkinter.Tk):
 
     def island_clicked(self, shape):
         print(f"island clicked {shape}")
+
+    def unit_clicked(self, unitmarker):
+        self.select_markers([unitmarker])
 
     def open_file(self):
         self.clear()
@@ -163,6 +171,7 @@ class App(tkinter.Tk):
     def add_unit(self, vehicle):
         u = Unit(vehicle)
         marker = UnitMarker(self.map_widget, u)
+        marker.command = self.unit_clicked
         marker.on_hover_end = self.end_hover
         marker.on_hover_start = self.hover_unit
         self.map_widget.add_marker(marker)

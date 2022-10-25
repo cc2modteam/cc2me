@@ -121,9 +121,6 @@ class CC2DataMarker(ShapeMarker):
         for shape in self._shapes:
             shape.unselect()
 
-    def click(self, event=None):
-        print(self.position)
-
 
 class IslandMarker(CC2DataMarker):
     def __init__(self, map_widget: "TkinterMapView", cc2obj: Island, on_click: Optional[callable] = None):
