@@ -7,7 +7,9 @@ import tkinter.messagebox
 from tkinter import filedialog
 from typing import Optional, List, Tuple
 
+from cc2me.savedata.constants import get_island_name, get_vehicle_name
 from cc2me.savedata.types.objects import Island, Unit
+from cc2me.savedata.types.tiles import Tile
 from cc2me.savedata.types.vehicles.vehicle import Vehicle
 from .cc2memapview import CC2MeMapView
 from cc2me.ui.mapmarkers import IslandMarker, UnitMarker
@@ -20,25 +22,29 @@ parser = argparse.ArgumentParser(description=__doc__, prog=APP_NAME)
 
 class App(tkinter.Tk):
 
-    WIDTH = 800
+    WIDTH = 900
     HEIGHT = 750
 
     def __init__(self, *args, **kwargs):
         tkinter.Tk.__init__(self, *args, **kwargs)
         self.menubar = tkinter.Menu()
         self.filemenu = tkinter.Menu()
-        self.editmenu = tkinter.Menu()
+
         self.menubar.add_cascade(label="File", menu=self.filemenu)
         self.filemenu.add_command(label="Open", command=self.open_file)
         self.filemenu.add_command(label="Save", command=self.save_file)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Exit", command=self.on_closing)
+
+        self.editmenu = tkinter.Menu()
         self.menubar.add_cascade(label="Edit", menu=self.editmenu)
         self.editmenu.add_command(label="Select None", command=self.select_none)
+
         self.configure(menu=self.menubar)
 
         self.save_filename: Optional[str] = None
         self.cc2me: Optional[CC2XMLSave] = None
+
         self.islands: List[IslandMarker] = []
         self.units: List[UnitMarker] = []
 
@@ -54,6 +60,9 @@ class App(tkinter.Tk):
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=2)
         self.grid_columnconfigure(3, weight=0)
+        self.status_line = tkinter.Variable(value="Ready..")
+        self.status_bar = tkinter.Label(textvariable=self.status_line, justify=tkinter.LEFT, width=self.WIDTH)
+        self.status_bar.grid(row=2, column=0, columnspan=4, padx=1, pady=1, sticky=tkinter.NSEW)
         self.grid_rowconfigure(1, weight=1)
 
         self.open_button = tkinter.Button(master=self, width=6, text="Open", command=self.open_file)
@@ -121,6 +130,9 @@ class App(tkinter.Tk):
         self.map_widget.set_zoom(1, 0.0, 0.0)
         self.map_widget.update()
 
+    def island_clicked(self, shape):
+        print(f"island clicked {shape}")
+
     def open_file(self):
         self.clear()
 
@@ -131,25 +143,39 @@ class App(tkinter.Tk):
         self.islands.clear()
         self.map_widget.update()
 
-        def island_clicked(shape):
-            print(f"island clicked {shape}")
-
         if self.cc2me:
             # islands
             for island_tile in self.cc2me.tiles:
-                island = Island(island_tile)
-                marker = IslandMarker(self.map_widget, island, on_click=island_clicked)
-                marker.text = f"Island {island_tile.id}"
-                self.map_widget.add_marker(marker)
-                self.islands.append(marker)
-
+                self.add_island(island_tile)
             # units
             for veh in self.cc2me.vehicles:
-                u = Unit(veh)
-                marker = UnitMarker(self.map_widget, u)
-                self.map_widget.add_marker(marker)
-                self.units.append(marker)
+                self.add_unit(veh)
+
         self.map_widget.canvas.update_idletasks()
+
+    def add_island(self, island_tile: Tile):
+        island = Island(island_tile)
+        marker = IslandMarker(self.map_widget, island, on_click=self.island_clicked)
+        marker.text = get_island_name(island_tile.id)
+        self.map_widget.add_marker(marker)
+        self.islands.append(marker)
+
+    def add_unit(self, vehicle):
+        u = Unit(vehicle)
+        marker = UnitMarker(self.map_widget, u)
+        marker.on_hover_end = self.end_hover
+        marker.on_hover_start = self.hover_unit
+        self.map_widget.add_marker(marker)
+        self.units.append(marker)
+
+    def hover_unit(self, marker: UnitMarker):
+        definition = marker.unit.vehicle().definition_index
+        text = f"Unit: {get_vehicle_name(definition)} {marker.unit.vehicle().id}"
+        self.status_line.set(text)
+
+    def end_hover(self, *args):
+        self.status_line.set("")
+
 
 def run(args=None):
     parser.parse_args(args)

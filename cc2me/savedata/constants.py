@@ -13,7 +13,6 @@ BIOME_SNOW_PINES = 1
 BIOME_SANDY_PINES = 3
 BIOME_DARK_MESAS = 7
 
-
 VEHICLE_DEF_CARRIER = 0
 
 
@@ -26,6 +25,7 @@ class IntEnum(Enum):
 
 class VehicleTypes(IntEnum):
     Carrier = 0
+    Barge = 16
 
 
 class IslandTypes(IntEnum):
@@ -39,3 +39,26 @@ class IslandTypes(IntEnum):
     Fuel = 7
     Barges = 8
 
+
+ISLAND_NAMES = ['VULCAN', 'ELWOOD', 'BYRNE', 'CEREBUS', 'CHARISSA', 'DUESSA', 'SOCRATES', 'GENETIX', 'EDGELEY',
+                'TOKAMAK', 'AVERNUS', 'ACHERON', 'MAGMA', 'IGNEOUS', 'ODRACIR', 'NAIADES', 'BEACON', 'DIONYSIUS',
+                'BACCHUS', 'BELTEMPEST', 'BARDLAND', 'BEDROCK', 'GRANITE', 'HYTAC', 'MNEMONIC', 'STORM', 'TERMINUS',
+                'THERMOPYLAE', 'STAVROS', 'EVERGREEN', 'CHERENKOV', 'LINGARD', 'VATTLAND', 'JUDGEMENT', 'FULCRUM',
+                'OUTCROP', 'ENDYMION', 'SOMNUS', 'SPLINTER', 'FORNAX', 'STEADFAST', 'TAKSAVEN', 'FRONTIER', 'DEADLOCK',
+                'URSULA', 'SANCTUARY', 'OBSIDIAN', 'ARACHNID', 'TWILIGHT', 'MILESTONE', 'INFERNO', 'TREASURE',
+                'FEARS', 'EDGE', 'TRAFFIC', 'STYX', 'HADES', 'KOUYATE', 'OUTPOST', 'BOUNTYBAR', 'MEDUSA', 'ISOLUS',
+                'SERRANO', 'CHARIBDIS', 'NEMESIS']
+
+
+def get_island_name(island_id: int) -> str:
+    try:
+        return ISLAND_NAMES[island_id - 1]
+    except IndexError:
+        return "Island {island_id}"
+
+def get_vehicle_name(definition_index: int) -> str:
+    for item in VehicleTypes:
+        if item.value == definition_index:
+            return item.name
+
+    return "***"

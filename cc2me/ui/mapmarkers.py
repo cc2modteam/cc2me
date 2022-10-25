@@ -14,7 +14,6 @@ from ..savedata.types.tiles import Tile
 
 class Marker(CanvasPositionMarker, ABC):
     """An extensible marker"""
-
     def is_visible(self) -> bool:
         canvas_pos_x, canvas_pos_y = self.get_canvas_pos(self.position)
         return -50 < canvas_pos_x < self.map_widget.width + 50 and -50 < canvas_pos_y < self.map_widget.height + 70
@@ -53,7 +52,7 @@ class ShapeMarker(Marker, ABC):
         self._zoom_scale_factor = zoom_scale
 
     def show_label(self) -> bool:
-        return self.label is not None and self.map_widget.zoom > 5
+        return self.label is not None and self.map_widget.zoom > 4
 
     def add_shapes(self, *shapes: CanvasShape):
         for shape in shapes:
@@ -91,6 +90,18 @@ class CC2DataMarker(ShapeMarker):
         self.object = cc2obj
         self.selected = False
         self._color = "#ff0000"
+        self.on_hover_start: callable = None
+        self.on_hover_end: callable = None
+
+    def mouse_enter(self, event=None):
+        super(Marker, self).mouse_enter(event)
+        if self.on_hover_start:
+            self.on_hover_start(self)
+
+    def mouse_leave(self, event=None):
+        super(Marker, self).mouse_leave(event)
+        if self.on_hover_end:
+            self.on_hover_end(self)
 
     @property
     def color(self) -> str:
@@ -118,7 +129,6 @@ class IslandMarker(CC2DataMarker):
     def __init__(self, map_widget: "TkinterMapView", cc2obj: Island, on_click: Optional[callable] = None):
         super(IslandMarker, self).__init__(map_widget, cc2obj)
         self.color = get_team_color(cc2obj.tile().team_control)
-        self._text = None
         self.command = on_click
         self.polygon = None
         tile = cast(Tile, self.object.object)
