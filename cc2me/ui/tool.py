@@ -75,6 +75,9 @@ class App(tkinter.Tk):
         self.save_button = tkinter.Button(master=self, width=6, text="Save", command=self.save_file)
         self.save_button.grid(row=0, column=1, pady=10, padx=5)
 
+        self.new_island = tkinter.Button(master=self, width=6, text="Island", command=self.add_new_island)
+        self.new_island.grid(row=0, column=2, pady=10, padx=5)
+
         self.map_widget = CC2MeMapView(width=self.WIDTH,
                                        height=600,
                                        corner_radius=0)
@@ -139,6 +142,10 @@ class App(tkinter.Tk):
     def on_closing(self, event=0):
         self.destroy()
         exit()
+
+    def add_new_island(self):
+        new_tile = self.cc2me.new_tile()
+        self.add_island(new_tile)
 
     def start(self):
         self.mainloop()
