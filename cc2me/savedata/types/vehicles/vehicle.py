@@ -27,7 +27,7 @@ class Attachments(ElementProxy):
         return [Attachment(x) for x in self.children()]
 
 
-class Vehicle(ElementProxy, LocationMixin, MovableLocationMixin):
+class Vehicle(ElementProxy, MovableLocationMixin):
     tag = "v"
 
     id = e_property(IntAttribute("id"))

@@ -9,7 +9,7 @@ from .cc2constants import get_team_color
 from .mapshapes import CanvasShape
 from ..savedata.constants import VehicleTypes
 from ..savedata.types.objects import CC2MapItem, Island, Unit
-from ..savedata.types.tiles import Tile
+from ..savedata.types.utils import MovableLocationMixin
 
 
 class Marker(CanvasPositionMarker, ABC):
@@ -33,7 +33,6 @@ class ShapeMarker(Marker, ABC):
 
     def __init__(self,
                  map_widget: "TkinterMapView",
-                 position: tuple,
                  text: Optional[str] = None,
                  text_color: Optional[str] = "#652A22",
                  command: Optional[Callable] = None,
@@ -42,7 +41,7 @@ class ShapeMarker(Marker, ABC):
                  ):
         super(ShapeMarker, self).__init__(
             map_widget,
-            position,
+            (0, 0),
             text=text,
             text_color=text_color,
             command=command,
@@ -85,20 +84,38 @@ class ShapeMarker(Marker, ABC):
 class CC2DataMarker(ShapeMarker):
     def __init__(self, map_widget: "TkinterMapView", cc2obj: CC2MapItem):
         super(CC2DataMarker, self).__init__(map_widget,
-                                            position=cc2obj.loc,
                                             text=cc2obj.text)
         self.object = cc2obj
         self.selected = False
         self._color = "#ff0000"
         self.on_hover_start: callable = None
         self.on_hover_end: callable = None
+        self.hovering = False
+
+    @property
+    def position(self) -> tuple:
+        if self.object:
+            return self.object.loc
+        return 0, 0
+
+    @position.setter
+    def position(self, value):
+        pass
+
+    def move(self, lat: float, lon: float):
+        self.object.move(lat, lon)
+
+    def click(self, event=None):
+        super(CC2DataMarker, self).click(event)
 
     def mouse_enter(self, event=None):
+        self.hovering = True
         super(Marker, self).mouse_enter(event)
         if self.on_hover_start:
             self.on_hover_start(self)
 
     def mouse_leave(self, event=None):
+        self.hovering = False
         super(Marker, self).mouse_leave(event)
         if self.on_hover_end:
             self.on_hover_end(self)
@@ -128,18 +145,12 @@ class IslandMarker(CC2DataMarker):
         self.color = get_team_color(cc2obj.tile().team_control)
         self.command = on_click
         self.polygon = None
-        tile = cast(Tile, self.object.object)
         # add the island polygon
-        self.polygon = map_widget.set_polygon(
-            [
-                (self.object.loc[0] + tile.bounds.min.z / 1000, self.object.loc[1] + tile.bounds.min.x / 1000),
-                (self.object.loc[0] + tile.bounds.min.z / 1000, self.object.loc[1] + tile.bounds.max.x / 1000),
-                (self.object.loc[0] + tile.bounds.max.z / 1000, self.object.loc[1] + tile.bounds.max.x / 1000),
-                (self.object.loc[0] + tile.bounds.max.z / 1000, self.object.loc[1] + tile.bounds.min.x / 1000),
-            ],
-            outline_color=self.color,
-            border_width=1,
-            fill_color=None,
+        self.polygon = map_widget.canvas.create_polygon(
+            *self.border_polygon_coords(),
+            outline=self.color,
+            width=1,
+            fill="",
         )
 
         # add the shape/icon
@@ -164,8 +175,21 @@ class IslandMarker(CC2DataMarker):
                                  )
         self.add_shapes(production, self.label)
 
-    def click(self, event=None):
-        self.command(self)
+    def border_polygon_coords(self):
+        tile = self.island.tile()
+        nw_x, nw_y = self.get_canvas_pos((self.object.loc[0] + tile.bounds.min.z / 1000, self.object.loc[1] + tile.bounds.min.x / 1000))
+        ne_x, ne_y = self.get_canvas_pos((self.object.loc[0] + tile.bounds.min.z / 1000, self.object.loc[1] + tile.bounds.max.x / 1000))
+        se_x, se_y = self.get_canvas_pos((self.object.loc[0] + tile.bounds.max.z / 1000, self.object.loc[1] + tile.bounds.max.x / 1000))
+        sw_x, sw_y = self.get_canvas_pos((self.object.loc[0] + tile.bounds.max.z / 1000, self.object.loc[1] + tile.bounds.min.x / 1000))
+        return [nw_x, nw_y, ne_x, ne_y, se_x, se_y, sw_x, sw_y]
+
+    def draw(self, event=None):
+        super(IslandMarker, self).draw(event)
+        self.map_widget.canvas.coords(self.polygon, *self.border_polygon_coords())
+
+    @property
+    def island(self) -> Island:
+        return cast(Island, self.object)
 
 
 class UnitMarker(CC2DataMarker):

@@ -1,7 +1,7 @@
 from typing import Tuple, cast, Optional
 
 from .tiles import Tile
-from .utils import ElementProxy, LocationMixin
+from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from .vehicles.vehicle import Vehicle
 
 LOC_SCALE_FACTOR = 1000
@@ -20,8 +20,16 @@ class CC2MapItem:
         if isinstance(self.object, LocationMixin):
             temp = cast(LocationMixin, self.object)
             # map uses lat+long (y, then x) remember to swap!
+            # in CC2 saves, Z is lattitude, X is longditude, Y is altitude
             return temp.loc.z / LOC_SCALE_FACTOR, temp.loc.x / LOC_SCALE_FACTOR
         return None
+
+    def move(self, world_lat, world_lon):
+        if isinstance(self.object, MovableLocationMixin):
+            temp = cast(MovableLocationMixin, self.object)
+            temp.move(world_lon * LOC_SCALE_FACTOR,
+                      temp.loc.y,
+                      world_lat * LOC_SCALE_FACTOR)
 
 
 class Island(CC2MapItem):

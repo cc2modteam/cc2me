@@ -1,11 +1,12 @@
 from tkinter import Event
-from typing import Tuple, Callable, Optional, Any
+from typing import Tuple, Callable, Optional, Any, List
 
 from PIL.ImageTk import PhotoImage, Image
 from tkintermapview import TkinterMapView
 from tkintermapview.canvas_position_marker import CanvasPositionMarker
 
 from .cc2constants import TILE_SIZE
+from .mapmarkers import Marker
 from ..savedata.logging import logger
 
 
@@ -32,10 +33,25 @@ class CC2MeMapView(TkinterMapView):
         self.selection_mode = False
         self.selection_box: Optional[Tuple[float, float, float, float]] = None
         self.selection_rect: Optional[int] = None
+        self.selected_markers: List[CanvasPositionMarker] = []
+        self.mouse_left_is_down = False
+        self.on_mouse_drag: Optional[Callable[[Event], bool]] = None
+        self.mouse_delta = [0, 0]
+        self.last_mouse_move_position: Optional[Tuple] = None
+        self.on_mouse_release: Optional[Callable] = None
 
     def set_zoom(self, zoom: int, relative_pointer_x: float = 0.5, relative_pointer_y: float = 0.5):
         logger.info(f"zoom {zoom}")
         super().set_zoom(zoom, relative_pointer_x, relative_pointer_y)
+
+    def set_mouse_arrow(self):
+        self.canvas.config(cursor="arrow")
+
+    def set_mouse_move(self):
+        self.canvas.config(cursor="fleur")
+
+    def set_mouse_choose(self):
+        self.canvas.config(cursor="hand2")
 
     def request_image(self, zoom: int, x: int, y: int, db_cursor=None) -> PhotoImage:
         return self.empty_tile_image
@@ -49,8 +65,18 @@ class CC2MeMapView(TkinterMapView):
         return marker
 
     def mouse_move(self, event):
+        if self.last_mouse_move_position is not None:
+            self.mouse_delta[0] = event.x - self.last_mouse_move_position[0]
+            self.mouse_delta[1] = event.y - self.last_mouse_move_position[1]
+        self.last_mouse_move_position = (event.x, event.y)
+
+        if self.on_mouse_drag is not None:
+            if self.on_mouse_drag(event):
+                return
+
         if not self.selection_mode:
-            super(CC2MeMapView, self).mouse_move(event)
+            if self.last_mouse_down_position is not None:
+                super(CC2MeMapView, self).mouse_move(event)
         else:
             # update the drag box
             self.canvas.coords(self.selection_rect,
@@ -58,6 +84,7 @@ class CC2MeMapView(TkinterMapView):
                                  event.x, event.y])
 
     def mouse_click(self, event):
+        self.mouse_left_is_down = True
         if self.selection_mode:
             self.selection_start = event
             self.selection_rect = self.canvas.create_rectangle(event.x, event.y, event.x + 1, event.y + 1,
@@ -68,6 +95,9 @@ class CC2MeMapView(TkinterMapView):
             super(CC2MeMapView, self).mouse_click(event)
 
     def mouse_release(self, event):
+        self.mouse_left_is_down = False
+        if self.on_mouse_release:
+            self.on_mouse_release()
         if self.selection_mode:
             if self.on_select_box:
                 self.on_select_box(

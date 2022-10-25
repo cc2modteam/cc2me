@@ -25,8 +25,8 @@ class IntEnum(Enum):
 
 class VehicleTypes(IntEnum):
     Carrier = 0
-    Walrus = 4
     Seal = 2
+    Walrus = 4
     Bear = 6
     Albatross = 8
     Manta = 10

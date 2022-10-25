@@ -32,7 +32,7 @@ class SpawnData(ElementProxy, IsSetMixin):
         self.is_set = False
 
 
-class Tile(ElementProxy, LocationMixin, MovableLocationMixin):
+class Tile(ElementProxy, MovableLocationMixin):
     tag = "t"
 
     id = e_property(IntAttribute("id", default_value=0))
@@ -92,7 +92,7 @@ class Tile(ElementProxy, LocationMixin, MovableLocationMixin):
             self.world_position.z = z
 
     def move(self, x: float, y: float, z: float) -> None:
-        self.set_position(x, y, z)
+        self.set_position(x=x, y=y, z=z)
 
     @property
     def loc(self) -> Location:
