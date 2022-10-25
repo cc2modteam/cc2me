@@ -164,7 +164,7 @@ class LocationMixin(ABC):
         pass
 
 
-class MovableLocationMixin(ABC):
+class MovableLocationMixin(LocationMixin, ABC):
     @abstractmethod
     def move(self, x: float, y: float, z: float) -> None:
         pass
