@@ -248,7 +248,17 @@ class App(tkinter.Tk):
                 # move all the selection
                 marker = self.dragging_marker
                 lat, lon = self.map_widget.convert_canvas_coords_to_decimal_coords(event.x, event.y)
-                marker.move(lat, lon)
+                olat, olon = marker.position
+                dlat = lat - olat
+                dlon = lon - olon
+
+                selected = self.selected_markers()
+                for marker in selected:
+                    m_lat, m_lon = marker.position
+                    marker.move(m_lat + dlat,
+                                m_lon + dlon)
+
+            for marker in self.selected_markers():
                 marker.draw()
 
             return True  # swallow
