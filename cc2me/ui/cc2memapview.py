@@ -1,3 +1,4 @@
+import tkinter
 from tkinter import Event
 from typing import Tuple, Callable, Optional, Any, List
 
@@ -6,7 +7,6 @@ from tkintermapview import TkinterMapView
 from tkintermapview.canvas_position_marker import CanvasPositionMarker
 
 from .cc2constants import TILE_SIZE
-from .mapmarkers import Marker
 from ..savedata.logging import logger
 
 
@@ -39,6 +39,13 @@ class CC2MeMapView(TkinterMapView):
         self.mouse_delta = [0, 0]
         self.last_mouse_move_position: Optional[Tuple] = None
         self.on_mouse_release: Optional[Callable] = None
+
+    def manage_z_order(self):
+        super(CC2MeMapView, self).manage_z_order()
+        try:
+            self.canvas.tag_lower("island", "unit")
+        except tkinter.TclError:
+            pass
 
     def set_zoom(self, zoom: int, relative_pointer_x: float = 0.5, relative_pointer_y: float = 0.5):
         logger.info(f"zoom {zoom}")

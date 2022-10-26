@@ -47,6 +47,13 @@ class Unit(CC2MapItem):
     def vehicle(self) -> Vehicle:
         return cast(Vehicle, self.object)
 
+    def altitude(self, alt: float):
+        if isinstance(self.object, MovableLocationMixin):
+            temp = cast(MovableLocationMixin, self.object)
+            temp.move(temp.loc.z,
+                      alt,
+                      temp.loc.x)
+
 
 class Carrier(Unit):
     def __init__(self, carrier: Vehicle):

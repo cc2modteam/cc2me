@@ -7,7 +7,7 @@ import tkinter.messagebox
 from tkinter import filedialog
 from typing import Optional, List, cast
 
-from cc2me.savedata.constants import get_island_name, get_vehicle_name
+from cc2me.savedata.constants import get_island_name, VehicleType, VehicleAttachmentDefinitionIndex
 from cc2me.savedata.types.objects import Island, Unit
 from cc2me.savedata.types.tiles import Tile
 from .cc2memapview import CC2MeMapView
@@ -57,8 +57,8 @@ class App(tkinter.Tk):
 
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=0)
-        self.grid_columnconfigure(2, weight=2)
-        self.grid_columnconfigure(3, weight=0)
+        self.grid_columnconfigure(2, weight=0)
+        self.grid_columnconfigure(3, weight=2)
 
         self.status_line = tkinter.Variable(value="Ready..")
         self.status_bar = tkinter.Label(textvariable=self.status_line,
@@ -235,7 +235,9 @@ class App(tkinter.Tk):
     def hover_unit(self, marker: UnitMarker):
         self.hover_marker(marker)
         definition = marker.unit.vehicle().definition_index
-        text = f"Unit: {get_vehicle_name(definition)} {marker.unit.vehicle().id}"
+        text = f"{VehicleType.get_name(definition)} {marker.unit.vehicle().id} "
+        for item in marker.unit.vehicle().attachments.items():
+            text += f"[{item.attachment_index}]:{VehicleAttachmentDefinitionIndex.get_name(item.definition_index)} "
         self.status_line.set(text)
 
     def hover_island(self, marker: IslandMarker):

@@ -7,7 +7,7 @@ from tkintermapview import TkinterMapView
 
 from .cc2constants import get_team_color
 from .mapshapes import CanvasShape
-from ..savedata.constants import VehicleTypes
+from ..savedata.constants import VehicleType
 from ..savedata.types.objects import CC2MapItem, Island, Unit
 from ..savedata.types.utils import MovableLocationMixin
 
@@ -161,7 +161,7 @@ class IslandMarker(CC2DataMarker):
                                  fill=self.color,
                                  width=1,
                                  outline=self.color,
-                                 tag="island marker",
+                                 tag="island",
                                  )
         production.on_left_mouse = self.click
         self.label = CanvasShape(map_widget.canvas,
@@ -171,7 +171,7 @@ class IslandMarker(CC2DataMarker):
                                  fill="#990000",
                                  font=self.font,
                                  anchor=tkinter.S,
-                                 tag="marker text"
+                                 tag="island"
                                  )
         self.add_shapes(production, self.label)
 
@@ -201,7 +201,7 @@ class UnitMarker(CC2DataMarker):
     @property
     def size(self) -> float:
         v = self.unit.vehicle()
-        if v.definition_index == VehicleTypes.Carrier.int:  # carrier
+        if v.definition_index == VehicleType.Carrier.int:  # carrier
             return 1.5
 
         return 0.5
@@ -218,7 +218,7 @@ class UnitMarker(CC2DataMarker):
                            fill="",
                            width=3,
                            outline="#000000",
-                           tag="vehicle marker",
+                           tag="unit",
                            )
         unit = CanvasShape(map_widget.canvas,
                            map_widget.canvas.create_polygon,
@@ -229,7 +229,7 @@ class UnitMarker(CC2DataMarker):
                            fill="",
                            width=1,
                            outline=self.color,
-                           tag="vehicle marker",
+                           tag="unit",
                            )
 
         self.add_shapes(back, unit)

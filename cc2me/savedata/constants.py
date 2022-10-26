@@ -22,23 +22,77 @@ class IntEnum(Enum):
     def int(self) -> int:
         return cast(int, self.value)
 
+    def __str__(self):
+        return str(self.name)
 
-class VehicleTypes(IntEnum):
-    Carrier = 0
-    Seal = 2
-    Walrus = 4
-    Bear = 6
+    @classmethod
+    def get_name(cls, num: int):
+        for item in cls:
+            if item.value == num:
+                return str(item.name)
+        return f"Unknown {num}"
+
+
+class VehicleType(IntEnum):
     Albatross = 8
-    Manta = 10
-    Razorbill = 12
-    Petrel = 14
     Barge = 16
-    Lifeboat = 57
-    Turret = 59
+    Bear = 6
+    Carrier = 0
     Jetty = 64
-    Needlefish = 77
-    Swordfish = 79
+    Lifeboat = 57
+    Manta = 10
     Mule = 88
+    Needlefish = 77
+    Petrel = 14
+    Razorbill = 12
+    Seal = 2
+    Swordfish = 79
+    Turret = 59
+    VirusBot = 58
+    Walrus = 4
+
+
+class VehicleAttachmentDefinitionIndex(IntEnum):
+    AWACS = 41
+    AirCam = 39
+    BattleDroids = 100
+    Bomb0 = 31
+    Bomb1 = 32
+    Bomb2 = 33
+    CIWS = 24
+    DriverSeat = 38
+    Flares = 43
+    FuelTank = 42
+    Gun100mm = 18
+    Gun100mmHeavy = 86
+    Gun120mm = 19
+    Gun15mm = 87
+    Gun20mm = 21
+    Gun30mm = 17
+    Gun40mm = 85
+    MissileAA = 36
+    MissileIR = 34
+    MissileIRLauncher = 25
+    MissileLaser = 35
+    MissileTV = 72
+    Noisemaker = 73
+    ObsCam = 37
+    Radar = 81
+    Rearm100mm = 93
+    Rearm120mm = 94
+    Rearm20mm = 90
+    Rearm30mm = 91
+    Rearm40mm = 92
+    RearmIR = 96
+    Refuel = 95
+    RocketPod = 200
+    SmallCam = 40
+    SmokeBomb = 83
+    SmokeTrail = 84
+    SonicPulse = 82
+    Torpedo = 70
+    TorpedoCountermesure = 74
+    VirusBot = 23
 
 
 class IslandTypes(IntEnum):
@@ -70,9 +124,3 @@ def get_island_name(island_id: int) -> str:
         return "Island {island_id}"
 
 
-def get_vehicle_name(definition_index: int) -> str:
-    for item in VehicleTypes:
-        if item.value == definition_index:
-            return item.name
-
-    return f"*** ({definition_index}) "
