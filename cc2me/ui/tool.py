@@ -61,9 +61,11 @@ class App(tkinter.Tk):
 
         self.open_button = tkinter.Button(master=self.toolbar, width=6, text="Open", command=self.open_file)
         self.save_button = tkinter.Button(master=self.toolbar, width=6, text="Save", command=self.save_file)
+        self.saveas_button = tkinter.Button(master=self.toolbar, width=6, text="Save As", command=self.save_as)
         self.new_island = tkinter.Button(master=self.toolbar, width=6, text="Island", command=self.add_new_island)
         self.open_button.pack(fill=tkinter.X, side=tkinter.LEFT)
         self.save_button.pack(fill=tkinter.X, side=tkinter.LEFT)
+        self.saveas_button.pack(fill=tkinter.X, side=tkinter.LEFT)
         self.new_island.pack(fill=tkinter.X, side=tkinter.LEFT)
         self.toolbar.pack(fill=tkinter.X, expand=False)
 
@@ -151,9 +153,17 @@ class App(tkinter.Tk):
 
     def save_file(self):
         if self.save_filename:
-            print(f"Saving {self.save_filename}")
-            with open(self.save_filename, "w") as fd:
-                fd.write(self.cc2me.export())
+            self.save(self.save_filename)
+
+    def save(self, filename):
+        print(f"Saving {self.filename}")
+        with open(self.filename, "w") as fd:
+            fd.write(self.cc2me.export())
+
+    def save_as(self):
+        filename = filedialog.asksaveasfilename(title="Save CC2 map as..")
+        if filename:
+            self.save(self.save_filename)
 
     def clear(self):
         # remove existing items
