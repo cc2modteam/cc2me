@@ -7,12 +7,13 @@ import tkinter.messagebox
 from tkinter import filedialog
 from typing import Optional, List, cast
 
-from cc2me.savedata.constants import get_island_name, VehicleType, VehicleAttachmentDefinitionIndex
-from cc2me.savedata.types.objects import Island, Unit
-from cc2me.savedata.types.tiles import Tile
-from .cc2memapview import CC2MeMapView
-from cc2me.ui.mapmarkers import IslandMarker, UnitMarker, Marker, CC2DataMarker
+from ..savedata.constants import get_island_name, VehicleType, VehicleAttachmentDefinitionIndex
+from ..savedata.types.objects import Island, Unit
+from ..savedata.types.tiles import Tile
 from ..savedata.loader import CC2XMLSave, load_save_file
+from .cc2memapview import CC2MeMapView
+from .mapmarkers import IslandMarker, UnitMarker, Marker, CC2DataMarker
+
 
 APP_NAME = "cc2me.ui.tool"
 
@@ -55,33 +56,31 @@ class App(tkinter.Tk):
             self.bind("<Command-q>", self.on_closing)
             self.bind("<Command-w>", self.on_closing)
 
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=0)
-        self.grid_columnconfigure(2, weight=0)
-        self.grid_columnconfigure(3, weight=2)
+        self.toolbar = tkinter.Frame(self, relief=tkinter.RAISED)
+        self.middle = tkinter.Frame(self)
+
+        self.open_button = tkinter.Button(master=self.toolbar, width=6, text="Open", command=self.open_file)
+        self.save_button = tkinter.Button(master=self.toolbar, width=6, text="Save", command=self.save_file)
+        self.new_island = tkinter.Button(master=self.toolbar, width=6, text="Island", command=self.add_new_island)
+        self.open_button.pack(fill=tkinter.X, side=tkinter.LEFT)
+        self.save_button.pack(fill=tkinter.X, side=tkinter.LEFT)
+        self.new_island.pack(fill=tkinter.X, side=tkinter.LEFT)
+        self.toolbar.pack(fill=tkinter.X, expand=False)
+
+        self.map_widget = CC2MeMapView(corner_radius=0)
+        self.map_widget.master = self.middle
+        self.map_widget.pack(fill=tkinter.BOTH, expand=True)
+        self.middle.pack(fill=tkinter.BOTH, expand=False)
 
         self.status_line = tkinter.Variable(value="Ready..")
-        self.status_bar = tkinter.Label(textvariable=self.status_line,
+        self.status_bar = tkinter.Label(self,
+                                        textvariable=self.status_line,
                                         justify=tkinter.LEFT,
                                         width=self.WIDTH,
                                         relief=tkinter.SUNKEN,
                                         anchor=tkinter.W)
-        self.status_bar.grid(row=2, column=0, columnspan=4, padx=1, pady=1, sticky=tkinter.NSEW)
-        self.grid_rowconfigure(1, weight=1)
+        self.status_bar.pack(fill=tkinter.X, expand=False)
 
-        self.open_button = tkinter.Button(master=self, width=6, text="Open", command=self.open_file)
-        self.open_button.grid(row=0, column=0, pady=10, padx=5)
-
-        self.save_button = tkinter.Button(master=self, width=6, text="Save", command=self.save_file)
-        self.save_button.grid(row=0, column=1, pady=10, padx=5)
-
-        self.new_island = tkinter.Button(master=self, width=6, text="Island", command=self.add_new_island)
-        self.new_island.grid(row=0, column=2, pady=10, padx=5)
-
-        self.map_widget = CC2MeMapView(width=self.WIDTH,
-                                       height=600,
-                                       corner_radius=0)
-        self.map_widget.grid(row=1, column=0, columnspan=4, sticky="nsew")
         self.map_widget.set_position(0, 0)
         self.map_widget.set_zoom(1)
         self.map_widget.add_right_click_menu_command(label="Select Units",
@@ -162,9 +161,12 @@ class App(tkinter.Tk):
             x.delete()
         self.map_widget.canvas_marker_list = []
         self.map_widget.selected_markers.clear()
+
+        for markers in [self.islands, self.units]:
+            for item in markers:
+                item.delete()
         self.islands.clear()
         self.units.clear()
-        self.map_widget.canvas.delete("all")
         self.cc2me = None
         self.map_widget.set_zoom(1, 0.0, 0.0)
         self.map_widget.update()
@@ -173,7 +175,6 @@ class App(tkinter.Tk):
     def marker_clicked(self, marker: CC2DataMarker) -> bool:
         if marker.selected:
             return True
-
         return False  # let click bubble up
 
     def island_clicked(self, shape):
@@ -188,7 +189,6 @@ class App(tkinter.Tk):
 
     def open_file(self):
         self.clear()
-
         filename = filedialog.askopenfilename(title="Open CC2 Save",
                                               filetypes=(("XML Files", "*.xml"),))
         if filename and os.path.exists(filename):
@@ -204,7 +204,7 @@ class App(tkinter.Tk):
             # units
             for veh in self.cc2me.vehicles:
                 self.add_unit(veh)
-
+        self.status_line.set(f"Loaded {filename} ({len(self.islands)} islands, {len(self.units)} units)")
         self.map_widget.canvas.update_idletasks()
 
     def add_island(self, island_tile: Tile):

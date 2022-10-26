@@ -50,6 +50,13 @@ class ShapeMarker(Marker, ABC):
         self._shapes: List[CanvasShape] = []
         self._zoom_scale_factor = zoom_scale
 
+    def delete(self):
+        super(ShapeMarker, self).delete()
+        for item in self._shapes:
+            item.delete(self.map_widget.canvas)
+        if self.label:
+            self.label.delete(self.map_widget.canvas)
+
     def show_label(self) -> bool:
         return self.label is not None and self.map_widget.zoom > 4
 
