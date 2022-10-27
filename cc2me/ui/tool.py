@@ -12,6 +12,7 @@ from ..savedata.types.objects import Island, Unit
 from ..savedata.types.tiles import Tile
 from ..savedata.loader import CC2XMLSave, load_save_file
 from .cc2memapview import CC2MeMapView
+from .toolbar import Toolbar
 from .mapmarkers import IslandMarker, UnitMarker, Marker, CC2DataMarker
 
 
@@ -56,19 +57,14 @@ class App(tkinter.Tk):
             self.bind("<Command-q>", self.on_closing)
             self.bind("<Command-w>", self.on_closing)
 
-        self.toolbar = tkinter.Frame(self, relief=tkinter.RAISED)
+        self.toolbar = Toolbar(self, relief=tkinter.RAISED)
+        self.toolbar.add_button("Open", "open", command=self.open_file)
+        self.toolbar.add_button("Save", "save", command=self.save_file, state=tkinter.DISABLED)
+        self.toolbar.add_button("Save As", "saveas", command=self.save_as, state=tkinter.DISABLED)
+        self.toolbar.add_button("New Island", "add-island", command=self.add_new_island, state=tkinter.DISABLED)
+        self.toolbar.frame.pack(fill=tkinter.X, expand=False)
+
         self.middle = tkinter.Frame(self)
-
-        self.open_button = tkinter.Button(master=self.toolbar, width=6, text="Open", command=self.open_file)
-        self.save_button = tkinter.Button(master=self.toolbar, width=6, text="Save", command=self.save_file)
-        self.saveas_button = tkinter.Button(master=self.toolbar, width=6, text="Save As", command=self.save_as)
-        self.new_island = tkinter.Button(master=self.toolbar, width=6, text="Island", command=self.add_new_island)
-        self.open_button.pack(fill=tkinter.X, side=tkinter.LEFT)
-        self.save_button.pack(fill=tkinter.X, side=tkinter.LEFT)
-        self.saveas_button.pack(fill=tkinter.X, side=tkinter.LEFT)
-        self.new_island.pack(fill=tkinter.X, side=tkinter.LEFT)
-        self.toolbar.pack(fill=tkinter.X, expand=False)
-
         self.map_widget = CC2MeMapView(corner_radius=0)
         self.map_widget.master = self.middle
         self.map_widget.pack(fill=tkinter.BOTH, expand=True)
@@ -215,6 +211,9 @@ class App(tkinter.Tk):
             for veh in self.cc2me.vehicles:
                 self.add_unit(veh)
         self.status_line.set(f"Loaded {filename} ({len(self.islands)} islands, {len(self.units)} units)")
+        for btn in [self.save_button, self.saveas_button, self.new_island]:
+            btn["state"] = tkinter.NORMAL
+
         self.map_widget.canvas.update_idletasks()
 
     def add_island(self, island_tile: Tile):
