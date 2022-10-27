@@ -98,7 +98,7 @@ class FloatAttribute(ElementAttributeProxy):
 class ElementProxy(ABC):
     tag: str = "X"
 
-    def __init__(self, element: Optional[Element] = None):
+    def __init__(self, element: Optional[Element] = None, cc2obj: Optional[Any] = None):
         apply_defaults = False
         if element is None:
             element = Element(self.tag)
@@ -106,7 +106,7 @@ class ElementProxy(ABC):
         self.element = element
         if apply_defaults:
             self.defaults()
-        self.cc2obj = None
+        self.cc2obj = cc2obj
 
     def defaults(self):
         pass
@@ -125,9 +125,12 @@ class ElementProxy(ABC):
             if item.tag == proxy.tag:
                 return proxy(item)
         # no min!
-        added = proxy()
-        self.element.append(added.element)
-        return added
+        try:
+            added = proxy()
+            self.element.append(added.element)
+            return added
+        except TypeError:
+            assert True
 
 
 class Point3D(ElementProxy):

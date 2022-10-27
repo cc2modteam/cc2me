@@ -1,13 +1,7 @@
 from typing import cast, List, Optional
-from ... import constants
 from ..utils import (ElementProxy, e_property, IntAttribute, Transform, Bodies,
                      Location, MovableLocationMixin)
-
-
-def vehicle_definition_name(defid: int) -> str:
-    if constants.VEHICLE_DEF_CARRIER == defid:
-        return "Carrier"
-    return f"Unknown ({defid})"
+from ...constants import VehicleType
 
 
 class Attachment(ElementProxy):
@@ -27,19 +21,35 @@ class Attachments(ElementProxy):
         return [Attachment(x) for x in self.children()]
 
 
+REMOTE_DRIVEABLE_VEHICLES = [
+    VehicleType.Bear,
+    VehicleType.Barge,
+    VehicleType.Seal,
+    VehicleType.Walrus,
+    VehicleType.Razorbill,
+    VehicleType.Albatross,
+    VehicleType.Petrel,
+    VehicleType.Mule,
+    VehicleType.Needlefish,
+    VehicleType.Swordfish
+]
+
+
 class Vehicle(ElementProxy, MovableLocationMixin):
     tag = "v"
 
+    @property
+    def type(self) -> VehicleType:
+        return VehicleType.lookup(self.definition_index)
+
     def on_set_team_id(self):
-        pass
+        # if we are set to a human team, ensure there is a pilot seat for some unit types
+        if self.type in REMOTE_DRIVEABLE_VEHICLES:
+            pass
 
     id = e_property(IntAttribute("id"))
     definition_index = e_property(IntAttribute("definition_index"))
     team_id = e_property(IntAttribute("team_id"), side_effect=on_set_team_id)
-
-    @property
-    def chassis(self) -> str:
-        return vehicle_definition_name(self.definition_index)
 
     @property
     def transform(self) -> Transform:

@@ -115,7 +115,7 @@ class CC2XMLSave:
 
     @property
     def tiles(self) -> List[Tile]:
-        return [Tile(x) for x in self._tiles]
+        return [Tile(element=x, cc2obj=self) for x in self._tiles]
 
     def tile(self, tile_id: int) -> Tile:
         """Get a tile by ID"""
@@ -146,7 +146,8 @@ class CC2XMLSave:
 
     def new_tile(self) -> Tile:
         """Create a new tile"""
-        tile = Tile(None)
+        tile = Tile(element=None, cc2obj=self)
+        tile.cc2obj = self
         tile.biome_type = BIOME_SANDY_PINES
         tile.id = self.next_tile_attrib_integer("id")
         tile.index = self.next_tile_attrib_integer("index")
@@ -187,7 +188,7 @@ class CC2XMLSave:
 
     @property
     def vehicles(self) -> List[Vehicle]:
-        return [Vehicle(x) for x in self._vehicles]
+        return [Vehicle(element=x, cc2obj=self) for x in self._vehicles]
 
     def next_tile_attrib_integer(self, name: str) -> str:
         last_index = 0

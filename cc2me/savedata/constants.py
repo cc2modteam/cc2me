@@ -16,8 +16,16 @@ BIOME_DARK_MESAS = 7
 VEHICLE_DEF_CARRIER = 0
 
 
-class IntEnum(Enum):
+class XEnum(Enum):
+    @classmethod
+    def lookup(cls, value):
+        for item in cls:
+            if item.value == value:
+                return item
+        raise KeyError(value)
 
+
+class IntEnum(XEnum):
     @property
     def int(self) -> int:
         return cast(int, self.value)
