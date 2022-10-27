@@ -85,7 +85,7 @@ class VehicleAttachmentDefinitionIndex(IntEnum):
     Rearm40mm = 92
     RearmIR = 96
     Refuel = 95
-    RocketPod = 200
+    RocketPod = 22
     SmallCam = 40
     SmokeBomb = 83
     SmokeTrail = 84

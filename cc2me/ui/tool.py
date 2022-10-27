@@ -154,8 +154,8 @@ class App(tkinter.Tk):
             self.save(self.save_filename)
 
     def save(self, filename):
-        print(f"Saving {self.filename}")
-        with open(self.filename, "w") as fd:
+        print(f"Saving {filename}")
+        with open(filename, "w") as fd:
             fd.write(self.cc2me.export())
 
     def save_as(self):
@@ -288,7 +288,6 @@ class App(tkinter.Tk):
 
     def on_mouse_release(self):
         self.dragging_marker = None
-
 
 def run(args=None):
     parser.parse_args(args)
