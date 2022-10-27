@@ -1,7 +1,7 @@
 from typing import cast, List, Optional
 from ... import constants
 from ..utils import (ElementProxy, e_property, IntAttribute, Transform, Bodies,
-                     LocationMixin, Location, MovableLocationMixin)
+                     Location, MovableLocationMixin)
 
 
 def vehicle_definition_name(defid: int) -> str:
@@ -30,9 +30,12 @@ class Attachments(ElementProxy):
 class Vehicle(ElementProxy, MovableLocationMixin):
     tag = "v"
 
+    def on_set_team_id(self):
+        pass
+
     id = e_property(IntAttribute("id"))
     definition_index = e_property(IntAttribute("definition_index"))
-    team_id = e_property(IntAttribute("team_id"))
+    team_id = e_property(IntAttribute("team_id"), side_effect=on_set_team_id)
 
     @property
     def chassis(self) -> str:

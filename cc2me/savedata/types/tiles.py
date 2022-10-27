@@ -43,16 +43,10 @@ class Tile(ElementProxy, MovableLocationMixin):
     team_capture_progress = e_property(FloatAttribute("team_capture_progress"))
     difficulty_factor = e_property(FloatAttribute("difficulty_factor"))
 
-    _team_control = e_property(IntAttribute("team_control"))
+    def on_set_team_control(self):
+        self.spawn_data.team_id = self.team_control
 
-    @property
-    def team_control(self):
-        return self._team_control
-
-    @team_control.setter
-    def team_control(self, value):
-        self._team_control = value
-        self.spawn_data.team_id = value
+    team_control = e_property(IntAttribute("team_control"), side_effect=on_set_team_control)
 
     def defaults(self):
         self.seed = random.randint(MIN_TILE_SEED, MAX_TILE_SEED)

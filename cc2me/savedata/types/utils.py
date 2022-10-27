@@ -34,13 +34,14 @@ class ElementAttributeProxy(ABC):
 
 
 class e_property(property):
-    def __init__(self, attribute: ElementAttributeProxy):
-        self.attribute = attribute
+    def __init__(self, attribute: ElementAttributeProxy, side_effect: Optional[callable] = None):
         super(e_property, self).__init__(
             self.do_get,
             self.do_set,
             None,
             f"get/set {attribute.name}")
+        self.attribute = attribute
+        self.side_effect: callable = side_effect
 
     # x = property(getx, setx, delx, "I'm the 'x' property.")
     def do_get(self, owner: "ElementProxy"):
@@ -52,6 +53,8 @@ class e_property(property):
         if owner is not None:
             self.attribute.parent = owner
         self.attribute.set(value)
+        if self.side_effect is not None:
+            self.side_effect(owner)
 
 
 class BoolAttribute(ElementAttributeProxy):
@@ -103,6 +106,7 @@ class ElementProxy(ABC):
         self.element = element
         if apply_defaults:
             self.defaults()
+        self.cc2obj = None
 
     def defaults(self):
         pass
