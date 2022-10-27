@@ -58,10 +58,10 @@ class App(tkinter.Tk):
             self.bind("<Command-w>", self.on_closing)
 
         self.toolbar = Toolbar(self, relief=tkinter.RAISED)
-        self.toolbar.add_button("Open", "open", command=self.open_file)
-        self.toolbar.add_button("Save", "save", command=self.save_file, state=tkinter.DISABLED)
-        self.toolbar.add_button("Save As", "saveas", command=self.save_as, state=tkinter.DISABLED)
-        self.toolbar.add_button("New Island", "add-island", command=self.add_new_island, state=tkinter.DISABLED)
+        self.toolbar.add_button("open", "open", command=self.open_file)
+        self.toolbar.add_button("save", "save", command=self.save_file, state=tkinter.DISABLED)
+        self.toolbar.add_button("saveas", "saveas", command=self.save_as, state=tkinter.DISABLED)
+        self.toolbar.add_button("addisland", "add-island", command=self.add_new_island, state=tkinter.DISABLED)
         self.toolbar.frame.pack(fill=tkinter.X, expand=False)
 
         self.middle = tkinter.Frame(self)
@@ -141,8 +141,10 @@ class App(tkinter.Tk):
         exit()
 
     def add_new_island(self):
+        # add in the middle of the canvas
+        loc = self.map_widget.convert_canvas_coords_to_decimal_coords(200, 100)
         new_tile = self.cc2me.new_tile()
-        self.add_island(new_tile)
+        marker = self.add_island(new_tile)
 
     def start(self):
         self.mainloop()
@@ -211,8 +213,8 @@ class App(tkinter.Tk):
             for veh in self.cc2me.vehicles:
                 self.add_unit(veh)
         self.status_line.set(f"Loaded {filename} ({len(self.islands)} islands, {len(self.units)} units)")
-        for btn in [self.save_button, self.saveas_button, self.new_island]:
-            btn["state"] = tkinter.NORMAL
+        for btn in ["save", "saveas", "addisland"]:
+            self.toolbar.enable(btn)
 
         self.map_widget.canvas.update_idletasks()
 
@@ -224,6 +226,7 @@ class App(tkinter.Tk):
         marker.text = get_island_name(island_tile.id)
         self.map_widget.add_marker(marker)
         self.islands.append(marker)
+        return marker
 
     def add_unit(self, vehicle):
         u = Unit(vehicle)
@@ -278,7 +281,7 @@ class App(tkinter.Tk):
 
             for marker in self.selected_markers():
                 marker.draw()
-
+            self.map_widget.update_idletasks()
             return True  # swallow
 
         return False  # bubble up

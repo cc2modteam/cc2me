@@ -21,8 +21,7 @@ class Marker(CanvasPositionMarker, ABC):
     def draw(self, event=None):
         if not self.deleted:
             self.render(event)
-            if not self.is_visible():
-                self.map_widget.manage_z_order()
+            self.map_widget.manage_z_order()
 
     @abstractmethod
     def render(self, event=None):
@@ -49,6 +48,10 @@ class ShapeMarker(Marker, ABC):
         self.label: Optional[CanvasShape] = None
         self._shapes: List[CanvasShape] = []
         self._zoom_scale_factor = zoom_scale
+
+    @property
+    def shapes(self) -> List[CanvasShape]:
+        return self._shapes
 
     def delete(self):
         super(ShapeMarker, self).delete()
@@ -83,9 +86,11 @@ class ShapeMarker(Marker, ABC):
     def bind_commands(self):
         for shape in self._shapes:
             if shape.bindable and shape.canvas_id != -1:
-                self.map_widget.canvas.tag_bind(shape.canvas_id, "<Enter>", self.mouse_enter)
-                self.map_widget.canvas.tag_bind(shape.canvas_id, "<Leave>", self.mouse_leave)
-                self.map_widget.canvas.tag_bind(shape.canvas_id, "<Button-1>", self.click)
+                pos = self.map_widget.canvas.coords(shape.canvas_id)
+                if len(pos) > 2:  # anything but text
+                    self.map_widget.canvas.tag_bind(shape.canvas_id, "<Enter>", self.mouse_enter)
+                    self.map_widget.canvas.tag_bind(shape.canvas_id, "<Leave>", self.mouse_leave)
+                    self.map_widget.canvas.tag_bind(shape.canvas_id, "<Button-1>", self.click)
 
 
 class CC2DataMarker(ShapeMarker):
@@ -151,14 +156,6 @@ class IslandMarker(CC2DataMarker):
         super(IslandMarker, self).__init__(map_widget, cc2obj)
         self.color = get_team_color(cc2obj.tile().team_control)
         self.command = on_click
-        self.polygon = None
-        # add the island polygon
-        self.polygon = map_widget.canvas.create_polygon(
-            *self.border_polygon_coords(),
-            outline=self.color,
-            width=1,
-            fill="",
-        )
 
         # add the shape/icon
         production = CanvasShape(map_widget.canvas,
@@ -182,6 +179,13 @@ class IslandMarker(CC2DataMarker):
                                  )
         self.add_shapes(production, self.label)
 
+        self.polygon = map_widget.canvas.create_polygon(
+            *self.border_polygon_coords(),
+            outline=self.color,
+            width=1,
+            fill="",
+        )
+
     def border_polygon_coords(self):
         tile = self.island.tile()
         nw_x, nw_y = self.get_canvas_pos((self.object.loc[0] + tile.bounds.min.z / 1000, self.object.loc[1] + tile.bounds.min.x / 1000))
@@ -192,7 +196,10 @@ class IslandMarker(CC2DataMarker):
 
     def draw(self, event=None):
         super(IslandMarker, self).draw(event)
-        self.map_widget.canvas.coords(self.polygon, *self.border_polygon_coords())
+        if self.polygon != -1:
+            self.map_widget.canvas.coords(self.polygon, *self.border_polygon_coords())
+            # ensure everything is on top of the polygon
+            self.map_widget.canvas.tag_lower(self.polygon)
 
     @property
     def island(self) -> Island:
