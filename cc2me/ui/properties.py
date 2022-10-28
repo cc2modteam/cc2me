@@ -1,17 +1,35 @@
 import tkinter
 from typing import Optional
-
+from tkinter import ttk
 from cc2me.savedata.types.objects import CC2MapItem
 
 
 class PropertyItem:
-    def __init__(self, name, value, choices=None):
+    def __init__(self, owner, name, value, choices=None):
+        self.owner = owner
         self.name = name
         self.value = value
         self.choices = choices
-
+        self.textvalue = None
         self.label = None
         self.value_widget = None
+
+    def on_modified(self, event):
+        owner: Optional[Properties] = self.owner
+        if owner is not None:
+            if self.textvalue is not None:
+                obj: CC2MapItem = self.owner.object
+                self.textvalue: tkinter.StringVar
+                value = self.textvalue.get()
+                # try setting
+                try:
+                    setattr(obj, self.name, value)
+                except AttributeError:
+                    pass
+                except LookupError:
+                    pass
+                except ValueError:
+                    pass
 
 
 class Properties:
@@ -31,7 +49,7 @@ class Properties:
         self._object = None
 
     @property
-    def object(self):
+    def object(self) -> CC2MapItem:
         return self._object
 
     @object.setter
@@ -42,7 +60,12 @@ class Properties:
             self.title.set(self.object.display_ident)
             for prop in new_value.viewable_properties:
                 value = new_value.__getattribute__(prop)
-                self.add_option_property(prop, value, None)
+                choices = None
+                try:
+                    choices = ["None"] + new_value.__getattribute__(f"{prop}_choices")
+                except AttributeError:
+                    pass
+                self.add_option_property(prop, value, choices)
 
     def clear(self):
         for item in self.option_items:
@@ -52,15 +75,22 @@ class Properties:
             if item.value_widget:
                 item.value_widget.pack_forget()
                 item.value_widget.destroy()
+            item.textvalue = None
         self.option_items.clear()
         self.items.pack_forget()
         self.title.set("")
 
     def add_option_property(self, text: str, selected=None, values: Optional[list] = None):
-        opt = PropertyItem(text, selected, values)
+        opt = PropertyItem(self, text, selected, values)
         opt.label = tkinter.Label(self.items, text=text, anchor=tkinter.W, width=40, justify=tkinter.LEFT)
-
-        opt.value_widget = tkinter.Label(self.items, text=str(selected), anchor=tkinter.W)
+        if opt.choices is not None:
+            opt.textvalue = tkinter.StringVar(self.items)
+            opt.textvalue.set(selected)
+            opt.value_widget = ttk.Combobox(self.items, textvariable=opt.textvalue)
+            opt.value_widget.bind("<<ComboboxSelected>>", opt.on_modified)
+            opt.value_widget["values"] = opt.choices
+        else:
+            opt.value_widget = tkinter.Label(self.items, text=str(selected), anchor=tkinter.W)
 
         opt.label.pack(side=tkinter.TOP, expand=True, fill=tkinter.Y)
         opt.value_widget.pack(side=tkinter.TOP, expand=True, fill=tkinter.Y)

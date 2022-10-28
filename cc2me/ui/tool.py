@@ -9,7 +9,7 @@ from typing import Optional, List
 
 from cc2me.ui.properties import Properties
 from ..savedata.constants import get_island_name, VehicleType, VehicleAttachmentDefinitionIndex
-from ..savedata.types.objects import Island, Unit
+from ..savedata.types.objects import Island, Unit, get_unit
 from ..savedata.types.tiles import Tile
 from ..savedata.loader import CC2XMLSave, load_save_file
 from .cc2memapview import CC2MeMapView
@@ -247,7 +247,7 @@ class App(tkinter.Tk):
         return marker
 
     def add_unit(self, vehicle):
-        u = Unit(vehicle)
+        u = get_unit(vehicle)
         marker = UnitMarker(self.map_widget, u)
         marker.command = self.unit_clicked
         marker.on_hover_end = self.end_hover

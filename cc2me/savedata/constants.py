@@ -24,6 +24,13 @@ class XEnum(Enum):
                 return item
         raise KeyError(value)
 
+    @classmethod
+    def reverse_lookup(cls, name):
+        for item in cls:
+            if item.name == name:
+                return item
+        return KeyError(name)
+
 
 class IntEnum(XEnum):
     @property

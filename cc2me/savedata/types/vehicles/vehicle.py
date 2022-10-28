@@ -26,6 +26,7 @@ REMOTE_DRIVEABLE_VEHICLES = [
 class Vehicle(ElementProxy, MovableLocationMixin):
     tag = "v"
 
+    @property
     def state(self) -> Optional[VehicleStateContainer]:
         if self.cc2obj:
             return self.cc2obj.vehicle_state(self.id)
@@ -113,10 +114,3 @@ class Vehicle(ElementProxy, MovableLocationMixin):
     def loc(self) -> Location:
         return Location(self.transform.tx, self.transform.ty, self.transform.tz)
 
-
-class Seal(Vehicle):
-    pass
-
-
-class Walrus(Vehicle):
-    pass

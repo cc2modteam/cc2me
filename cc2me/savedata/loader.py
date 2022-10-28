@@ -19,9 +19,8 @@ XML_START = '<?xml version="1.0" encoding="UTF-8"?>'
 META_ROOT = "meta"
 SCENE_ROOT = "scene"
 VEHICLES_ROOT = "vehicles"
-VEHICLE_STATES_ROOT = "vehicle_states"
 MISSILES_ROOT = "missiles"
-ROOT_ORDER = [META_ROOT, SCENE_ROOT, VEHICLES_ROOT, VEHICLE_STATES_ROOT, MISSILES_ROOT]
+ROOT_ORDER = [META_ROOT, SCENE_ROOT, VEHICLES_ROOT, MISSILES_ROOT]
 
 CARRIER_VEH_DEF_INDEX = "0"
 
@@ -200,7 +199,7 @@ class CC2XMLSave:
 
     @property
     def _vehicle_states(self) -> List[Element]:
-        return self.roots[VEHICLE_STATES_ROOT].getroot().findall(f"./{VEHICLE_STATES_ROOT}/v")
+        return self.roots[VEHICLES_ROOT].getroot().findall(f"./{VEHICLES_ROOT}/vehicle_states/v")
 
     @property
     def vehicle_states(self) -> List[VehicleStateContainer]:
