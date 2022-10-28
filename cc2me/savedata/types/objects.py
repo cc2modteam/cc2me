@@ -72,7 +72,8 @@ class Island(CC2MapItem):
 
     @team_owner.setter
     def team_owner(self, value):
-        self.tile().team_control = int(value)
+        if value != "None":
+            self.tile().team_control = int(value)
 
     @property
     def team_owner_choices(self) -> List[int]:
@@ -92,9 +93,10 @@ class Island(CC2MapItem):
 
     @island_type.setter
     def island_type(self, value: Union[IslandTypes, str]):
-        if isinstance(value, str):
-            value = IslandTypes.reverse_lookup(value)
-        self.tile().facility.category = value.value
+        if value != "None":
+            if isinstance(value, str):
+                value = IslandTypes.reverse_lookup(value)
+            self.tile().facility.category = value.value
 
     @property
     def island_type_choices(self) -> List[IslandTypes]:
@@ -117,6 +119,11 @@ class Unit(CC2MapItem):
     @property
     def team_owner(self) -> int:
         return self.vehicle().team_id
+
+    @team_owner.setter
+    def team_owner(self, value):
+        if value != "None":
+            self.vehicle().team_id = int(value)
 
     @property
     def team_owner_choices(self) -> List[int]:
@@ -143,7 +150,30 @@ class Unit(CC2MapItem):
 
     @property
     def alt(self) -> float:
-        return self.vehicle().loc.y
+        return self.vehicle().transform.ty
+
+    @alt.setter
+    def alt(self, value: float):
+        if value != "None":
+            self.vehicle().move(self.vehicle().transform.tx,
+                                float(value),
+                                self.vehicle().transform.tz
+                                )
+
+    @property
+    def alt_choices(self) -> List[float]:
+        return [
+            self.alt,
+            -10,
+            -1,
+            5,
+            15,
+            50,
+            200,
+            800,
+            1200,
+            10000,  # just for fun
+        ]
 
     def altitude(self, alt: float):
         if isinstance(self.object, MovableLocationMixin):
@@ -158,6 +188,13 @@ class Unit(CC2MapItem):
             item = VehicleAttachmentDefinitionIndex.lookup(item.definition_index)
 
         return item
+
+    def set_attachment(self, attachment_index: int, value: Optional[VehicleAttachmentDefinitionIndex]):
+        if value is not None:
+            value_idx = value.value
+            self.vehicle().attachments[attachment_index] = value_idx
+        else:
+            del self.vehicle().attachments[attachment_index]
 
 
 class AirUnit(Unit):
