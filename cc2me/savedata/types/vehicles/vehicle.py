@@ -1,24 +1,10 @@
-from typing import cast, List, Optional
+from typing import cast, Optional
+
+from .attachments import Attachments
+from ..teams import Team
 from ..utils import (ElementProxy, e_property, IntAttribute, Transform, Bodies,
                      Location, MovableLocationMixin)
 from ...constants import VehicleType
-
-
-class Attachment(ElementProxy):
-    tag = "a"
-    attachment_index = e_property(IntAttribute("attachment_index"))
-    definition_index = e_property(IntAttribute("definition_index"))
-
-    @property
-    def bodies(self) -> Bodies:
-        return cast(Bodies, self.get_default_child_by_tag(Bodies))
-
-
-class Attachments(ElementProxy):
-    tag = "attachments"
-
-    def items(self) -> List[Attachment]:
-        return [Attachment(x) for x in self.children()]
 
 
 REMOTE_DRIVEABLE_VEHICLES = [
@@ -39,13 +25,29 @@ class Vehicle(ElementProxy, MovableLocationMixin):
     tag = "v"
 
     @property
+    def human_controlled(self) -> bool:
+        if self.cc2obj:
+            team: Team = self.cc2obj.team(self.team_id)
+            return team.human_controlled
+        return False
+
+    @property
     def type(self) -> VehicleType:
         return VehicleType.lookup(self.definition_index)
 
+    @property
+    def human_remote_pilot(self) -> bool:
+        if self.human_controlled:
+            return self.type in REMOTE_DRIVEABLE_VEHICLES
+        return False
+
     def on_set_team_id(self):
         # if we are set to a human team, ensure there is a pilot seat for some unit types
-        if self.type in REMOTE_DRIVEABLE_VEHICLES:
-            pass
+        if self.human_remote_pilot:
+            a0 = self.attachments[0]
+            if a0 is None:
+                pass
+                # make a driver seat
 
     id = e_property(IntAttribute("id"))
     definition_index = e_property(IntAttribute("definition_index"))
@@ -103,3 +105,13 @@ class Vehicle(ElementProxy, MovableLocationMixin):
     @property
     def loc(self) -> Location:
         return Location(self.transform.tx, self.transform.ty, self.transform.tz)
+
+
+
+class Seal(Vehicle):
+    pass
+
+
+
+class Walrus(Vehicle):
+    pass

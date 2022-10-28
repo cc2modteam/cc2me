@@ -108,6 +108,10 @@ class ElementProxy(ABC):
             self.defaults()
         self.cc2obj = cc2obj
 
+    @property
+    def human_controlled(self) -> bool:
+        return False
+
     def defaults(self):
         pass
 

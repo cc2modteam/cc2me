@@ -1,6 +1,7 @@
 import random
 from typing import Optional, cast
 
+from .teams import Team
 from .utils import (ElementProxy,
                     IntAttribute,
                     FloatAttribute,
@@ -42,6 +43,13 @@ class Tile(ElementProxy, MovableLocationMixin):
     team_capture = e_property(IntAttribute("team_capture", default_value=MAX_INTEGER))
     team_capture_progress = e_property(FloatAttribute("team_capture_progress"))
     difficulty_factor = e_property(FloatAttribute("difficulty_factor"))
+
+    @property
+    def human_controlled(self) -> bool:
+        if self.cc2obj:
+            team: Team = self.cc2obj.team(self.team_control)
+            return team.human_controlled
+        return False
 
     def on_set_team_control(self):
         self.spawn_data.team_id = self.team_control
