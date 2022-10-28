@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data attached_to_vehicle_id="2" internal_fuel_remaining="2.00000000e+03" supporting_parent_vehicle_id="0"
+      waypoint_id_counter="0" is_destroyed="false" is_trigger_destroy="false" trigger_destroy_reason="1"
+      operation_state="0" dock_state="4" countermeasure_sensor="0" hitpoints="400" is_waypoint_reached="false"
+      preferred_bay_index="0" control_mode="0" override_target_velocity="0.00000000e+00" override_power="0.00000000e+00"
+      override_taxi="false" steering="0.00000000e+00">
+    <game_object submergence_factor="0.00000000e+00">
+        <wheels>
+            <w>
+                <value rotations_per_second="-9.16447561e-07" steering="0.00000000e+00" rotation="1.15081639e-05"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+            <w>
+                <value rotations_per_second="-8.93876972e-07" steering="0.00000000e+00" rotation="9.58272722e-05"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+            <w>
+                <value rotations_per_second="-1.00106945e-06" steering="0.00000000e+00" rotation="3.81135142e-05"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+            <w>
+                <value rotations_per_second="-7.56917416e-07" steering="0.00000000e+00" rotation="6.87075635e-06"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+            <w>
+                <value rotations_per_second="-8.63526282e-07" steering="-0.00000000e+00" rotation="1.21918230e-04"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+            <w>
+                <value rotations_per_second="-8.40905557e-07" steering="-0.00000000e+00" rotation="5.09573438e-05"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+            <w>
+                <value rotations_per_second="-9.65903837e-07" steering="-0.00000000e+00" rotation="1.00109486e-04"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+            <w>
+                <value rotations_per_second="-8.87349529e-07" steering="-0.00000000e+00" rotation="1.09383742e-04"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+        </wheels>
+        <force_emitters>
+            <f>
+                <value factor="0.00000000e+00" target_factor="0.00000000e+00">
+                    <offset m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00"
+                            m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00"
+                            m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+                </value>
+            </f>
+            <f>
+                <value factor="0.00000000e+00" target_factor="0.00000000e+00">
+                    <offset m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00"
+                            m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00"
+                            m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+                </value>
+            </f>
+        </force_emitters>
+        <control_surfaces>
+            <c>
+                <value pitch="0.00000000e+00" target_pitch="0.00000000e+00"/>
+            </c>
+        </control_surfaces>
+        <buoyancy>
+            <b>
+                <value submergence_factor="0.00000000e+00">
+                    <velocity x="0.00000000e+00" y="0.00000000e+00" z="0.00000000e+00"/>
+                </value>
+            </b>
+            <b>
+                <value submergence_factor="0.00000000e+00">
+                    <velocity x="0.00000000e+00" y="0.00000000e+00" z="0.00000000e+00"/>
+                </value>
+            </b>
+            <b>
+                <value submergence_factor="0.00000000e+00">
+                    <velocity x="0.00000000e+00" y="0.00000000e+00" z="0.00000000e+00"/>
+                </value>
+            </b>
+            <b>
+                <value submergence_factor="0.00000000e+00">
+                    <velocity x="0.00000000e+00" y="0.00000000e+00" z="0.00000000e+00"/>
+                </value>
+            </b>
+            <b>
+                <value submergence_factor="0.00000000e+00">
+                    <velocity x="0.00000000e+00" y="0.00000000e+00" z="0.00000000e+00"/>
+                </value>
+            </b>
+        </buoyancy>
+        <buttons/>
+        <indicators/>
+        <dials/>
+        <doors/>
+        <screens/>
+        <damage_zones/>
+    </game_object>
+    <vehicle_attachments/>
+    <supporting_vehicles>
+        <vehicles/>
+    </supporting_vehicles>
+    <waypoints/>
+    <docking_queue_data vehicle_id="0" tile_node_id="0" hangar_index="4294967295"/>
+    <attack_target is_target_vehicle="false" target_vehicle_id="0" type="0" altitude="400">
+        <position x="0.00000000e+00" y="0.00000000e+00"/>
+    </attack_target>
+    <override_target_position x="0.00000000e+00" y="0.00000000e+00" z="0.00000000e+00"/>
+    <override_target_direction x="0.00000000e+00" y="0.00000000e+00"/>
+</data>

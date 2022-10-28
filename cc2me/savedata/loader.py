@@ -10,6 +10,7 @@ from io import StringIO
 from .types.teams import Team
 from .types.tiles import Tile
 from .types.vehicles.vehicle import Vehicle
+from .types.vehicles.vehicle_state import VehicleStateContainer
 from ..paths import SCHEMA
 from .logging import logger
 from .constants import POS_Y_SEABOTTOM, BIOME_SANDY_PINES
@@ -18,8 +19,9 @@ XML_START = '<?xml version="1.0" encoding="UTF-8"?>'
 META_ROOT = "meta"
 SCENE_ROOT = "scene"
 VEHICLES_ROOT = "vehicles"
+VEHICLE_STATES_ROOT = "vehicle_states"
 MISSILES_ROOT = "missiles"
-ROOT_ORDER = [META_ROOT, SCENE_ROOT, VEHICLES_ROOT, MISSILES_ROOT]
+ROOT_ORDER = [META_ROOT, SCENE_ROOT, VEHICLES_ROOT, VEHICLE_STATES_ROOT, MISSILES_ROOT]
 
 CARRIER_VEH_DEF_INDEX = "0"
 
@@ -189,6 +191,20 @@ class CC2XMLSave:
     @property
     def vehicles(self) -> List[Vehicle]:
         return [Vehicle(element=x, cc2obj=self) for x in self._vehicles]
+
+    def vehicle_state(self, vid) -> Optional[VehicleStateContainer]:
+        for item in self.vehicle_states:
+            if item.id == vid:
+                return item
+        return None
+
+    @property
+    def _vehicle_states(self) -> List[Element]:
+        return self.roots[VEHICLE_STATES_ROOT].getroot().findall(f"./{VEHICLE_STATES_ROOT}/v")
+
+    @property
+    def vehicle_states(self) -> List[VehicleStateContainer]:
+        return [VehicleStateContainer(element=x) for x in self._vehicle_states]
 
     def next_tile_attrib_integer(self, name: str) -> str:
         last_index = 0

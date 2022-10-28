@@ -46,6 +46,7 @@ class VehicleType(IntEnum):
     Barge = 16
     Bear = 6
     Carrier = 0
+    Droid = 97
     Jetty = 64
     Lifeboat = 57
     Manta = 10

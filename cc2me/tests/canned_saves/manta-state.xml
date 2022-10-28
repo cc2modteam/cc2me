@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data attached_to_vehicle_id="0" internal_fuel_remaining="1.20000000e+03" supporting_parent_vehicle_id="0"
+      waypoint_id_counter="49" is_destroyed="false" is_trigger_destroy="false" trigger_destroy_reason="1"
+      operation_state="2" dock_state="0" countermeasure_sensor="0" hitpoints="80" is_waypoint_reached="false"
+      preferred_bay_index="12" control_mode="0" override_target_velocity="7.20000000e+01"
+      override_power="1.00000000e+00" override_taxi="false" pitch="-2.36468047e-01" roll="-5.43348670e-01"
+      forward_velocity="6.72634354e+01" vertical_velocity="1.50835724e+01" is_weapon_fired="false"
+      is_weapon_abort="false" is_landing_gear="false">
+    <game_object submergence_factor="0.00000000e+00">
+        <wheels>
+            <w>
+                <value rotations_per_second="7.95987189e-01" steering="0.00000000e+00" rotation="3.80079269e+01"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+            <w>
+                <value rotations_per_second="4.53132167e-02" steering="0.00000000e+00" rotation="4.35481459e-01"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+            <w>
+                <value rotations_per_second="7.90663958e-02" steering="0.00000000e+00" rotation="2.02936962e-01"
+                       brake_factor="0.00000000e+00"/>
+            </w>
+        </wheels>
+        <force_emitters>
+            <f>
+                <value factor="1.00000000e+00" target_factor="1.00000000e+00">
+                    <offset m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00"
+                            m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00"
+                            m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+                </value>
+            </f>
+        </force_emitters>
+        <control_surfaces>
+            <c>
+                <value pitch="0.00000000e+00" target_pitch="0.00000000e+00"/>
+            </c>
+            <c>
+                <value pitch="0.00000000e+00" target_pitch="0.00000000e+00"/>
+            </c>
+        </control_surfaces>
+        <buoyancy>
+            <b>
+                <value submergence_factor="0.00000000e+00">
+                    <velocity x="0.00000000e+00" y="0.00000000e+00" z="0.00000000e+00"/>
+                </value>
+            </b>
+            <b>
+                <value submergence_factor="0.00000000e+00">
+                    <velocity x="0.00000000e+00" y="0.00000000e+00" z="0.00000000e+00"/>
+                </value>
+            </b>
+            <b>
+                <value submergence_factor="0.00000000e+00">
+                    <velocity x="-4.21208017e+00" y="4.80833577e-01" z="-1.17611196e+01"/>
+                </value>
+            </b>
+        </buoyancy>
+        <buttons/>
+        <indicators/>
+        <dials/>
+        <doors/>
+        <screens/>
+        <damage_zones/>
+    </game_object>
+    <vehicle_attachments/>
+    <supporting_vehicles>
+        <vehicles/>
+    </supporting_vehicles>
+    <waypoints>
+        <w id="46" type="0" target_vehicle_id="0" target_tile_id="0" altitude="425" wait_group="0"
+           repeat_index="4294967295">
+            <position x="1.98937912e+04" y="3.50009117e+03"/>
+            <attack_targets/>
+        </w>
+        <w id="47" type="0" target_vehicle_id="0" target_tile_id="0" altitude="425" wait_group="0"
+           repeat_index="4294967295">
+            <position x="1.77062448e+04" y="1.23472556e+03"/>
+            <attack_targets/>
+        </w>
+        <w id="48" type="0" target_vehicle_id="0" target_tile_id="0" altitude="425" wait_group="0"
+           repeat_index="4294967295">
+            <position x="1.54681467e+04" y="2.33954168e+03"/>
+            <attack_targets/>
+        </w>
+        <w id="49" type="0" target_vehicle_id="0" target_tile_id="0" altitude="425" wait_group="0" repeat_index="0">
+            <position x="1.79567388e+04" y="4.83066398e+03"/>
+            <attack_targets/>
+        </w>
+    </waypoints>
+    <docking_queue_data vehicle_id="0" tile_node_id="0" hangar_index="4294967295"/>
+    <attack_target is_target_vehicle="false" target_vehicle_id="0" type="0" altitude="400">
+        <position x="0.00000000e+00" y="0.00000000e+00"/>
+    </attack_target>
+    <override_target_position x="1.98937912e+04" y="0.00000000e+00" z="3.50009117e+03"/>
+    <override_target_direction x="9.74862993e-01" y="-2.22805321e-01"/>
+    <control_inputs x="-4.39149067e-02" y="1.00000000e+00" z="-5.86881414e-02" w="1.00000000e+00"/>
+    <weapon_abort_direction x="0.00000000e+00" y="0.00000000e+00" z="1.00000000e+00"/>
+</data>

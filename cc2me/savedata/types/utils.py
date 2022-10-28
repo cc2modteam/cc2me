@@ -73,6 +73,17 @@ class BoolAttribute(ElementAttributeProxy):
             self.parent.set(self.name, "false")
 
 
+class StrAttribute(ElementAttributeProxy):
+
+    type_default = ""
+
+    def get(self) -> Any:
+        return str(super(StrAttribute, self).get())
+
+    def set(self, value: Any):
+        self.parent.set(self.name, str(value))
+
+
 class IntAttribute(ElementAttributeProxy):
 
     type_default = 0

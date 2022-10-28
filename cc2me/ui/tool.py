@@ -122,6 +122,7 @@ class App(tkinter.Tk):
         for item in self.islands:
             item.unselect()
         self.map_widget.selected_markers.clear()
+        self.properties.clear()
 
     def on_selection(self, mode, nw, se):
         # format is NW[y], NW[x], SW[y], SW[x]
@@ -141,6 +142,12 @@ class App(tkinter.Tk):
         for item in markers:
             item.select()
             self.map_widget.selected_markers.append(item)
+        if len(markers) == 1:
+            # populate properties panel
+            self.properties.clear()
+            obj = markers[0].object
+            self.properties.object = obj
+
         print(f"selected {len(markers)}")
 
     def on_closing(self, event=0):
@@ -191,9 +198,9 @@ class App(tkinter.Tk):
     def marker_clicked(self, marker: CC2DataMarker) -> bool:
         if marker.selected:
             return True
-        if isinstance(marker, UnitMarker):
-            marker: UnitMarker
-            self.properties.title.set(f"{marker.unit.vehicle().type.name} ({marker.unit.vehicle().id})")
+        #if isinstance(marker, UnitMarker):
+        #    marker: UnitMarker
+        #    self.properties.title.set(f"{marker.unit.vehicle().type.name} ({marker.unit.vehicle().id})")
         return False  # let click bubble up
 
     def island_clicked(self, shape):

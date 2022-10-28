@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data is_active="true" control_mode="0" ammo="1" track_timer="0" is_attachment_rearmed="true" payload_id="0">
+	<game_object submergence_factor="0.00000000e+00">
+		<wheels/>
+		<force_emitters/>
+		<control_surfaces/>
+		<buoyancy/>
+		<buttons/>
+		<indicators/>
+		<dials/>
+		<doors/>
+		<screens/>
+		<damage_zones/>
+	</game_object>
+	<track_vector x="0.00000000e+00" y="0.00000000e+00" z="0.00000000e+00"/>
+</data>

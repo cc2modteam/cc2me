@@ -1,6 +1,8 @@
 from typing import cast, Optional
 
 from .attachments import Attachments
+from .embedded_xmlstates.vehicles import EmbeddedDataState
+from .vehicle_state import VehicleStateContainer
 from ..teams import Team
 from ..utils import (ElementProxy, e_property, IntAttribute, Transform, Bodies,
                      Location, MovableLocationMixin)
@@ -23,6 +25,11 @@ REMOTE_DRIVEABLE_VEHICLES = [
 
 class Vehicle(ElementProxy, MovableLocationMixin):
     tag = "v"
+
+    def state(self) -> Optional[VehicleStateContainer]:
+        if self.cc2obj:
+            return self.cc2obj.vehicle_state(self.id)
+        return None
 
     @property
     def human_controlled(self) -> bool:
@@ -107,10 +114,8 @@ class Vehicle(ElementProxy, MovableLocationMixin):
         return Location(self.transform.tx, self.transform.ty, self.transform.tz)
 
 
-
 class Seal(Vehicle):
     pass
-
 
 
 class Walrus(Vehicle):
