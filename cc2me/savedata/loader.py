@@ -168,6 +168,13 @@ class CC2XMLSave:
             index_value += 1
         self.tiles_parent.attrib.update(id_counter=str(index_value))
 
+    def remove_vehicle(self, vehicle: Vehicle):
+        """Delete a vehicle and its state data"""
+        # this might go wrong if other units refer to this vehicle somehow..
+        state = vehicle.state
+        self._vehicle_states.remove(state.element)
+        self._vehicles.remove(vehicle.element)
+
     @property
     def _teams(self) -> List[Element]:
         return self.roots[SCENE_ROOT].getroot().findall("./teams/teams/t")
@@ -199,7 +206,7 @@ class CC2XMLSave:
 
     @property
     def _vehicle_states(self) -> List[Element]:
-        return self.roots[VEHICLES_ROOT].getroot().findall(f"./{VEHICLES_ROOT}/vehicle_states/v")
+        return self.roots[VEHICLES_ROOT].getroot().findall(f"./vehicle_states/v")
 
     @property
     def vehicle_states(self) -> List[VehicleStateContainer]:

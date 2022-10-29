@@ -62,6 +62,7 @@ class App(tkinter.Tk):
         self.toolbar.add_button("open", "open", command=self.open_file)
         self.toolbar.add_button("save", "save", command=self.save_file, state=tkinter.DISABLED)
         self.toolbar.add_button("saveas", "saveas", command=self.save_as, state=tkinter.DISABLED)
+        self.toolbar.add_button("delete", "delete", command=self.remove_item, state=tkinter.DISABLED)
         self.toolbar.add_button("addisland", "add-island", command=self.add_new_island, state=tkinter.DISABLED)
 
         self.middle = tkinter.Frame(self)
@@ -124,6 +125,8 @@ class App(tkinter.Tk):
             item.unselect()
         self.map_widget.selected_markers.clear()
         self.properties.clear()
+        self.toolbar.enable("addisland")
+        self.toolbar.disable("delete")
 
     def on_selection(self, mode, nw, se):
         # format is NW[y], NW[x], SW[y], SW[x]
@@ -140,6 +143,8 @@ class App(tkinter.Tk):
 
     def select_markers(self, markers):
         self.select_none()
+        self.toolbar.disable("addisland")
+        self.toolbar.enable("delete")
         for item in markers:
             item.select()
             self.map_widget.selected_markers.append(item)
@@ -166,6 +171,17 @@ class App(tkinter.Tk):
         marker.move(loc[0], loc[1])
         marker.draw()
         self.select_markers([marker])
+
+    def remove_item(self):
+        selected = self.selected_markers()
+        for marker in selected:
+            if isinstance(marker, IslandMarker):
+                tile = marker.island.tile()
+                self.cc2me.remove_tile(tile)
+            if isinstance(marker, UnitMarker):
+                vehicle = marker.unit.vehicle()
+                self.cc2me.remove_vehicle(vehicle)
+            marker.delete()
 
     def start(self):
         self.mainloop()
