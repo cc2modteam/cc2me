@@ -191,7 +191,7 @@ class IslandMarker(CC2DataMarker):
                                  fill="#990000",
                                  font=self.font,
                                  anchor=tkinter.S,
-                                 tag="island"
+                                 tag="text"
                                  )
         self.add_shapes(production, self.label)
 

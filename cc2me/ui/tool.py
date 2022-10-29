@@ -242,7 +242,7 @@ class App(tkinter.Tk):
         marker = IslandMarker(self.map_widget, island, on_click=self.island_clicked)
         marker.on_hover_start = self.hover_island
         marker.on_hover_end = self.end_hover
-        marker.text = get_island_name(island_tile.id)
+        marker.text = island.display_ident
         self.map_widget.add_marker(marker)
         self.islands.append(marker)
         return marker

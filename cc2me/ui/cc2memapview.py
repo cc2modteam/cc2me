@@ -44,6 +44,7 @@ class CC2MeMapView(TkinterMapView):
         super(CC2MeMapView, self).manage_z_order()
         try:
             self.canvas.tag_lower("island", "unit")
+            self.canvas.tag_raise("text")
         except tkinter.TclError:
             pass
 
