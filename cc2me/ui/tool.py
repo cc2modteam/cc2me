@@ -224,6 +224,7 @@ class App(tkinter.Tk):
                 vehicle = marker.unit.vehicle()
                 self.cc2me.remove_vehicle(vehicle)
             marker.delete()
+        self.select_none()
 
     def start(self):
         self.mainloop()
@@ -310,6 +311,7 @@ class App(tkinter.Tk):
 
     def add_unit(self, vehicle) -> UnitMarker:
         u = get_unit(vehicle)
+        print(str(u))
         marker = UnitMarker(self.map_widget, u)
         marker.command = self.unit_clicked
         marker.on_hover_end = self.end_hover

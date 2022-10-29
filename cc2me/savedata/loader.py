@@ -1,12 +1,12 @@
 from typing import Optional, List
-from xml.etree.ElementTree import XMLParser, Element
-import random
+from xml.etree.ElementTree import Element
 import xmlschema
 import os
 import re
 from xml.etree import ElementTree
 from io import StringIO
 
+from .types.abstract import CC2Save
 from .types.teams import Team
 from .types.tiles import Tile
 from .types.vehicles.vehicle import Vehicle
@@ -106,7 +106,7 @@ class CC2ElementTree(ElementTree.ElementTree):
         return self.getroot()
 
 
-class CC2XMLSave:
+class CC2XMLSave(CC2Save):
     def __init__(self):
         self.roots = {}
 
@@ -154,9 +154,9 @@ class CC2XMLSave:
         tile = Tile(element=None, cc2obj=self)
         tile.cc2obj = self
         tile.biome_type = BIOME_SANDY_PINES
-        tile.id = self.next_tile_attrib_integer("id")
-        tile.index = self.next_tile_attrib_integer("index")
-        self.tiles_parent.attrib.update(id_counter=str(tile.id))
+        tile.id = self.next_tile_id
+        tile.index = tile.id - 1
+        self.last_tile_id = tile.id
         self.tiles_container.append(tile.element)
         tile.set_position(x=0, z=0, y=POS_Y_SEABOTTOM)
         return tile
@@ -170,9 +170,9 @@ class CC2XMLSave:
             tile.id = index_value + 1
             tile.index = index_value
             index_value += 1
-        tids = [x for x in self.tiles_parent if x.attrib.get("id") == tid]
+        tids = [x for x in self.tiles_container if x.attrib.get("id") == tid]
         if tids:
-            self.tiles_parent.remove(tids[0])
+            self.tiles_container.remove(tids[0])
         self.tiles_parent.attrib.update(id_counter=str(index_value))
 
     def remove_vehicle(self, vehicle: Vehicle):
@@ -274,12 +274,17 @@ class CC2XMLSave:
 
         return v
 
-    def next_tile_attrib_integer(self, name: str) -> str:
-        last_index = 0
-        for item in self._tiles:
-            value = int(item.attrib.get(name, "0"))
-            last_index = max(value, last_index)
-        return str(last_index + 1)
+    @property
+    def last_tile_id(self) -> int:
+        return int(self.tiles_parent.attrib["id_counter"])
+
+    @last_tile_id.setter
+    def last_tile_id(self, value: int):
+        self.tiles_parent.attrib["id_counter"] = str(value)
+
+    @property
+    def next_tile_id(self) -> int:
+        return 1 + self.last_tile_id
 
     def export(self) -> str:
 
@@ -311,7 +316,7 @@ def load_save_file(filename: str) -> CC2XMLSave:
     buf = StoppableStringIO()
     logger.info(f"open {filename}")
     with open(filename, "r") as original:
-        # read as one big string so we can use the offset
+        # read as one big string so that we can use the offset
         full_content = original.read()
         buf.write(re.sub(r"[\r\n]", " ", full_content))
     buf.seek(0, os.SEEK_SET)

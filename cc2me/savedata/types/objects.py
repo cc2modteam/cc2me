@@ -1,12 +1,7 @@
-"""
-
-"""
 import abc
 from typing import Tuple, cast, Optional, List, Union
-
 from .tiles import Tile
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
-from .vehicles.attachments import Attachment
 from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData
 from .vehicles.vehicle import Vehicle
 from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex
@@ -60,6 +55,12 @@ class CC2MapItem:
                       temp.loc.y,
                       world_lat * LOC_SCALE_FACTOR)
 
+    def __str__(self):
+        out = f"{self.display_ident}:\n"
+        for prop in self.viewable_properties:
+            out += f" {prop} {getattr(self, prop)}\n"
+        return out
+
 
 class Island(CC2MapItem):
     def __init__(self, tile: Tile):
@@ -73,8 +74,20 @@ class Island(CC2MapItem):
         return self.name
 
     @property
+    def alt(self) -> float:
+        return self.tile().loc.y
+
+    @property
+    def biome(self) -> int:
+        return self.tile().biome_type
+
+    @property
+    def seed(self) -> int:
+        return self.tile().seed
+
+    @property
     def viewable_properties(self) -> List[str]:
-        return super(Island, self).viewable_properties + ["name", "island_type"]
+        return super(Island, self).viewable_properties + ["name", "island_type", "alt", "seed", "biome"]
 
     @property
     def team_owner(self) -> int:
@@ -126,6 +139,7 @@ class Unit(CC2MapItem):
     def team_owner(self, value):
         if value != "None":
             self.vehicle().team_id = int(value)
+            team = self.object.cc2obj.team(self.vehicle().team_id)
 
     @property
     def display_ident(self) -> str:

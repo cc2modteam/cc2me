@@ -180,7 +180,7 @@ class CC2DataMarker(ShapeMarker):
 class IslandMarker(CC2DataMarker):
     ICONS = {
         IslandTypes.Warehouse: "warehouse-island",
-        IslandTypes.Turrets: "turrets-island",
+        IslandTypes.Turrets: "turret-island",
         IslandTypes.Surface_Units: "land-island",
         IslandTypes.Air_Units: "air-island",
         IslandTypes.Utility: "utility-island",

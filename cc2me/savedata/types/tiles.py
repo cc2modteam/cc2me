@@ -71,6 +71,20 @@ class Tile(ElementProxy, MovableLocationMixin):
         return cast(Bounds, self.get_default_child_by_tag(Bounds))
 
     @property
+    def island_radius(self) -> float:
+        return self.bounds.max.x
+
+    @island_radius.setter
+    def island_radius(self, radius: int):
+        if radius > 2000:
+            if radius > 7000:
+                radius = 7000
+            self.bounds.min.x = -1 * radius
+            self.bounds.min.z = -1 * radius
+            self.bounds.max.x = radius
+            self.bounds.max.z = radius
+
+    @property
     def spawn_data(self) -> SpawnData:
         return cast(SpawnData, self.get_default_child_by_tag(SpawnData))
 

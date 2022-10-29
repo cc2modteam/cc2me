@@ -4,8 +4,8 @@ from typing import cast, Any, List, Optional, Union, Tuple
 
 MAX_INTEGER = 4294967295
 
-MIN_TILE_SEED = 10000
-MAX_TILE_SEED = 200000
+MIN_TILE_SEED = 6000
+MAX_TILE_SEED = 20000
 
 POS_Y_SEABOTTOM = -1
 
