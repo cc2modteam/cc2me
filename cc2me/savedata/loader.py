@@ -255,6 +255,10 @@ class CC2XMLSave:
         v_state = VehicleStateContainer(element=None, cc2obj=self)
         v_state.id = v_id
 
+        # set default altitude to 20, any lower and things on land probably appear inside terrain and vanish
+        # there is no "fall" damage so stuff just falls into place
+        v.set_location(y=20)
+
         fuel = get_fuel_capacity(v_type)
         if fuel:
             # set initial fuel capacity

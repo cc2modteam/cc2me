@@ -182,6 +182,7 @@ VEHICLE_CAPACITY = [
     InternalFuelCapacity(400, VehicleType.Razorbill),
     InternalFuelCapacity(1000, VehicleType.Swordfish),
     InternalFuelCapacity(800, VehicleType.Needlefish),
+    InternalFuelCapacity(2000, VehicleType.Barge),
 ]
 
 

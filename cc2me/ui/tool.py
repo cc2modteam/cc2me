@@ -65,6 +65,14 @@ class App(tkinter.Tk):
         self.toolbar.add_button("delete", "delete", command=self.remove_item, state=tkinter.DISABLED)
         self.toolbar.add_button("addisland", "add-island", command=self.add_new_island, state=tkinter.DISABLED)
 
+        self.toolbar.add_button("addseal", "seal", command=self.add_new_seal, state=tkinter.DISABLED)
+        self.toolbar.add_button("addwalrus", "walrus", command=self.add_new_walrus, state=tkinter.DISABLED)
+        self.toolbar.add_button("addbear", "bear", command=self.add_new_bear, state=tkinter.DISABLED)
+
+        self.toolbar.add_button("addneedlefish", "needlefish", command=self.add_new_needlefish, state=tkinter.DISABLED)
+        self.toolbar.add_button("addswordfish", "swordfish", command=self.add_new_swordfish, state=tkinter.DISABLED)
+        self.toolbar.add_button("addbarge", "barge", command=self.add_new_barge, state=tkinter.DISABLED)
+
         self.middle = tkinter.Frame(self)
         self.map_widget = CC2MeMapView(corner_radius=0)
         self.map_widget.master = self.middle
@@ -125,8 +133,12 @@ class App(tkinter.Tk):
             item.unselect()
         self.map_widget.selected_markers.clear()
         self.properties.clear()
-        self.toolbar.enable("addisland")
+
         self.toolbar.disable("delete")
+        for button in ["addisland", "addwalrus",
+                       "addseal", "addbarge",
+                       "addneedlefish", "addswordfish"]:
+            self.toolbar.enable(button)
 
     def on_selection(self, mode, nw, se):
         # format is NW[y], NW[x], SW[y], SW[x]
@@ -143,7 +155,11 @@ class App(tkinter.Tk):
 
     def select_markers(self, markers):
         self.select_none()
-        self.toolbar.disable("addisland")
+        for button in ["addisland", "addwalrus",
+                       "addseal", "addbarge",
+                       "addneedlefish", "addswordfish"]:
+            self.toolbar.disable(button)
+
         self.toolbar.enable("delete")
         for item in markers:
             item.select()
@@ -171,6 +187,32 @@ class App(tkinter.Tk):
         marker.move(loc[0], loc[1])
         marker.draw()
         self.select_markers([marker])
+
+    def add_new_unit(self, vtype: VehicleType):
+        loc = self.map_widget.convert_canvas_coords_to_decimal_coords(200, 200)
+        # self.map_widget.set_zoom(15)
+        v = self.cc2me.new_vehicle(vtype)
+        marker = self.add_unit(v)
+        marker.unit.move(loc[0], loc[1])
+        self.select_markers([marker])
+
+    def add_new_seal(self):
+        self.add_new_unit(VehicleType.Seal)
+
+    def add_new_walrus(self):
+        self.add_new_unit(VehicleType.Walrus)
+
+    def add_new_bear(self):
+        self.add_new_unit(VehicleType.Bear)
+
+    def add_new_barge(self):
+        self.add_new_unit(VehicleType.Barge)
+
+    def add_new_swordfish(self):
+        self.add_new_unit(VehicleType.Swordfish)
+
+    def add_new_needlefish(self):
+        self.add_new_unit(VehicleType.Needlefish)
 
     def remove_item(self):
         selected = self.selected_markers()
@@ -248,8 +290,11 @@ class App(tkinter.Tk):
             for veh in self.cc2me.vehicles:
                 self.add_unit(veh)
         self.status_line.set(f"Loaded {filename} ({len(self.islands)} islands, {len(self.units)} units)")
-        for btn in ["save", "saveas", "addisland"]:
-            self.toolbar.enable(btn)
+
+        for button in ["save", "saveas", "addisland",
+                       "addwalrus", "addseal", "addbarge",
+                       "addneedlefish", "addswordfish"]:
+            self.toolbar.enable(button)
 
         self.map_widget.canvas.update_idletasks()
 
@@ -263,7 +308,7 @@ class App(tkinter.Tk):
         self.islands.append(marker)
         return marker
 
-    def add_unit(self, vehicle):
+    def add_unit(self, vehicle) -> UnitMarker:
         u = get_unit(vehicle)
         marker = UnitMarker(self.map_widget, u)
         marker.command = self.unit_clicked
@@ -271,6 +316,7 @@ class App(tkinter.Tk):
         marker.on_hover_start = self.hover_unit
         self.map_widget.add_marker(marker)
         self.units.append(marker)
+        return marker
 
     def hover_marker(self, marker):
         self.current_marker = marker

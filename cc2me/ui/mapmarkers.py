@@ -96,11 +96,10 @@ class ShapeMarker(Marker, ABC):
     def bind_commands(self):
         for shape in self._shapes:
             if shape.bindable and shape.canvas_id != -1:
-                pos = self.map_widget.canvas.coords(shape.canvas_id)
-                if len(pos) > 2:  # anything but text
-                    self.map_widget.canvas.tag_bind(shape.canvas_id, "<Enter>", self.mouse_enter)
-                    self.map_widget.canvas.tag_bind(shape.canvas_id, "<Leave>", self.mouse_leave)
-                    self.map_widget.canvas.tag_bind(shape.canvas_id, "<Button-1>", self.click)
+                # anything bindable
+                self.map_widget.canvas.tag_bind(shape.canvas_id, "<Enter>", self.mouse_enter)
+                self.map_widget.canvas.tag_bind(shape.canvas_id, "<Leave>", self.mouse_leave)
+                self.map_widget.canvas.tag_bind(shape.canvas_id, "<Button-1>", self.click)
 
 
 class CC2DataMarker(ShapeMarker):
@@ -215,6 +214,7 @@ class IslandMarker(CC2DataMarker):
                           outline=self.color,
                           tag="island",
                           )
+        box.bindable = True
         box.on_left_mouse = self.click
         self.label = CanvasShape(map_widget.canvas,
                                  map_widget.canvas.create_text,
