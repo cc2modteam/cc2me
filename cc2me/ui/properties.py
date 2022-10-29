@@ -37,7 +37,8 @@ class PropertyItem:
                 if isinstance(marker, CC2DataMarker):
                     marker: CC2DataMarker
                     if marker.selected:
-                        marker.render(None)
+                        marker.update_shape_outline()
+                        marker.redraw()
 
 
 class Properties:

@@ -45,6 +45,7 @@ class CC2MeMapView(TkinterMapView):
         try:
             self.canvas.tag_lower("island", "unit")
             self.canvas.tag_raise("text")
+            self.canvas.tag_raise("icon")
         except tkinter.TclError:
             pass
 

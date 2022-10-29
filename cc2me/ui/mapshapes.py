@@ -67,6 +67,7 @@ class CanvasShape:
             coords = self.get_coords(x, y, zoom)
             canvas.coords(self.canvas_id, *coords)
             canvas.tag_bind(self.canvas_id, "<Button-1>", self.on_left_mouse)
+            self.update_colors()
 
     def delete(self, canvas: tkinter.Canvas):
         if self.canvas_id != -1:
