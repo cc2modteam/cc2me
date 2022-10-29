@@ -160,20 +160,33 @@ class CC2XMLSave:
     def remove_tile(self, tile: Tile):
         """Delete a tile"""
         # find the tile element, remove it, then re-compute the id and index values
-        self.tiles_container.remove(tile.element)
+        tid = str(tile.id)
         index_value = 0
         for tile in self.tiles:
             tile.id = index_value + 1
             tile.index = index_value
             index_value += 1
+        tids = [x for x in self.tiles_parent if x.attrib.get("id") == tid]
+        if tids:
+            self.tiles_parent.remove(tids[0])
         self.tiles_parent.attrib.update(id_counter=str(index_value))
 
     def remove_vehicle(self, vehicle: Vehicle):
         """Delete a vehicle and its state data"""
         # this might go wrong if other units refer to this vehicle somehow..
-        state = vehicle.state
-        self._vehicle_states.remove(state.element)
-        self._vehicles.remove(vehicle.element)
+        vparent = self.vehicles_parent
+        vsparent = self.vehicle_states_parent
+
+        if vehicle:
+            vid = str(vehicle.id)
+            state = vehicle.state
+            if state:
+                vse = [x for x in vsparent if x.attrib.get("id") == vid]
+                if vse:
+                    vsparent.remove(vse[0])
+            ve = [x for x in vparent if x.attrib.get("id") == vid]
+            if ve:
+                vparent.remove(ve[0])
 
     @property
     def _teams(self) -> List[Element]:
@@ -195,6 +208,10 @@ class CC2XMLSave:
         return self.roots[VEHICLES_ROOT].getroot().findall(f"./{VEHICLES_ROOT}/v")
 
     @property
+    def vehicles_parent(self) -> Element:
+        return self.roots[VEHICLES_ROOT].getroot().findall("./vehicles")[0]
+
+    @property
     def vehicles(self) -> List[Vehicle]:
         return [Vehicle(element=x, cc2obj=self) for x in self._vehicles]
 
@@ -207,6 +224,10 @@ class CC2XMLSave:
     @property
     def _vehicle_states(self) -> List[Element]:
         return self.roots[VEHICLES_ROOT].getroot().findall(f"./vehicle_states/v")
+
+    @property
+    def vehicle_states_parent(self) -> Element:
+        return self.roots[VEHICLES_ROOT].getroot().findall("./vehicle_states")[0]
 
     @property
     def vehicle_states(self) -> List[VehicleStateContainer]:
