@@ -7,6 +7,7 @@ from typing import Tuple, cast, Optional, List, Union
 from .tiles import Tile
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from .vehicles.attachments import Attachment
+from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData
 from .vehicles.vehicle import Vehicle
 from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex
 from ..loader import CC2XMLSave
@@ -176,30 +177,19 @@ class Unit(CC2MapItem):
                       temp.loc.x)
 
     def get_attachment(self, attachment_index: int) -> Optional[VehicleAttachmentDefinitionIndex]:
-        item = self.vehicle().attachments[attachment_index]
-        if item is not None:
-            item = VehicleAttachmentDefinitionIndex.lookup(item.definition_index)
-
-        return item
+        return self.vehicle().get_attachment(attachment_index)
 
     def set_attachment(self, attachment_index: int, value: Optional[VehicleAttachmentDefinitionIndex]):
-        if value == "None":
-            value = None
+        self.vehicle().set_attachment(attachment_index, value)
 
-        if isinstance(value, str):
-            try:
-                value = VehicleAttachmentDefinitionIndex.reverse_lookup(value)
-            except KeyError:
-                return
+    def get_attachment_state(self, attachment_index: int) -> Optional[EmbeddedAttachmentStateData]:
+        a_state_container = self.vehicle().get_attachment_state(attachment_index)
+        if a_state_container:
+            return a_state_container.data
+        return EmbeddedAttachmentStateData(element=None)
 
-        if value is not None:
-            value_idx = value.value
-            new_attachment = Attachment()
-            new_attachment.attachment_index = attachment_index
-            new_attachment.definition_index = value_idx
-            self.vehicle().attachments.replace(new_attachment)
-        else:
-            del self.vehicle().attachments[attachment_index]
+    def set_attachment_state(self, attachment_index: int, data: EmbeddedAttachmentStateData):
+        self.vehicle().state.attachments[attachment_index].data = data
 
 
 class AirUnit(Unit):

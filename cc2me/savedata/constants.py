@@ -1,5 +1,6 @@
+from abc import ABC
 from enum import Enum
-from typing import cast, Any
+from typing import cast, Any, List, Optional, Union, Tuple
 
 MAX_INTEGER = 4294967295
 
@@ -146,3 +147,102 @@ def get_island_name(island_id: int) -> str:
         return "Island {island_id}"
 
 
+class Capacity(ABC):
+
+    attribs: List[str] = []
+
+    def __init__(self,
+                 attachment: VehicleAttachmentDefinitionIndex,
+                 count: int,
+                 *v_types):
+        self.attachment = attachment
+        self.count = count
+        self.vtypes = v_types
+
+
+class AmmunitionCapacity(Capacity):
+    attribs = ["ammo"]
+
+
+class FuelTankCapacity(Capacity):
+    attribs = ["fuel_capacity", "fuel_remaining"]
+
+
+class InternalFuelCapacity(Capacity):
+    attribs = ["internal_fuel_remaining"]
+
+    def __init__(self, count: int, *vtype: VehicleType):
+        super(InternalFuelCapacity, self).__init__(VehicleAttachmentDefinitionIndex.FuelTank, count, *vtype)
+
+
+VEHICLE_CAPACITY = [
+    InternalFuelCapacity(2000, VehicleType.Petrel, VehicleType.Manta, VehicleType.Albatross),
+    InternalFuelCapacity(1200, VehicleType.Walrus, VehicleType.Bear, VehicleType.Mule),
+    InternalFuelCapacity(800, VehicleType.Seal),
+    InternalFuelCapacity(400, VehicleType.Razorbill),
+    InternalFuelCapacity(1000, VehicleType.Swordfish),
+    InternalFuelCapacity(800, VehicleType.Needlefish),
+]
+
+
+ATTACHMENT_CAPACITY = [
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipTorpedo, 4,
+                       VehicleType.Needlefish, VehicleType.Swordfish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipCIWS, 100,
+                       VehicleType.Needlefish, VehicleType.Swordfish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.CruiseMissile, 10,
+                       VehicleType.Needlefish, VehicleType.Swordfish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.AWACS, 1,
+                       VehicleType.Manta),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun20mm, 400,
+                       VehicleType.Manta, VehicleType.Albatross, VehicleType.Razorbill, VehicleType.Petrel),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun30mm, 500,
+                       VehicleType.Seal, VehicleType.Walrus),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun40mm, 400,
+                       VehicleType.Seal, VehicleType.Walrus),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileIRLauncher, 4,
+                       VehicleType.Seal, VehicleType.Walrus),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun100mm, 40,
+                       VehicleType.Bear),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun100mmHeavy, 40,
+                       VehicleType.Bear),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun120mm, 25,
+                       VehicleType.Bear),
+    FuelTankCapacity(VehicleAttachmentDefinitionIndex.FuelTank, 100,
+                     VehicleType.Albatross, VehicleType.Manta, VehicleType.Razorbill, VehicleType.Petrel)
+]
+
+for a_type in [VehicleAttachmentDefinitionIndex.MissileIR,
+               VehicleAttachmentDefinitionIndex.MissileAA,
+               VehicleAttachmentDefinitionIndex.MissileLaser,
+               VehicleAttachmentDefinitionIndex.Bomb0,
+               VehicleAttachmentDefinitionIndex.Bomb1,
+               VehicleAttachmentDefinitionIndex.Bomb2,
+               VehicleAttachmentDefinitionIndex.MissileTV,
+               VehicleAttachmentDefinitionIndex.AirObsCam,
+               ]:
+    ATTACHMENT_CAPACITY.append(
+        AmmunitionCapacity(a_type, 1,
+                           VehicleType.Manta, VehicleType.Petrel, VehicleType.Razorbill, VehicleType.Albatross))
+
+
+def get_attachment_capacity(
+        vehicle: Union[VehicleType, int],
+        attachment: Union[VehicleAttachmentDefinitionIndex, int]) -> Optional[Capacity]:
+    if isinstance(vehicle, int):
+        vehicle = VehicleType.lookup(vehicle)
+    if isinstance(attachment, int):
+        attachment = VehicleAttachmentDefinitionIndex.lookup(attachment)
+
+    for item in ATTACHMENT_CAPACITY:
+        if item.attachment == attachment:
+            if vehicle in item.vtypes:
+                return item
+    return None
+
+
+def get_fuel_capacity(v_type: VehicleType) -> Optional[InternalFuelCapacity]:
+    for item in VEHICLE_CAPACITY:
+        if v_type in item.vtypes:
+            return item
+    return None

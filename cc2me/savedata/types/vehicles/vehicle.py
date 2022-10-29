@@ -1,13 +1,12 @@
-from typing import cast, Optional
+from typing import cast, Optional, Union
 
-from .attachments import Attachments
+from .attachments import Attachments, Attachment
 from .embedded_xmlstates.vehicles import EmbeddedVehicleStateData
-from .vehicle_state import VehicleStateContainer
+from .vehicle_state import VehicleStateContainer, VehicleAttachmentState
 from ..teams import Team
 from ..utils import (ElementProxy, e_property, IntAttribute, Transform, Bodies,
                      Location, MovableLocationMixin)
-from ...constants import VehicleType
-
+from ...constants import VehicleType, VehicleAttachmentDefinitionIndex, get_attachment_capacity
 
 REMOTE_DRIVEABLE_VEHICLES = [
     VehicleType.Bear,
@@ -114,3 +113,43 @@ class Vehicle(ElementProxy, MovableLocationMixin):
     def loc(self) -> Location:
         return Location(self.transform.tx, self.transform.ty, self.transform.tz)
 
+    def get_attachment(self, attachment_index: int) -> Optional[VehicleAttachmentDefinitionIndex]:
+        item = self.attachments[attachment_index]
+        if item is not None:
+            item = VehicleAttachmentDefinitionIndex.lookup(item.definition_index)
+        return item
+
+    def get_attachment_state(self, attachment_index: int) -> Optional[VehicleAttachmentState]:
+        return self.state.attachments[attachment_index]
+
+    def set_attachment(self, attachment_index: int, value: Optional[Union[str, VehicleAttachmentDefinitionIndex]]):
+        if value == "None":
+            value = None
+
+        if isinstance(value, str):
+            try:
+                value = VehicleAttachmentDefinitionIndex.reverse_lookup(value)
+            except KeyError:
+                return
+
+        if value is not None:
+            value: VehicleAttachmentDefinitionIndex
+            value_idx = value.value
+            new_attachment = Attachment()
+            new_attachment.attachment_index = attachment_index
+            new_attachment.definition_index = value_idx
+            self.attachments.replace(new_attachment)
+
+            new_attachment_state = VehicleAttachmentState(element=None, cc2obj=self.cc2obj)
+            new_attachment_state.attachment_index = attachment_index
+
+            capacity = get_attachment_capacity(self.definition_index, value)
+            data = new_attachment_state.data
+            for attrib_name in capacity.attribs:
+                setattr(data, attrib_name, capacity.count)
+
+            new_attachment_state.data = data
+            self.state.attachments.replace(new_attachment_state)
+        else:
+            del self.attachments[attachment_index]
+            del self.state.attachments[attachment_index]

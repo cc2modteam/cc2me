@@ -13,7 +13,7 @@ from .types.vehicles.vehicle import Vehicle
 from .types.vehicles.vehicle_state import VehicleStateContainer
 from ..paths import SCHEMA
 from .logging import logger
-from .constants import POS_Y_SEABOTTOM, BIOME_SANDY_PINES
+from .constants import POS_Y_SEABOTTOM, BIOME_SANDY_PINES, VehicleType, get_fuel_capacity
 
 XML_START = '<?xml version="1.0" encoding="UTF-8"?>'
 META_ROOT = "meta"
@@ -142,6 +142,10 @@ class CC2XMLSave:
         return self.roots[SCENE_ROOT].getroot().findall("./tiles")[0]
 
     @property
+    def scene_vehicles(self) -> Element:
+        return self.roots[SCENE_ROOT].getroot().findall("./vehicles")[0]
+
+    @property
     def tiles_container(self) -> Element:
         return self.roots[SCENE_ROOT].getroot().findall("./tiles/tiles")[0]
 
@@ -232,6 +236,39 @@ class CC2XMLSave:
     @property
     def vehicle_states(self) -> List[VehicleStateContainer]:
         return [VehicleStateContainer(element=x) for x in self._vehicle_states]
+
+    def new_vehicle(self, v_type: VehicleType):
+        # find next id
+        v_id = 0
+        for item in self.vehicles:
+            if item.id > v_id:
+                v_id = item.id + 1
+
+        v_next = int(self.scene_vehicles.attrib.get("id_counter", str(v_id)))
+        if v_next > v_id:
+            v_id = v_next
+        self.scene_vehicles.attrib["id_counter"] = str(v_id + 1)
+
+        v = Vehicle(element=None, cc2obj=self)
+        v.id = v_id
+        v.definition_index = v_type.value
+        v_state = VehicleStateContainer(element=None, cc2obj=self)
+        v_state.id = v_id
+
+        fuel = get_fuel_capacity(v_type)
+        if fuel:
+            # set initial fuel capacity
+            data = v_state.data
+            for attrib_name in fuel.attribs:
+                setattr(data, attrib_name, fuel.count)
+            v_state.data = data
+
+        vpar = self.vehicles_parent
+        vpar.append(v.element)
+        vspar = self.vehicle_states_parent
+        vspar.append(v_state.element)
+
+        return v
 
     def next_tile_attrib_integer(self, name: str) -> str:
         last_index = 0

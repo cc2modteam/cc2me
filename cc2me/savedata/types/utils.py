@@ -139,13 +139,12 @@ class ElementProxy(ABC):
         for item in self.children():
             if item.tag == proxy.tag:
                 return proxy(item)
-        # no min!
         try:
             added = proxy()
             self.element.append(added.element)
             return added
         except TypeError:
-            assert True
+            pass
 
 
 class Point3D(ElementProxy):
