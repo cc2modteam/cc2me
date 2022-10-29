@@ -103,6 +103,12 @@ class CC2DataMarker(ShapeMarker):
         self.on_hover_start: callable = None
         self.on_hover_end: callable = None
         self.hovering = False
+        if cc2obj:
+            self.color = get_team_color(cc2obj.team_owner)
+
+    def render(self, event=None):
+        self.update_shape_outline()
+        super(CC2DataMarker, self).render(event)
 
     @property
     def position(self) -> tuple:
@@ -150,11 +156,21 @@ class CC2DataMarker(ShapeMarker):
         for shape in self._shapes:
             shape.unselect()
 
+    def update_shape_outline(self):
+        # resync the shape outline if it has changed
+        self.color = get_team_color(self.object.team_owner)
+
+        for shape in self.shapes:
+            if shape.outline:
+                if shape.outline != "#000000":
+                    shape.outline = self.color
+            if shape.fill:
+                shape.fill = self.color
+
 
 class IslandMarker(CC2DataMarker):
     def __init__(self, map_widget: "TkinterMapView", cc2obj: Island, on_click: Optional[callable] = None):
         super(IslandMarker, self).__init__(map_widget, cc2obj)
-        self.color = get_team_color(cc2obj.tile().team_control)
         self.command = on_click
 
         # add the shape/icon
@@ -222,7 +238,6 @@ class UnitMarker(CC2DataMarker):
 
     def __init__(self, map_widget: TkinterMapView, cc2obj: Unit, on_click: Optional[callable] = None):
         super(UnitMarker, self).__init__(map_widget, cc2obj)
-        self.color = get_team_color(cc2obj.vehicle().team_id)
         back = CanvasShape(map_widget.canvas,
                            map_widget.canvas.create_polygon,
                            -1 * self.size, 0,

@@ -1,12 +1,13 @@
 import tkinter
-from typing import Optional
+from typing import Optional, Any, List
 from tkinter import ttk
-from cc2me.savedata.types.objects import CC2MapItem
+from ..savedata.types.objects import CC2MapItem
+from .mapmarkers import CC2DataMarker
 
 
 class PropertyItem:
-    def __init__(self, owner, name, value, choices=None):
-        self.owner = owner
+    def __init__(self, props: "Properties", name: str, value: Any, choices=None):
+        self.owner = props
         self.name = name
         self.value = value
         self.choices = choices
@@ -18,18 +19,25 @@ class PropertyItem:
         owner: Optional[Properties] = self.owner
         if owner is not None:
             if self.textvalue is not None:
-                obj: CC2MapItem = self.owner.object
-                self.textvalue: tkinter.StringVar
-                value = self.textvalue.get()
-                # try setting
-                try:
-                    setattr(obj, self.name, value)
-                except AttributeError:
-                    pass
-                except LookupError:
-                    pass
-                except ValueError:
-                    pass
+                for obj in self.owner.objects:
+                    obj: CC2MapItem
+                    self.textvalue: tkinter.StringVar
+                    value = self.textvalue.get()
+                    # try setting
+                    try:
+                        setattr(obj, self.name, value)
+                    except AttributeError:
+                        pass
+                    except LookupError:
+                        pass
+                    except ValueError:
+                        pass
+
+            for marker in owner.map_widget.canvas_marker_list:
+                if isinstance(marker, CC2DataMarker):
+                    marker: CC2DataMarker
+                    if marker.selected:
+                        marker.render(None)
 
 
 class Properties:
@@ -46,26 +54,38 @@ class Properties:
         self.title_label.pack(side=tkinter.TOP, expand=True, fill=tkinter.Y)
         self.items = tkinter.Frame(self.frame)
         self.option_items = []
-        self._object = None
+        self._objects = None
+        self.map_widget = None
 
     @property
-    def object(self) -> CC2MapItem:
-        return self._object
+    def objects(self) -> List[CC2MapItem]:
+        return self._objects
 
-    @object.setter
-    def object(self, new_value: CC2MapItem):
+    @objects.setter
+    def objects(self, new_value: List[CC2MapItem]):
         self.clear()
-        self._object = new_value
+        self._objects = list(new_value)
         if new_value is not None:
-            self.title.set(self.object.display_ident)
-            for prop in new_value.viewable_properties:
-                value = new_value.__getattribute__(prop)
-                choices = None
-                try:
-                    choices = ["None"] + new_value.__getattribute__(f"{prop}_choices")
-                except AttributeError:
-                    pass
-                self.add_option_property(prop, value, choices)
+            if len(self.objects) == 1:
+                obj: CC2MapItem = self.objects[0]
+                self.title.set(obj.display_ident)
+                # show normal props
+
+                for prop in obj.viewable_properties:
+                    value = obj.__getattribute__(prop)
+                    choices = None
+                    try:
+                        choices = ["None"] + obj.__getattribute__(f"{prop}_choices")
+                    except AttributeError:
+                        pass
+                    self.add_option_property(prop, value, choices)
+            elif len(self._objects) > 1:
+                self.title.set(f"Multiple ({len(self.objects)}) objects selected")
+                obj: CC2MapItem = self.objects[0]
+                # multiple objects,
+                # allow only change of team
+                self.add_option_property("team_owner", "None",
+                                         obj.team_owner_choices)
 
     def clear(self):
         for item in self.option_items:

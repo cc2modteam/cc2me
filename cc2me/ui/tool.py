@@ -84,6 +84,7 @@ class App(tkinter.Tk):
 
         self.map_widget.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True)
         self.properties.frame.pack(side=tkinter.TOP, expand=False)
+        self.properties.map_widget = self.map_widget
         self.middle.pack(fill=tkinter.BOTH, expand=True)
 
         self.map_widget.set_position(0, 0)
@@ -146,7 +147,10 @@ class App(tkinter.Tk):
             # populate properties panel
             self.properties.clear()
             obj = markers[0].object
-            self.properties.object = obj
+            self.properties.objects = [obj]
+        else:
+            self.properties.clear()
+            self.properties.objects = [x.object for x in markers]
 
         print(f"selected {len(markers)}")
 
@@ -198,9 +202,6 @@ class App(tkinter.Tk):
     def marker_clicked(self, marker: CC2DataMarker) -> bool:
         if marker.selected:
             return True
-        #if isinstance(marker, UnitMarker):
-        #    marker: UnitMarker
-        #    self.properties.title.set(f"{marker.unit.vehicle().type.name} ({marker.unit.vehicle().id})")
         return False  # let click bubble up
 
     def island_clicked(self, shape):

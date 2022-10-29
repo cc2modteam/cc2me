@@ -6,6 +6,7 @@ from typing import Tuple, cast, Optional, List, Union
 
 from .tiles import Tile
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
+from .vehicles.attachments import Attachment
 from .vehicles.vehicle import Vehicle
 from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex
 from ..loader import CC2XMLSave
@@ -29,6 +30,14 @@ class CC2MapItem:
     @abc.abstractmethod
     def team_owner(self) -> int:
         pass
+
+    @property
+    def team_owner_choices(self) -> List[int]:
+        teams = []
+        cc2obj: CC2XMLSave = self.object.cc2obj
+        for team in cc2obj.teams:
+            teams.append(team.id)
+        return teams
 
     @property
     def text(self) -> Optional[str]:
@@ -76,14 +85,6 @@ class Island(CC2MapItem):
             self.tile().team_control = int(value)
 
     @property
-    def team_owner_choices(self) -> List[int]:
-        teams = []
-        cc2obj: CC2XMLSave = self.object.cc2obj
-        for team in cc2obj.teams:
-            teams.append(team.id)
-        return teams
-
-    @property
     def name(self):
         return get_island_name(self.tile().id)
 
@@ -124,14 +125,6 @@ class Unit(CC2MapItem):
     def team_owner(self, value):
         if value != "None":
             self.vehicle().team_id = int(value)
-
-    @property
-    def team_owner_choices(self) -> List[int]:
-        teams = []
-        cc2obj: CC2XMLSave = self.object.cc2obj
-        for team in cc2obj.teams:
-            teams.append(team.id)
-        return teams
 
     @property
     def display_ident(self) -> str:
@@ -190,9 +183,21 @@ class Unit(CC2MapItem):
         return item
 
     def set_attachment(self, attachment_index: int, value: Optional[VehicleAttachmentDefinitionIndex]):
+        if value == "None":
+            value = None
+
+        if isinstance(value, str):
+            try:
+                value = VehicleAttachmentDefinitionIndex.reverse_lookup(value)
+            except KeyError:
+                return
+
         if value is not None:
             value_idx = value.value
-            self.vehicle().attachments[attachment_index] = value_idx
+            new_attachment = Attachment()
+            new_attachment.attachment_index = attachment_index
+            new_attachment.definition_index = value_idx
+            self.vehicle().attachments.replace(new_attachment)
         else:
             del self.vehicle().attachments[attachment_index]
 
@@ -201,6 +206,10 @@ class AirUnit(Unit):
     @property
     def wing0(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(1)
+
+    @wing0.setter
+    def wing0(self, value):
+        self.set_attachment(1, value)
 
     @property
     def wing0_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
@@ -227,6 +236,10 @@ class AirUnit(Unit):
     def wing1(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(2)
 
+    @wing1.setter
+    def wing1(self, value):
+        self.set_attachment(2, value)
+
 
 class AirUnitAux(AirUnit):
     @property
@@ -248,9 +261,17 @@ class Razorbill(AirUnitAux):
     def aux0(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(3)
 
+    @aux0.setter
+    def aux0(self, value):
+        self.set_attachment(3, value)
+
     @property
     def aux1(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(4)
+
+    @aux1.setter
+    def aux1(self, value):
+        self.set_attachment(4, value)
 
     @property
     def viewable_properties(self) -> List[str]:
@@ -266,16 +287,24 @@ class Albatross(AirUnit):
     @property
     def turret_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
         return [
-            VehicleAttachmentDefinitionIndex.AirCam
+            VehicleAttachmentDefinitionIndex.AirObsCam,
         ]
 
     @property
     def wing0(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(2)
 
+    @wing0.setter
+    def wing0(self, value):
+        self.set_attachment(2, value)
+
     @property
     def wing1(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(4)
+
+    @wing1.setter
+    def wing1(self, value):
+        self.set_attachment(4, value)
 
     @property
     def wing2_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
@@ -285,6 +314,10 @@ class Albatross(AirUnit):
     def wing2(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(5)
 
+    @wing2.setter
+    def wing2(self, value):
+        self.set_attachment(5, value)
+
     @property
     def wing3_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
         return self.wing0_choices
@@ -292,6 +325,10 @@ class Albatross(AirUnit):
     @property
     def wing3(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(3)
+
+    @wing3.setter
+    def wing3(self, value):
+        self.set_attachment(3, value)
 
     @property
     def viewable_properties(self) -> List[str]:
@@ -318,9 +355,17 @@ class Manta(Albatross):
     def aux0(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(7)
 
+    @aux0.setter
+    def aux0(self, value):
+        self.set_attachment(7, value)
+
     @property
     def aux1(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(8)
+
+    @aux1.setter
+    def aux1(self, value):
+        self.set_attachment(8, value)
 
     @property
     def viewable_properties(self) -> List[str]:
@@ -332,13 +377,25 @@ class GroundTurreted(Unit):
     def turret(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(1)
 
+    @turret.setter
+    def turret(self, value):
+        self.set_attachment(1, value)
+
     @property
     def aux0(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(2)
 
+    @aux0.setter
+    def aux0(self, value):
+        self.set_attachment(2, value)
+
     @property
     def aux1(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(3)
+
+    @aux1.setter
+    def aux1(self, value):
+        self.set_attachment(3, value)
 
     @property
     def turret_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
@@ -347,7 +404,7 @@ class GroundTurreted(Unit):
             VehicleAttachmentDefinitionIndex.Gun40mm,
             VehicleAttachmentDefinitionIndex.Radar,
             VehicleAttachmentDefinitionIndex.ObsCam,
-            VehicleAttachmentDefinitionIndex.MissileIRLauncher
+            VehicleAttachmentDefinitionIndex.MissileIRLauncher,
         ]
 
     @property
@@ -383,6 +440,10 @@ class Bear(GroundTurreted):
     def turret(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(2)
 
+    @turret.setter
+    def turret(self, value):
+        self.set_attachment(2, value)
+
     @property
     def turret_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
         return [
@@ -395,9 +456,91 @@ class Bear(GroundTurreted):
     def aux0(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(3)
 
+    @aux0.setter
+    def aux0(self, value):
+        self.set_attachment(3, value)
+
     @property
     def aux1(self) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.get_attachment(1)
+
+    @aux1.setter
+    def aux1(self, value):
+        self.set_attachment(1, value)
+
+
+class Ship(Unit):
+    @staticmethod
+    def ship_attachments() -> List[VehicleAttachmentDefinitionIndex]:
+        return [
+            VehicleAttachmentDefinitionIndex.ShipCam,
+            VehicleAttachmentDefinitionIndex.ShipCIWS,
+            VehicleAttachmentDefinitionIndex.ShipTorpedo,
+            VehicleAttachmentDefinitionIndex.ShipGun160mm,
+            VehicleAttachmentDefinitionIndex.CruiseMissile,
+        ]
+
+
+class Needlefish(Ship):
+
+    @property
+    def deck0(self) -> Optional[VehicleAttachmentDefinitionIndex]:
+        return self.get_attachment(1)
+
+    @deck0.setter
+    def deck0(self, value: VehicleAttachmentDefinitionIndex):
+        self.set_attachment(1, value)
+
+    @property
+    def deck0_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
+        return self.ship_attachments()
+
+    @property
+    def deck1(self) -> Optional[VehicleAttachmentDefinitionIndex]:
+        return self.get_attachment(2)
+
+    @deck1.setter
+    def deck1(self, value: VehicleAttachmentDefinitionIndex):
+        self.set_attachment(2, value)
+
+    @property
+    def deck1_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
+        return self.ship_attachments()
+
+    @property
+    def viewable_properties(self) -> List[str]:
+        return super(Needlefish, self).viewable_properties + ["deck0", "deck1"]
+
+
+class Swordfish(Needlefish):
+
+    @property
+    def deck2(self) -> Optional[VehicleAttachmentDefinitionIndex]:
+        return self.get_attachment(3)
+
+    @deck2.setter
+    def deck2(self, value: VehicleAttachmentDefinitionIndex):
+        self.set_attachment(3, value)
+
+    @property
+    def deck2_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
+        return self.ship_attachments()
+
+    @property
+    def deck3(self) -> Optional[VehicleAttachmentDefinitionIndex]:
+        return self.get_attachment(4)
+
+    @deck3.setter
+    def deck3(self, value: VehicleAttachmentDefinitionIndex):
+        self.set_attachment(4, value)
+
+    @property
+    def deck3_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
+        return self.ship_attachments()
+
+    @property
+    def viewable_properties(self) -> List[str]:
+        return super(Swordfish, self).viewable_properties + ["deck2", "deck3"]
 
 
 def get_unit(vehicle: Vehicle) -> Unit:
@@ -415,5 +558,9 @@ def get_unit(vehicle: Vehicle) -> Unit:
         return Petrel(vehicle)
     elif vehicle.type == VehicleType.Manta:
         return Manta(vehicle)
+    elif vehicle.type == VehicleType.Swordfish:
+        return Swordfish(vehicle)
+    elif vehicle.type == VehicleType.Needlefish:
+        return Needlefish(vehicle)
 
     return Unit(vehicle)

@@ -27,13 +27,13 @@ class Attachments(ElementProxy):
         return None
 
     def __delitem__(self, key):
-        for item in self.items():
-            if item.attachment_index == key:
-                self.children().remove(item.element)
+        for child in self.element:
+            if child.attrib.get("attachment_index", "-1") == str(key.attachment_index):
+                self.element.remove(child)
 
     def replace(self, attachment: Attachment):
         del self[attachment]
-        self.children().append(attachment.element)
+        self.element.append(attachment.element)
 
 
 def make_attachment(atype: VehicleAttachmentDefinitionIndex) -> Attachment:

@@ -1,7 +1,7 @@
 from typing import cast, Optional
 
 from .attachments import Attachments
-from .embedded_xmlstates.vehicles import EmbeddedDataState
+from .embedded_xmlstates.vehicles import EmbeddedVehicleStateData
 from .vehicle_state import VehicleStateContainer
 from ..teams import Team
 from ..utils import (ElementProxy, e_property, IntAttribute, Transform, Bodies,

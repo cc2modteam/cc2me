@@ -1,9 +1,8 @@
-from typing import cast, List
 from xml.etree import ElementTree
-from ...utils import ElementProxy, IntAttribute, e_property, StrAttribute, FloatAttribute, BoolAttribute
+from ...utils import ElementProxy, IntAttribute, e_property, FloatAttribute, BoolAttribute
 
 
-class EmbeddedDataState(ElementProxy):
+class EmbeddedVehicleStateData(ElementProxy):
     # see cc2me/tests/canned_saves/manta-state.xml
     tag = "data"
 
@@ -18,6 +17,18 @@ class EmbeddedDataState(ElementProxy):
         self.is_destroyed = False
         self.hitpoints = 80
         self.internal_fuel_remaining = 400
+
+    def to_string(self):
+        return ElementTree.tostring(self.element)
+
+
+class EmbeddedAttachmentStateData(ElementProxy):
+    tag = "data"
+
+    ammo = e_property(IntAttribute("ammo"))
+
+    def defaults(self):
+        self.ammo = 1
 
     def to_string(self):
         return ElementTree.tostring(self.element)

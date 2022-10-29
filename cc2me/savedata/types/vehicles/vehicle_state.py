@@ -1,7 +1,7 @@
 from typing import cast, List
 
 from xml.etree import ElementTree
-from .embedded_xmlstates.vehicles import EmbeddedDataState
+from .embedded_xmlstates.vehicles import EmbeddedVehicleStateData
 from ..utils import ElementProxy, e_property, StrAttribute, IntAttribute
 
 
@@ -28,11 +28,11 @@ class VehicleStateContainer(ElementProxy):
         return cast(VehicleAttachmentStates, self.get_default_child_by_tag(VehicleAttachmentStates))
 
     @property
-    def data(self) -> EmbeddedDataState:
+    def data(self) -> EmbeddedVehicleStateData:
         root = ElementTree.fromstring(self.state)
-        return EmbeddedDataState(element=root)
+        return EmbeddedVehicleStateData(element=root)
 
     @data.setter
-    def data(self, value: EmbeddedDataState):
+    def data(self, value: EmbeddedVehicleStateData):
         self.state = value.to_string()
 

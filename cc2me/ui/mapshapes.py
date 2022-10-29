@@ -14,23 +14,34 @@ class CanvasShape:
         self.on_left_mouse: Optional[callable] = None
         self.selected = False
         self.selected_outline_color = "#ffffff"
+        self.outline = kwargs.get("outline", None)
+        self.fill = kwargs.get("fill", None)
         self._normal_outline_color = None
+
+    def update_colors(self):
+        if "fill" in self.kwargs:
+            if self.fill:
+                self.canvas.itemconfig(self.canvas_id, fill=self.fill)
+
+        if "outline" in self.kwargs:
+            if self.outline != "#000000":
+                if self.outline:
+                    self.canvas.itemconfig(self.canvas_id, outline=self.outline)
+                else:
+                    self.canvas.itemconfig(self.canvas_id, outline="")
+
+                if self.selected:
+                    self.canvas.itemconfig(self.canvas_id, outline=self.selected_outline_color)
 
     def select(self):
         if not self.selected:
             self.selected = True
-            self._normal_outline_color = self.kwargs.get("outline", None)
-            if self._normal_outline_color is not None:
-                self.kwargs["outline"] = self.selected_outline_color
-                self.canvas.itemconfig(self.canvas_id, outline=self.kwargs["outline"])
+            self.update_colors()
 
     def unselect(self):
         if self.selected:
             self.selected = False
-            if self._normal_outline_color is not None:
-                self.kwargs["outline"] = self._normal_outline_color
-                self._normal_outline_color = None
-                self.canvas.itemconfig(self.canvas_id, outline=self.kwargs["outline"])
+            self.update_colors()
 
     def get_coords(self, x: float, y: float, zoom: float) -> List[float]:
         coords = []
@@ -44,7 +55,12 @@ class CanvasShape:
             return
         coords = self.get_coords(x, y, zoom)
         if self.canvas_id == -1:
-            self.canvas_id = self.func(*coords, **self.kwargs)
+            args = dict(self.kwargs)
+            if self.outline:
+                args["outline"] = self.outline
+            if self.fill:
+                args["fill"] = self.fill
+            self.canvas_id = self.func(*coords, **args)
 
     def update(self, canvas: tkinter.Canvas, x: float, y: float, zoom: float):
         if self.canvas_id != -1:

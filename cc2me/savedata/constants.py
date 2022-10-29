@@ -70,23 +70,28 @@ class VehicleType(IntEnum):
 
 class VehicleAttachmentDefinitionIndex(IntEnum):
     AWACS = 41
-    AirCam = 39
+    AirObsCam = 39
     BattleDroids = 100
     Bomb0 = 31
     Bomb1 = 32
     Bomb2 = 33
     CIWS = 24
+    CruiseMissile = 29
+    ShipCIWS = 26
+    ShipCam = 30
     DriverSeat = 38
     Flares = 43
     FuelTank = 42
     Gun100mm = 18
     Gun100mmHeavy = 86
     Gun120mm = 19
+    ShipGun160mm = 20
     Gun15mm = 87
     Gun20mm = 21
     Gun30mm = 17
     Gun40mm = 85
     MissileAA = 36
+    MissileAALauncher = 27
     MissileIR = 34
     MissileIRLauncher = 25
     MissileLaser = 35
@@ -108,6 +113,7 @@ class VehicleAttachmentDefinitionIndex(IntEnum):
     SonicPulse = 82
     Torpedo = 70
     TorpedoCountermesure = 74
+    ShipTorpedo = 75
     VirusBot = 23
 
 
