@@ -76,6 +76,7 @@ class Tile(ElementProxy, MovableLocationMixin):
 
     @island_radius.setter
     def island_radius(self, radius: int):
+        radius = int(radius)
         if radius > 2000:
             if radius > 7000:
                 radius = 7000

@@ -82,12 +82,29 @@ class Island(CC2MapItem):
         return self.tile().biome_type
 
     @property
+    def size(self) -> float:
+        return self.tile().island_radius
+
+    @size.setter
+    def size(self, value):
+        self.tile().island_radius = value
+
+    @property
+    def size_choices(self) -> List[str]:
+        return [
+            "2000",
+            "3500",
+            "6000",
+            "7500",
+        ]
+
+    @property
     def seed(self) -> int:
         return self.tile().seed
 
     @property
     def viewable_properties(self) -> List[str]:
-        return super(Island, self).viewable_properties + ["name", "island_type", "alt", "seed", "biome"]
+        return super(Island, self).viewable_properties + ["name", "island_type", "alt", "seed", "biome", "size"]
 
     @property
     def team_owner(self) -> int:
