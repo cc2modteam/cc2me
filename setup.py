@@ -21,5 +21,5 @@ setup(
     install_requires=requirements,
     packages=find_packages(where="."),
     package_dir={"": "."},
-    package_data={"cc2me": ["*.xsd"]},
+    package_data={"cc2me": ["ui/icons/*.png"]},
 )
