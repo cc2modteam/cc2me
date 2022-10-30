@@ -9,7 +9,7 @@ from .utils import (ElementProxy,
                     WorldPosition,
                     IsSetMixin,
                     e_property, LocationMixin, Location, MovableLocationMixin)
-from ..constants import MAX_INTEGER, MIN_TILE_SEED, MAX_TILE_SEED
+from ..constants import MAX_INTEGER, MIN_TILE_SEED, MAX_TILE_SEED, generate_island_seed
 
 
 class Facility(ElementProxy):
@@ -57,7 +57,7 @@ class Tile(ElementProxy, MovableLocationMixin):
     team_control = e_property(IntAttribute("team_control"), side_effect=on_set_team_control)
 
     def defaults(self):
-        self.seed = random.randint(MIN_TILE_SEED, MAX_TILE_SEED)
+        self.seed = generate_island_seed()
         self.biome_type = random.randint(1, 7)
         self.team_capture_progress = 0.0
         self.difficulty_factor = 0.0

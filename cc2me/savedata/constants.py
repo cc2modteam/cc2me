@@ -1,6 +1,7 @@
+import random
 from abc import ABC
 from enum import Enum
-from typing import cast, Any, List, Optional, Union, Tuple
+from typing import cast, List, Optional, Union
 
 MAX_INTEGER = 4294967295
 
@@ -15,6 +16,10 @@ BIOME_SANDY_PINES = 3
 BIOME_DARK_MESAS = 7
 
 VEHICLE_DEF_CARRIER = 0
+
+
+def generate_island_seed() -> int:
+    return random.randint(MIN_TILE_SEED, MAX_TILE_SEED)
 
 
 class XEnum(Enum):

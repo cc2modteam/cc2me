@@ -4,7 +4,8 @@ from .tiles import Tile
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData
 from .vehicles.vehicle import Vehicle
-from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex
+from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex, \
+    generate_island_seed
 from ..loader import CC2XMLSave
 
 LOC_SCALE_FACTOR = 1000
@@ -102,6 +103,19 @@ class Island(CC2MapItem):
     def seed(self) -> int:
         return self.tile().seed
 
+    @seed.setter
+    def seed(self, value):
+        self.tile().seed = value
+
+    @property
+    def seed_choices(self) -> List[str]:
+        return [
+            str(self.seed),
+            str(generate_island_seed()),
+            str(generate_island_seed()),
+            str(generate_island_seed()),
+        ]
+
     @property
     def viewable_properties(self) -> List[str]:
         return super(Island, self).viewable_properties + ["name", "island_type", "alt", "seed", "biome", "size"]
@@ -157,6 +171,9 @@ class Unit(CC2MapItem):
         if value != "None":
             self.vehicle().team_id = int(value)
             team = self.object.cc2obj.team(self.vehicle().team_id)
+            if team.human_controlled:
+                # add a driver seat for human operation
+                self.vehicle().set_attachment(0, VehicleAttachmentDefinitionIndex.DriverSeat)
 
     @property
     def display_ident(self) -> str:
