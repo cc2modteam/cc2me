@@ -160,7 +160,7 @@ class App(tkinter.Tk):
 
     def select_markers(self, markers):
         self.select_none()
-        for button in ["addisland", "addwalrus",
+        for button in ["addisland", "addwalrus", "addbear",
                        "addseal", "addbarge",
                        "addneedlefish", "addswordfish"]:
             self.toolbar.disable(button)
