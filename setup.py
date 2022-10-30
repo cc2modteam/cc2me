@@ -22,4 +22,9 @@ setup(
     packages=find_packages(where="."),
     package_dir={"": "."},
     package_data={"cc2me": ["ui/icons/*.png"]},
+    entry_points={
+        "gui_scripts": [
+            "cc2me = cc2me.ui.tool:run"
+        ]
+    }
 )
