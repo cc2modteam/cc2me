@@ -60,6 +60,7 @@ class Tile(ElementProxy, MovableLocationMixin):
         self.seed = generate_island_seed()
         self.biome_type = random.randint(1, 7)
         self.team_capture_progress = 0.0
+        self.team_control = 0
         self.difficulty_factor = 0.0
         assert self.bounds
         assert self.facility

@@ -438,6 +438,7 @@ class GroundTurreted(Unit):
     @property
     def turret_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
         return [
+            VehicleAttachmentDefinitionIndex.CIWS,
             VehicleAttachmentDefinitionIndex.Gun30mm,
             VehicleAttachmentDefinitionIndex.Gun40mm,
             VehicleAttachmentDefinitionIndex.Radar,
