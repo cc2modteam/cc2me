@@ -181,7 +181,11 @@ class Unit(CC2MapItem):
 
     @property
     def viewable_properties(self) -> List[str]:
-        return super(Unit, self).viewable_properties + ["vehicle_type", "alt"]
+        return super(Unit, self).viewable_properties + ["vehicle_type", "alt", "hitpoints"]
+
+    @property
+    def hitpoints(self) -> float:
+        return self.vehicle().state.data.hitpoints
 
     def vehicle(self) -> Vehicle:
         return cast(Vehicle, self.object)

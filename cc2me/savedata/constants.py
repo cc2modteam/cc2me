@@ -180,7 +180,14 @@ class InternalFuelCapacity(Capacity):
         super(InternalFuelCapacity, self).__init__(VehicleAttachmentDefinitionIndex.FuelTank, count, *vtype)
 
 
-VEHICLE_CAPACITY = [
+class Hitpoints(Capacity):
+    attribs = ["hitpoints"]
+
+    def __init__(self, count: int, *vtype: VehicleType):
+        super(Hitpoints, self).__init__(VehicleAttachmentDefinitionIndex.DriverSeat, count, *vtype)
+
+
+VEHICLE_DEFAULT_STATE = [
     InternalFuelCapacity(2000, VehicleType.Petrel, VehicleType.Manta, VehicleType.Albatross),
     InternalFuelCapacity(1200, VehicleType.Walrus, VehicleType.Bear, VehicleType.Mule),
     InternalFuelCapacity(800, VehicleType.Seal),
@@ -188,6 +195,14 @@ VEHICLE_CAPACITY = [
     InternalFuelCapacity(1000, VehicleType.Swordfish),
     InternalFuelCapacity(800, VehicleType.Needlefish),
     InternalFuelCapacity(2000, VehicleType.Barge),
+    Hitpoints(40, VehicleType.Razorbill, VehicleType.Albatross),
+    Hitpoints(300, VehicleType.Needlefish),
+    Hitpoints(600, VehicleType.Swordfish),
+    Hitpoints(80, VehicleType.Manta),
+    Hitpoints(160, VehicleType.Petrel),
+    Hitpoints(4000, VehicleType.Barge),
+    Hitpoints(5000, VehicleType.Carrier),
+    Hitpoints(400, VehicleType.Seal, VehicleType.Bear, VehicleType.Walrus, VehicleType.Mule),
 ]
 
 
@@ -247,8 +262,9 @@ def get_attachment_capacity(
     return None
 
 
-def get_fuel_capacity(v_type: VehicleType) -> Optional[InternalFuelCapacity]:
-    for item in VEHICLE_CAPACITY:
+def get_default_state(v_type: VehicleType) -> Optional[Capacity]:
+    values = []
+    for item in VEHICLE_DEFAULT_STATE:
         if v_type in item.vtypes:
-            return item
-    return None
+            values.append(item)
+    return values

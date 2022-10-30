@@ -13,7 +13,7 @@ from .types.vehicles.vehicle import Vehicle
 from .types.vehicles.vehicle_state import VehicleStateContainer
 from ..paths import SCHEMA
 from .logging import logger
-from .constants import POS_Y_SEABOTTOM, BIOME_SANDY_PINES, VehicleType, get_fuel_capacity
+from .constants import POS_Y_SEABOTTOM, BIOME_SANDY_PINES, VehicleType, get_default_state
 
 XML_START = '<?xml version="1.0" encoding="UTF-8"?>'
 META_ROOT = "meta"
@@ -259,12 +259,12 @@ class CC2XMLSave(CC2Save):
         # there is no "fall" damage so stuff just falls into place
         v.set_location(y=20)
 
-        fuel = get_fuel_capacity(v_type)
-        if fuel:
-            # set initial fuel capacity
+        statevalues = get_default_state(v_type)
+        for statevalue in statevalues:
+            # set initial state data
             data = v_state.data
-            for attrib_name in fuel.attribs:
-                setattr(data, attrib_name, fuel.count)
+            for attrib_name in statevalue.attribs:
+                setattr(data, attrib_name, statevalue.count)
             v_state.data = data
 
         vpar = self.vehicles_parent
