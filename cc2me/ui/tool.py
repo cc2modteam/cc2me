@@ -7,13 +7,14 @@ import tkinter.messagebox
 from tkinter import filedialog
 from typing import Optional, List
 
-from cc2me.ui.properties import Properties
+from .properties import Properties
 from ..savedata.constants import get_island_name, VehicleType, VehicleAttachmentDefinitionIndex
 from ..savedata.types.objects import Island, Unit, get_unit
 from ..savedata.types.tiles import Tile
 from ..savedata.loader import CC2XMLSave, load_save_file
 from .cc2memapview import CC2MeMapView
 from .toolbar import Toolbar
+from .saveslotchooser import SlotChooser
 from .mapmarkers import IslandMarker, UnitMarker, CC2DataMarker
 
 
@@ -26,6 +27,8 @@ class App(tkinter.Tk):
 
     WIDTH = 900
     HEIGHT = 750
+    cc2dir = os.path.expandvars(r'%APPDATA%\\Carrier Command 2')
+    persistent = os.path.join(cc2dir, "persistent_data.xml")
 
     def __init__(self, *args, **kwargs):
         tkinter.Tk.__init__(self, *args, **kwargs)
@@ -60,8 +63,10 @@ class App(tkinter.Tk):
 
         self.toolbar = Toolbar(self, relief=tkinter.RAISED)
         self.toolbar.add_button("open", "open", command=self.open_file)
+        self.toolbar.add_button("openslot", "open-slot", command=self.open_slot)
         self.toolbar.add_button("save", "save", command=self.save_file, state=tkinter.DISABLED)
         self.toolbar.add_button("saveas", "saveas", command=self.save_as, state=tkinter.DISABLED)
+        self.toolbar.add_button("saveslot", "save-slot", command=self.save_slot, state=tkinter.DISABLED)
         self.toolbar.add_button("delete", "delete", command=self.remove_item, state=tkinter.DISABLED)
         self.toolbar.add_button("addisland", "add-island", command=self.add_new_island, state=tkinter.DISABLED)
 
@@ -273,10 +278,28 @@ class App(tkinter.Tk):
             self.select_markers([unitmarker])
             self.map_widget.set_mouse_move()
 
+    def open_slot(self):
+        choice = {}
+        SlotChooser(self, persistent_file=self.persistent, choice=choice)
+        if choice:
+            filename = os.path.join(self.cc2dir, "saved_games", choice[1]["filename"], "save.xml")
+            self.read_file(filename)
+
+    def save_slot(self):
+        choice = {}
+        SlotChooser(self, persistent_file=self.persistent, choice=choice, title="Overwrite CC2 Save Slot")
+        if choice:
+            filename = os.path.join(self.cc2dir, "saved_games", choice[1]["filename"], "save.xml")
+            self.save_filename = filename
+            self.save(filename)
+
     def open_file(self):
-        self.clear()
         filename = filedialog.askopenfilename(title="Open CC2 Save",
                                               filetypes=(("XML Files", "*.xml"),))
+        self.read_file(filename)
+
+    def read_file(self, filename):
+        self.clear()
         if filename and os.path.exists(filename):
             self.cc2me = load_save_file(filename)
             self.save_filename = filename
@@ -292,8 +315,8 @@ class App(tkinter.Tk):
                 self.add_unit(veh)
         self.status_line.set(f"Loaded {filename} ({len(self.islands)} islands, {len(self.units)} units)")
 
-        for button in ["save", "saveas", "addisland",
-                       "addwalrus", "addseal", "addbarge",
+        for button in ["save", "saveas", "addisland", "saveslot",
+                       "addwalrus", "addseal", "addbear", "addbarge",
                        "addneedlefish", "addswordfish"]:
             self.toolbar.enable(button)
 
