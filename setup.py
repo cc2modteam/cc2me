@@ -1,9 +1,7 @@
 from setuptools import setup, find_packages
-
 VERSION = "0.0.1"
 
 requirements = [
-    "xmlschema==2.1.1",
     "tkintermapview==1.15",
     "pillow==9.2.0",
 ]
@@ -25,6 +23,9 @@ setup(
     entry_points={
         "gui_scripts": [
             "cc2me = cc2me.ui.tool:run"
+        ],
+        "console_scripts": [
+            "cc2mec = cc2me.ui.tool:run"
         ]
-    }
+    },
 )
