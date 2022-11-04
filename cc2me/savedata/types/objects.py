@@ -169,14 +169,27 @@ class Unit(CC2MapItem):
     def setup_attachments(self):
         pass
 
+    def find_attachment_choices(self, attrib: str) -> List[VehicleAttachmentDefinitionIndex]:
+        if attrib.endswith("_choices"):
+            name = attrib.rsplit("_", 1)[0]
+            for item in self.attachments.values():
+                if name == f"{item.name}{item.position}":
+                    return item.choices
+        return None
+
     def define_attachment_point(self, attachment: UnitAttachment):
         self.attachments[attachment.position] = attachment
 
     def __getattr__(self, name: str):
-        for item in self.attachments.values():
-            item: UnitAttachment
-            if name == f"{item.name}{item.position}":
-                return self.get_attachment(item.position)
+        if name.endswith("_choices"):
+            choices = self.find_attachment_choices(name)
+            if choices is not None:
+                return choices
+        else:
+            for item in self.attachments.values():
+                item: UnitAttachment
+                if name == f"{item.name}{item.position}":
+                    return self.get_attachment(item.position)
 
         raise AttributeError(name)
 
@@ -548,39 +561,19 @@ class Ship(Unit):
 
 class Carrier(Ship):
     def setup_attachments(self):
-        for i in range(12):
+        for i in range(14):
             self.define_attachment_point(UnitAttachment(name="carrier", position=i, choices=None))
 
 
 class Needlefish(Ship):
 
-    @property
-    def deck0(self) -> Optional[VehicleAttachmentDefinitionIndex]:
-        return self.get_attachment(1)
-
-    @deck0.setter
-    def deck0(self, value: VehicleAttachmentDefinitionIndex):
-        self.set_attachment(1, value)
-
-    @property
-    def deck0_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
-        return self.ship_attachments()
-
-    @property
-    def deck1(self) -> Optional[VehicleAttachmentDefinitionIndex]:
-        return self.get_attachment(2)
-
-    @deck1.setter
-    def deck1(self, value: VehicleAttachmentDefinitionIndex):
-        self.set_attachment(2, value)
-
-    @property
-    def deck1_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
-        return self.ship_attachments()
-
-    @property
-    def viewable_properties(self) -> List[str]:
-        return super(Needlefish, self).viewable_properties + ["deck0", "deck1"]
+    def setup_attachments(self):
+        self.define_attachment_point(UnitAttachment(name="deck",
+                                                    position=1,
+                                                    choices=self.ship_attachments()))
+        self.define_attachment_point(UnitAttachment(name="deck",
+                                                    position=2,
+                                                    choices=self.ship_attachments()))
 
 
 class Swordfish(Needlefish):
