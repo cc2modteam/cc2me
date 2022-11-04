@@ -73,10 +73,11 @@ class Properties:
                 # show normal props
 
                 for prop in obj.viewable_properties:
-                    value = obj.__getattribute__(prop)
+                    value = getattr(obj, prop)
+                    # value = obj.__getattribute__(prop)
                     choices = None
                     try:
-                        choices = ["None"] + obj.__getattribute__(f"{prop}_choices")
+                        choices = ["None"] + getattr(obj, f"{prop}_choices")
                     except AttributeError:
                         pass
                     self.add_option_property(prop, value, choices)

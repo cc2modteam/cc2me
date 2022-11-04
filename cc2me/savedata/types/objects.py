@@ -1,5 +1,7 @@
 import abc
-from typing import Tuple, cast, Optional, List, Union
+from typing import Tuple, cast, Optional, List, Union, Dict
+
+from .attachment_attributes import UnitAttachment
 from .tiles import Tile
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData
@@ -161,6 +163,22 @@ class Island(CC2MapItem):
 class Unit(CC2MapItem):
     def __init__(self, unit: Vehicle):
         super(Unit, self).__init__(unit)
+        self.attachments: Dict[int, UnitAttachment] = {}
+        self.setup_attachments()
+
+    def setup_attachments(self):
+        pass
+
+    def define_attachment_point(self, attachment: UnitAttachment):
+        self.attachments[attachment.position] = attachment
+
+    def __getattr__(self, name: str):
+        for item in self.attachments.values():
+            item: UnitAttachment
+            if name == f"{item.name}{item.position}":
+                return self.get_attachment(item.position)
+
+        raise AttributeError(name)
 
     @property
     def team_owner(self) -> int:
@@ -181,7 +199,11 @@ class Unit(CC2MapItem):
 
     @property
     def viewable_properties(self) -> List[str]:
-        return super(Unit, self).viewable_properties + ["vehicle_type", "alt", "hitpoints"]
+        attachment_names = []
+        for item in self.attachments.values():
+            name = f"{item.name}{item.position}"
+            attachment_names.append(name)
+        return super(Unit, self).viewable_properties + ["vehicle_type", "alt", "hitpoints"] + attachment_names
 
     @property
     def hitpoints(self) -> float:
@@ -524,6 +546,12 @@ class Ship(Unit):
         ]
 
 
+class Carrier(Ship):
+    def setup_attachments(self):
+        for i in range(12):
+            self.define_attachment_point(UnitAttachment(name="carrier", position=i, choices=None))
+
+
 class Needlefish(Ship):
 
     @property
@@ -605,5 +633,7 @@ def get_unit(vehicle: Vehicle) -> Unit:
         return Swordfish(vehicle)
     elif vehicle.type == VehicleType.Needlefish:
         return Needlefish(vehicle)
+    elif vehicle.type == VehicleType.Carrier:
+        return Carrier(vehicle)
 
     return Unit(vehicle)
