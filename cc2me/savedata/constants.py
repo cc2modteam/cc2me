@@ -82,6 +82,8 @@ class VehicleAttachmentDefinitionIndex(IntEnum):
     Bomb1 = 32
     Bomb2 = 33
     CIWS = 24
+    Ship28 = 28
+    Ship76 = 76
     CruiseMissile = 29
     ShipCIWS = 26
     ShipCam = 30
