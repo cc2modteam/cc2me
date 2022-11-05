@@ -246,7 +246,7 @@ class App(tkinter.Tk):
     def save_as(self):
         filename = filedialog.asksaveasfilename(title="Save CC2 map as..")
         if filename:
-            self.save(self.filename)
+            self.save(filename)
 
     def clear(self):
         self.map_widget.canvas_marker_list = []

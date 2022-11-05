@@ -247,7 +247,8 @@ class CC2XMLSave(CC2Save):
         v_next = int(self.scene_vehicles.attrib.get("id_counter", str(v_id)))
         if v_next > v_id:
             v_id = v_next
-        self.scene_vehicles.attrib["id_counter"] = str(v_id + 1)
+        v_id += 1
+        self.scene_vehicles.attrib["id_counter"] = str(v_id)
 
         v = Vehicle(element=None, cc2obj=self)
         v.id = v_id

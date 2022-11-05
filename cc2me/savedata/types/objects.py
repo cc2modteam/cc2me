@@ -169,6 +169,12 @@ class Unit(CC2MapItem):
     def setup_attachments(self):
         pass
 
+    def find_attachment(self, name: str) -> Optional[UnitAttachment]:
+        for item in self.attachments.values():
+            if f"{name}" == f"{item.name}{item.position}":
+                return item
+        return None
+
     def find_attachment_choices(self, attrib: str) -> List[VehicleAttachmentDefinitionIndex]:
         if attrib.endswith("_choices"):
             name = attrib.rsplit("_", 1)[0]
@@ -181,17 +187,27 @@ class Unit(CC2MapItem):
         self.attachments[attachment.position] = attachment
 
     def __getattr__(self, name: str):
-        if name.endswith("_choices"):
-            choices = self.find_attachment_choices(name)
-            if choices is not None:
-                return choices
-        else:
-            for item in self.attachments.values():
-                item: UnitAttachment
-                if name == f"{item.name}{item.position}":
-                    return self.get_attachment(item.position)
+        if "attachments" in self.__dict__:
+            if name.endswith("_choices"):
+                choices = self.find_attachment_choices(name)
+                if choices is not None:
+                    return choices
+            else:
+                for item in self.attachments.values():
+                    item: UnitAttachment
+                    if name == f"{item.name}{item.position}":
+                        return self.get_attachment(item.position)
 
         raise AttributeError(name)
+
+    def __setattr__(self, key: str, value):
+        if "attachments" in self.__dict__:
+            attachment = self.find_attachment(key)
+            if attachment is not None:
+                self.set_attachment(attachment.position, value)
+                return
+
+        super(Unit, self).__setattr__(key, value)
 
     @property
     def team_owner(self) -> int:
@@ -422,6 +438,18 @@ class Carrier(Ship):
             self.define_attachment_point(UnitAttachment(name="carrier", position=i, choices=None))
 
 
+class Barge(Ship):
+
+    def setup_attachments(self):
+        self.define_attachment_point(
+            UnitAttachment(name="seat",
+                           position=0,
+                           choices=[
+                               VehicleAttachmentDefinitionIndex.DriverSeat,
+                           ])
+        )
+
+
 class Needlefish(Ship):
 
     def setup_attachments(self):
@@ -466,5 +494,7 @@ def get_unit(vehicle: Vehicle) -> Unit:
         return Needlefish(vehicle)
     elif vehicle.type == VehicleType.Carrier:
         return Carrier(vehicle)
+    elif vehicle.type == VehicleType.Barge:
+        return Barge(vehicle)
 
     return Unit(vehicle)
