@@ -218,7 +218,7 @@ class Unit(CC2MapItem):
         if value != "None":
             self.vehicle().team_id = int(value)
             team = self.object.cc2obj.team(self.vehicle().team_id)
-            if team.human_controlled:
+            if team.human_controlled or not team.is_ai_controlled:
                 # add a driver seat for human operation
                 self.vehicle().set_attachment(0, VehicleAttachmentDefinitionIndex.DriverSeat)
 
@@ -429,6 +429,9 @@ class Ship(Unit):
             VehicleAttachmentDefinitionIndex.ShipTorpedo,
             VehicleAttachmentDefinitionIndex.ShipGun160mm,
             VehicleAttachmentDefinitionIndex.CruiseMissile,
+            VehicleAttachmentDefinitionIndex.Gun100mm,
+            VehicleAttachmentDefinitionIndex.Gun40mm,
+            VehicleAttachmentDefinitionIndex.SmokeTrail
         ]
 
 
