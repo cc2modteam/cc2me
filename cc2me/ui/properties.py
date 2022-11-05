@@ -86,8 +86,10 @@ class Properties:
                 obj: CC2MapItem = self.objects[0]
                 # multiple objects,
                 # allow only change of team
-                self.add_option_property("team_owner", "None",
-                                         obj.team_owner_choices)
+                self.add_option_property("team_owner", selected="None",
+                                         values=obj.team_owner_choices)
+                self.add_option_property("alt", selected="None",
+                                         values=[0, 50, 100, 300, 800])
 
     def clear(self):
         for item in self.option_items:

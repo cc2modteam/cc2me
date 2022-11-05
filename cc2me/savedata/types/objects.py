@@ -7,7 +7,7 @@ from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData
 from .vehicles.vehicle import Vehicle
 from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex, \
-    generate_island_seed
+    generate_island_seed, get_default_hitpoints
 from ..loader import CC2XMLSave
 
 LOC_SCALE_FACTOR = 1000
@@ -238,6 +238,29 @@ class Unit(CC2MapItem):
     def hitpoints(self) -> float:
         return self.vehicle().state.data.hitpoints
 
+    @hitpoints.setter
+    def hitpoints(self, value: Union[float, str]):
+        if isinstance(value, str):
+            if value.isdecimal():
+                value = float(value)
+        if value:
+            data = self.vehicle().state.data
+            data.hitpoints = value
+            self.vehicle().state.data = data
+
+    @property
+    def hitpoints_choices(self) -> List[float]:
+        values = [
+            self.hitpoints,
+        ]
+
+        default_max = get_default_hitpoints(self.vehicle_type)
+        if default_max:
+            values.append(int(default_max / 2))
+            values.append(default_max)
+
+        return values
+
     def vehicle(self) -> Vehicle:
         return cast(Vehicle, self.object)
 
@@ -414,9 +437,18 @@ class Walrus(GroundTurreted):
 
 class Bear(GroundTurreted):
 
+    @property
+    def turret_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
+        return super(Bear, self).turret_choices + [
+            VehicleAttachmentDefinitionIndex.Gun100mm,
+            VehicleAttachmentDefinitionIndex.Gun100mmHeavy,
+            VehicleAttachmentDefinitionIndex.Gun120mm,
+            VehicleAttachmentDefinitionIndex.MissileAALauncher,
+        ]
+
     def setup_attachments(self):
         self.define_attachment_point(UnitAttachment(name="turret", position=2, choices=self.turret_choices))
-        self.define_attachment_point(UnitAttachment(name="aux", position=1, choices=self.aux_choices))
+        self.define_attachment_point(UnitAttachment(name="aux", position=1, choices=self.aux_choices + [VehicleAttachmentDefinitionIndex.Gun40mm]))
         self.define_attachment_point(UnitAttachment(name="aux", position=3, choices=self.aux_choices))
 
 
@@ -428,9 +460,16 @@ class Ship(Unit):
             VehicleAttachmentDefinitionIndex.ShipCIWS,
             VehicleAttachmentDefinitionIndex.ShipTorpedo,
             VehicleAttachmentDefinitionIndex.ShipGun160mm,
+            VehicleAttachmentDefinitionIndex.MissileAALauncher,
             VehicleAttachmentDefinitionIndex.CruiseMissile,
             VehicleAttachmentDefinitionIndex.Gun100mm,
+            VehicleAttachmentDefinitionIndex.Gun100mmHeavy,
             VehicleAttachmentDefinitionIndex.Gun40mm,
+            VehicleAttachmentDefinitionIndex.Gun30mm,
+            VehicleAttachmentDefinitionIndex.RocketPod,
+            VehicleAttachmentDefinitionIndex.Flares,
+            VehicleAttachmentDefinitionIndex.AWACS,
+            VehicleAttachmentDefinitionIndex.MissileIRLauncher,
             VehicleAttachmentDefinitionIndex.SmokeTrail
         ]
 
@@ -449,8 +488,7 @@ class Barge(Ship):
                            position=0,
                            choices=[
                                VehicleAttachmentDefinitionIndex.DriverSeat,
-                           ])
-        )
+                           ]))
 
 
 class Needlefish(Ship):

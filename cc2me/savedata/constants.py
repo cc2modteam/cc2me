@@ -222,7 +222,7 @@ ATTACHMENT_CAPACITY = [
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun30mm, 500,
                        VehicleType.Seal, VehicleType.Walrus),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun40mm, 400,
-                       VehicleType.Seal, VehicleType.Walrus),
+                       VehicleType.Seal, VehicleType.Walrus, VehicleType.Bear),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileIRLauncher, 4,
                        VehicleType.Seal, VehicleType.Walrus),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun100mm, 40,
@@ -231,8 +231,34 @@ ATTACHMENT_CAPACITY = [
                        VehicleType.Bear),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun120mm, 25,
                        VehicleType.Bear),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileAALauncher, 8,
+                       VehicleType.Bear, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Flares, 20,
+                       VehicleType.Bear, VehicleType.Walrus, VehicleType.Seal, VehicleType.Razorbill, VehicleType.Manta),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Flares, 60,
+                       VehicleType.Swordfish, VehicleType.Needlefish),
     FuelTankCapacity(VehicleAttachmentDefinitionIndex.FuelTank, 100,
-                     VehicleType.Albatross, VehicleType.Manta, VehicleType.Razorbill, VehicleType.Petrel)
+                     VehicleType.Albatross, VehicleType.Manta, VehicleType.Razorbill, VehicleType.Petrel),
+
+    # silly warship weapons
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileIRLauncher, 10,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun30mm, 800,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun40mm, 500,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun100mm, 55,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun100mm, 55,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun100mmHeavy, 55,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Flares, 50,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.SmokeTrail, 50,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.RocketPod, 60,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
 ]
 
 for a_type in [VehicleAttachmentDefinitionIndex.MissileIR,
@@ -264,7 +290,15 @@ def get_attachment_capacity(
     return None
 
 
-def get_default_state(v_type: VehicleType) -> Optional[Capacity]:
+def get_default_hitpoints(v_type: VehicleType) -> Optional[float]:
+    states = get_default_state(v_type)
+    for item in states:
+        if isinstance(item, Hitpoints):
+            return item.count
+    return None
+
+
+def get_default_state(v_type: VehicleType) -> List[Capacity]:
     values = []
     for item in VEHICLE_DEFAULT_STATE:
         if v_type in item.vtypes:

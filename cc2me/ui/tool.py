@@ -140,7 +140,7 @@ class App(tkinter.Tk):
         self.properties.clear()
 
         self.toolbar.disable("delete")
-        for button in ["addisland", "addwalrus",
+        for button in ["addisland", "addwalrus", "addbear",
                        "addseal", "addbarge",
                        "addneedlefish", "addswordfish"]:
             self.toolbar.enable(button)
