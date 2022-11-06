@@ -1,15 +1,15 @@
 import random
-from typing import Optional, cast
+from typing import Optional, cast, Tuple
 
+from .spawndata import SpawnData
 from .teams import Team
 from .utils import (ElementProxy,
                     IntAttribute,
                     FloatAttribute,
                     Bounds,
                     WorldPosition,
-                    IsSetMixin,
-                    e_property, LocationMixin, Location, MovableLocationMixin)
-from ..constants import MAX_INTEGER, MIN_TILE_SEED, MAX_TILE_SEED, generate_island_seed
+                    e_property, Location, MovableLocationMixin)
+from ..constants import MAX_INTEGER, generate_island_seed
 
 
 class Facility(ElementProxy):
@@ -23,14 +23,6 @@ class Facility(ElementProxy):
     def defaults(self):
         self.category = random.randint(1, 7)
         self.fitting = 60
-
-
-class SpawnData(ElementProxy, IsSetMixin):
-    tag = "spawn_data"
-    team_id = e_property(IntAttribute("team_id", default_value=0))
-
-    def defaults(self):
-        self.is_set = False
 
 
 class Tile(ElementProxy, MovableLocationMixin):
@@ -102,15 +94,28 @@ class Tile(ElementProxy, MovableLocationMixin):
                      x: Optional[float] = None,
                      y: Optional[float] = None,
                      z: Optional[float] = None):
+        dx = 0.0
         if x is not None:
+            dx = x - self.world_position.x
             self.world_position.x = x
+        dy = 0.0
         if y is not None:
+            dy = y - self.world_position.y
             self.world_position.y = y
+        dz = 0.0
         if z is not None:
+            dz = z - self.world_position.z
             self.world_position.z = z
+
+        # update the spawn locations
+        for item in self.spawn_data.vehicles.items():
+            item.data.world_position.x += dx
+            item.data.world_position.y += dy
+            item.data.world_position.z += dz
 
     def move(self, x: float, y: float, z: float) -> None:
         self.set_position(x=x, y=y, z=z)
+
 
     @property
     def loc(self) -> Location:

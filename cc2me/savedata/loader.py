@@ -7,6 +7,7 @@ from xml.etree import ElementTree
 from io import StringIO
 
 from .types.abstract import CC2Save
+from .types.spawndata import SpawnData
 from .types.teams import Team
 from .types.tiles import Tile
 from .types.vehicles.vehicle import Vehicle
@@ -274,6 +275,15 @@ class CC2XMLSave(CC2Save):
         vspar.append(v_state.element)
 
         return v
+
+    @property
+    def next_respawn_id(self) -> int:
+        next_id = 0
+        for tile in self.tiles:
+            for item in tile.spawn_data.vehicles.items():
+                if item.data.respawn_id > next_id:
+                    next_id = item.data.respawn_id
+        return next_id + 1
 
     @property
     def last_tile_id(self) -> int:

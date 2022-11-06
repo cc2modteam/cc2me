@@ -95,6 +95,8 @@ class Island(CC2MapItem):
     @property
     def size_choices(self) -> List[str]:
         return [
+            "500",
+            "1000",
             "2000",
             "3500",
             "6000",
@@ -130,6 +132,7 @@ class Island(CC2MapItem):
     def team_owner(self, value):
         if value != "None":
             self.tile().team_control = int(value)
+            self.tile().spawn_data.team_id = int(value)
 
     @property
     def name(self):
