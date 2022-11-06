@@ -10,7 +10,7 @@ class Attachment(ElementProxy):
     definition_index = e_property(IntAttribute("definition_index"))
 
     @property
-    def bodies(self) -> Bodies:
+    def bodies(self) -> Optional[Bodies]:
         return cast(Bodies, self.get_default_child_by_tag(Bodies))
 
 

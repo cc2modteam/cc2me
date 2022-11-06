@@ -1,5 +1,5 @@
 import abc
-from typing import Tuple, cast, Optional, List, Union, Dict
+from typing import Tuple, cast, Optional, List, Union, Dict, Iterable
 
 from .attachment_attributes import UnitAttachment
 from .spawndata import VehicleSpawn
@@ -231,12 +231,17 @@ class Unit(CC2MapItem):
         return f"{self.vehicle().type.name} ({self.vehicle().id}"
 
     @property
-    def viewable_properties(self) -> List[str]:
+    def dynamic_attachment_names(self) -> List[str]:
         attachment_names = []
         for item in self.attachments.values():
             name = f"{item.name}{item.position}"
             attachment_names.append(name)
-        return super(Unit, self).viewable_properties + ["vehicle_type", "alt", "hitpoints"] + attachment_names
+        return attachment_names
+
+    @property
+    def viewable_properties(self) -> List[str]:
+        attachment_names = self.dynamic_attachment_names
+        return super(Unit, self).viewable_properties + ["vehicle_type", "alt", "hitpoints"] + list(attachment_names)
 
     @property
     def hitpoints(self) -> float:
@@ -524,6 +529,26 @@ class Spawn(Unit):
         super(Spawn, self).__init__(vspawn)
         self.tile = island
 
+    def __str__(self):
+        return f"{self.display_ident}"
+
+    def setup_attachments(self):
+        data_attachments = self.spawn().data.attachments.items()
+        for item in data_attachments:
+            self.define_attachment_point(UnitAttachment(name="",
+                                                        position=len(self.attachments),
+                                                        choices=[VehicleAttachmentDefinitionIndex.lookup(
+                                                            item.definition_index)]))
+
+    def get_attachment(self, attachment_index: int) -> Optional[VehicleAttachmentDefinitionIndex]:
+        items = self.spawn().data.attachments.items()
+        if len(items) > attachment_index:
+            return VehicleAttachmentDefinitionIndex.lookup(items[attachment_index].definition_index)
+        return None
+
+    def get_attachment_state(self, attachment_index: int) -> Optional[EmbeddedAttachmentStateData]:
+        return None
+
     def vehicle(self) -> Optional[Vehicle]:
         return None
 
@@ -533,7 +558,7 @@ class Spawn(Unit):
 
     @property
     def viewable_properties(self) -> List[str]:
-        return ["vehicle_type", "team_owner", "loc", "alt"]
+        return ["vehicle_type", "team_owner", "loc", "alt"] + list(self.dynamic_attachment_names)
 
     @property
     def alt(self) -> float:

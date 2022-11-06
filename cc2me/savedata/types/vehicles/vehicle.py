@@ -96,10 +96,11 @@ class Vehicle(ElementProxy, MovableLocationMixin):
         self.transform.tz += dz
 
         for att in self.attachments.items():
-            for body in att.bodies.items():
-                body.transform.tx += dx
-                body.transform.ty += dy
-                body.transform.tz += dz
+            if att.bodies:
+                for body in att.bodies.items():
+                    body.transform.tx += dx
+                    body.transform.ty += dy
+                    body.transform.tz += dz
 
         for body in self.bodies.items():
             body.transform.tx += dx

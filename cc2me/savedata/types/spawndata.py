@@ -1,7 +1,45 @@
-from typing import cast, Iterable
+from typing import cast, Iterable, Optional, List
 
 from .utils import ElementProxy, IsSetMixin, e_property, IntAttribute, FloatAttribute, WorldPosition, \
-    MovableLocationMixin, Location
+    MovableLocationMixin, Location, Bodies
+from .vehicles.attachments import Attachment
+
+
+class VehicleSpawnAttachment(Attachment):
+    ammo = id = e_property(IntAttribute("ammo"))
+
+    @property
+    def attachment_index(self) -> int:
+        return -1
+
+    @attachment_index.setter
+    def attachment_index(self, value):
+        pass
+
+    def bodies(self) -> Optional[Bodies]:
+        return None
+
+
+class VehicleSpawnAttachments(ElementProxy):
+    tag = "attachments"
+
+    def items(self) -> List[VehicleSpawnAttachment]:
+        return [VehicleSpawnAttachment(x) for x in self.children()]
+
+    def __getitem__(self, item_index: int) -> Optional[VehicleSpawnAttachment]:
+        for item in self.items():
+            if item.attachment_index == item_index:
+                return item
+        return None
+
+    def __delitem__(self, key):
+        for child in self.element:
+            if child.attrib.get("attachment_index", "-1") == str(key.attachment_index):
+                self.element.remove(child)
+
+    def replace(self, attachment: VehicleSpawnAttachment):
+        del self[attachment]
+        self.element.append(attachment.element)
 
 
 class VehicleSpawnData(ElementProxy):
@@ -11,6 +49,10 @@ class VehicleSpawnData(ElementProxy):
     definition_index = e_property(IntAttribute("definition_index", default_value=0))
     hitpoints = e_property(IntAttribute("hitpoints", default_value=0))
     orientation = e_property(FloatAttribute("orientation", default_value=0))
+
+    @property
+    def attachments(self) -> VehicleSpawnAttachments:
+        return cast(VehicleSpawnAttachments, self.get_default_child_by_tag(VehicleSpawnAttachments))
 
     @property
     def world_position(self) -> WorldPosition:
