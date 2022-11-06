@@ -339,7 +339,7 @@ class App(tkinter.Tk):
             try:
                 self.cc2me.vehicle(vid)
             except KeyError:
-                self.add_spawn(Spawn(spawn))
+                self.add_spawn(Spawn(spawn, island_tile))
 
         self.islands.append(marker)
         return marker

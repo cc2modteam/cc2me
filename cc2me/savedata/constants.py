@@ -54,6 +54,13 @@ class IntEnum(XEnum):
         return f"Unknown {num}"
 
 
+class SpawnType(IntEnum):
+    Ground = 0
+    Airfield = 1
+    NeedlefishNavalPatrol = 2
+    SwordfishNavalPatrol = 3
+
+
 class VehicleType(IntEnum):
     Albatross = 8
     Barge = 16

@@ -520,6 +520,10 @@ class Swordfish(Needlefish):
 
 class Spawn(Unit):
 
+    def __init__(self, vspawn: VehicleSpawn, island: Tile):
+        super(Spawn, self).__init__(vspawn)
+        self.tile = island
+
     def vehicle(self) -> Optional[Vehicle]:
         return None
 
@@ -529,7 +533,17 @@ class Spawn(Unit):
 
     @property
     def viewable_properties(self) -> List[str]:
-        return ["vehicle_type", "team_owner", "loc"]
+        return ["vehicle_type", "team_owner", "loc", "alt"]
+
+    @property
+    def alt(self) -> float:
+        return self.spawn().data.world_position.y
+
+    @alt.setter
+    def alt(self, value: float):
+        data = self.spawn().data
+        data.world_position.y = value
+        self.spawn().data = data
 
     @property
     def display_ident(self) -> str:
@@ -537,7 +551,7 @@ class Spawn(Unit):
 
     @property
     def team_owner(self) -> int:
-        return 0
+        return self.tile.team_control
 
     def spawn(self) -> VehicleSpawn:
         return VehicleSpawn(self.object.element)
