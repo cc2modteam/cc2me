@@ -9,7 +9,7 @@ from .cc2constants import get_team_color
 from .image_loader import load_icon
 from .mapshapes import CanvasShape
 from ..savedata.constants import VehicleType, IslandTypes
-from ..savedata.types.objects import CC2MapItem, Island, Unit
+from ..savedata.types.objects import CC2MapItem, Island, Unit, Spawn
 from ..savedata.types.utils import MovableLocationMixin
 
 
@@ -174,7 +174,10 @@ class CC2DataMarker(ShapeMarker):
                 if shape.outline != "#000000":
                     shape.outline = self.color
             if shape.fill:
-                shape.fill = self.color
+                if isinstance(self.object, Spawn):
+                    pass
+                else:
+                    shape.fill = self.color
 
 
 class IslandMarker(CC2DataMarker):
@@ -272,20 +275,26 @@ class UnitMarker(CC2DataMarker):
     @property
     def size(self) -> float:
         v = self.unit.vehicle()
-        if v.definition_index == VehicleType.Carrier.int:  # carrier
-            return 1.5
+        if v is not None:
+            if v.definition_index == VehicleType.Carrier.int:  # carrier
+                return 1.5
 
         return 0.5
 
     def __init__(self, map_widget: TkinterMapView, cc2obj: Unit, on_click: Optional[callable] = None):
         super(UnitMarker, self).__init__(map_widget, cc2obj)
+        # fill the middle for spawns
+        fill = ""
+        if isinstance(cc2obj, Spawn):
+            fill = "white"
+
         back = CanvasShape(map_widget.canvas,
                            map_widget.canvas.create_polygon,
                            -1 * self.size, 0,
                            0, -1 * self.size,
                            self.size, 0,
                            0, self.size,
-                           fill="",
+                           fill=fill,
                            width=3,
                            outline="#000000",
                            tag="unit",

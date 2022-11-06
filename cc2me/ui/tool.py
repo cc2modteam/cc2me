@@ -9,7 +9,7 @@ from typing import Optional, List
 
 from .properties import Properties
 from ..savedata.constants import get_island_name, VehicleType, VehicleAttachmentDefinitionIndex
-from ..savedata.types.objects import Island, Unit, get_unit
+from ..savedata.types.objects import Island, Unit, get_unit, Spawn
 from ..savedata.types.tiles import Tile
 from ..savedata.loader import CC2XMLSave, load_save_file
 from .cc2memapview import CC2MeMapView
@@ -52,6 +52,7 @@ class App(tkinter.Tk):
 
         self.islands: List[IslandMarker] = []
         self.units: List[UnitMarker] = []
+        self.spawns: List[UnitMarker] = []
 
         self.title(APP_NAME)
         self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
@@ -123,7 +124,7 @@ class App(tkinter.Tk):
         found: List[CC2DataMarker] = []
         for item in self.islands:
             found.append(item)
-        for item in self.units:
+        for item in self.units + self.spawns:
             found.append(item)
         return found
 
@@ -132,10 +133,11 @@ class App(tkinter.Tk):
 
     def select_none(self):
         self.map_widget.set_mouse_arrow()
-        for item in self.units:
+        for item in self.units + self.spawns:
             item.unselect()
         for item in self.islands:
             item.unselect()
+
         self.map_widget.selected_markers.clear()
         self.properties.clear()
 
@@ -152,7 +154,7 @@ class App(tkinter.Tk):
         selected = []
         self.select_none()
         if mode == "units":
-            for u in self.units:
+            for u in self.units + self.spawns:
                 if se[0] < u.position[0] < nw[0]:
                     if se[1] > u.position[1] > nw[1]:
                         selected.append(u)
@@ -252,11 +254,12 @@ class App(tkinter.Tk):
         self.map_widget.canvas_marker_list = []
         self.map_widget.selected_markers.clear()
 
-        for markers in [self.islands, self.units]:
+        for markers in [self.islands, self.units, self.spawns]:
             for item in markers:
                 item.delete()
         self.islands.clear()
         self.units.clear()
+        self.spawns.clear()
 
         self.cc2me = None
         self.map_widget.set_zoom(1, 0.0, 0.0)
@@ -329,17 +332,35 @@ class App(tkinter.Tk):
         marker.on_hover_end = self.end_hover
         marker.text = island.display_ident
         self.map_widget.add_marker(marker)
+
+        # if the island has spawns add those if the unit doesn't exist yet
+        for spawn in island.tile().spawn_data.vehicles.items():
+            vid = spawn.data.respawn_id
+            try:
+                self.cc2me.vehicle(vid)
+            except KeyError:
+                self.add_spawn(Spawn(spawn))
+
         self.islands.append(marker)
         return marker
 
-    def add_unit(self, vehicle) -> UnitMarker:
-        u = get_unit(vehicle)
-        print(str(u))
-        marker = UnitMarker(self.map_widget, u)
+    def _add_unit_marker(self, unit):
+        print(str(unit))
+        marker = UnitMarker(self.map_widget, unit)
         marker.command = self.unit_clicked
         marker.on_hover_end = self.end_hover
         marker.on_hover_start = self.hover_unit
         self.map_widget.add_marker(marker)
+        return marker
+
+    def add_spawn(self, spawn) -> UnitMarker:
+        marker = self._add_unit_marker(spawn)
+        self.spawns.append(marker)
+        return marker
+
+    def add_unit(self, vehicle) -> UnitMarker:
+        u = get_unit(vehicle)
+        marker = self._add_unit_marker(u)
         self.units.append(marker)
         return marker
 
@@ -352,10 +373,15 @@ class App(tkinter.Tk):
 
     def hover_unit(self, marker: UnitMarker):
         self.hover_marker(marker)
-        definition = marker.unit.vehicle().definition_index
-        text = f"{VehicleType.get_name(definition)} {marker.unit.vehicle().id} "
-        for item in marker.unit.vehicle().attachments.items():
-            text += f"[{item.attachment_index}]:{VehicleAttachmentDefinitionIndex.get_name(item.definition_index)} "
+        vtype = marker.unit.vehicle_type
+        text = f"{vtype.name} "
+        if isinstance(marker.unit, Spawn):
+            text = f"spawn {text}"
+        else:
+            text += f"{marker.unit.vehicle().id} "
+            for item in marker.unit.vehicle().attachments.items():
+                text += f"[{item.attachment_index}]:{VehicleAttachmentDefinitionIndex.get_name(item.definition_index)} "
+
         self.status_line.set(text)
 
     def hover_island(self, marker: IslandMarker):

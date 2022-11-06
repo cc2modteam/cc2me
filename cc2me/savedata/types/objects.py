@@ -2,6 +2,7 @@ import abc
 from typing import Tuple, cast, Optional, List, Union, Dict
 
 from .attachment_attributes import UnitAttachment
+from .spawndata import VehicleSpawn
 from .tiles import Tile
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData
@@ -164,7 +165,7 @@ class Island(CC2MapItem):
 
 
 class Unit(CC2MapItem):
-    def __init__(self, unit: Vehicle):
+    def __init__(self, unit: Union[Vehicle, VehicleSpawn]):
         super(Unit, self).__init__(unit)
         self.attachments: Dict[int, UnitAttachment] = {}
         self.setup_attachments()
@@ -515,6 +516,31 @@ class Swordfish(Needlefish):
         self.define_attachment_point(UnitAttachment(name="deck",
                                                     position=4,
                                                     choices=self.ship_attachments()))
+
+
+class Spawn(Unit):
+
+    def vehicle(self) -> Optional[Vehicle]:
+        return None
+
+    @property
+    def vehicle_type(self) -> VehicleType:
+        return VehicleType(self.spawn().data.definition_index)
+
+    @property
+    def viewable_properties(self) -> List[str]:
+        return ["vehicle_type", "team_owner", "loc"]
+
+    @property
+    def display_ident(self) -> str:
+        return f"spawn {VehicleType.lookup(self.spawn().data.definition_index)} {self.spawn().data.respawn_id}"
+
+    @property
+    def team_owner(self) -> int:
+        return 0
+
+    def spawn(self) -> VehicleSpawn:
+        return VehicleSpawn(self.object.element)
 
 
 def get_unit(vehicle: Vehicle) -> Unit:

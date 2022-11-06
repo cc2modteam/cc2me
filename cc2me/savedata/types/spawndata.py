@@ -1,6 +1,7 @@
 from typing import cast, Iterable
 
-from .utils import ElementProxy, IsSetMixin, e_property, IntAttribute, FloatAttribute, WorldPosition
+from .utils import ElementProxy, IsSetMixin, e_property, IntAttribute, FloatAttribute, WorldPosition, \
+    MovableLocationMixin, Location
 
 
 class VehicleSpawnData(ElementProxy):
@@ -16,7 +17,17 @@ class VehicleSpawnData(ElementProxy):
         return cast(WorldPosition, self.get_default_child_by_tag(WorldPosition))
 
 
-class VehicleSpawn(ElementProxy):
+class VehicleSpawn(ElementProxy, MovableLocationMixin):
+    def move(self, x: float, y: float, z: float) -> None:
+        self.data.world_position.x = x
+        self.data.world_position.y = y
+        self.data.world_position.z = z
+
+    @property
+    def loc(self) -> Location:
+        pos = self.data.world_position
+        return Location(pos.x, pos.y, pos.z)
+
     tag = "v"
     spawn_type = e_property(IntAttribute("spawn_type", default_value=0))
 
