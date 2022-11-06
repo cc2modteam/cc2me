@@ -236,7 +236,7 @@ class Transform(ElementProxy):
     m21 = e_property(FloatAttribute("m21"))
     m22 = e_property(FloatAttribute("m22"))
 
-    # location transform / position
+    # location transform / slot
     tx = e_property(FloatAttribute("tx"))
     ty = e_property(FloatAttribute("ty"))
     tz = e_property(FloatAttribute("tz"))

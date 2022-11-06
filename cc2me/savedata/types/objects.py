@@ -9,6 +9,7 @@ from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData
 from .vehicles.vehicle import Vehicle
 from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex, \
     generate_island_seed, get_default_hitpoints
+from ..rules import get_unit_attachment_choices, get_unit_attachment_slots
 from ..loader import CC2XMLSave
 
 LOC_SCALE_FACTOR = 1000
@@ -171,7 +172,12 @@ class Unit(CC2MapItem):
         self.setup_attachments()
 
     def setup_attachments(self):
-        pass
+        slots = get_unit_attachment_slots(self.vehicle_type)
+        for slot in slots:
+            self.define_attachment_point(
+                UnitAttachment(name="attach", position=slot,
+                               choices=get_unit_attachment_choices(self.vehicle_type, slot))
+            )
 
     def find_attachment(self, name: str) -> Optional[UnitAttachment]:
         for item in self.attachments.values():
@@ -179,7 +185,7 @@ class Unit(CC2MapItem):
                 return item
         return None
 
-    def find_attachment_choices(self, attrib: str) -> List[VehicleAttachmentDefinitionIndex]:
+    def find_attachment_choices(self, attrib: str) -> Optional[List[VehicleAttachmentDefinitionIndex]]:
         if attrib.endswith("_choices"):
             name = attrib.rsplit("_", 1)[0]
             for item in self.attachments.values():
@@ -328,58 +334,19 @@ class Unit(CC2MapItem):
 
 
 class AirUnit(Unit):
-
-    def setup_attachments(self):
-        self.define_attachment_point(UnitAttachment(name="wing", position=1, choices=self.wing_choices))
-        self.define_attachment_point(UnitAttachment(name="wing", position=2, choices=self.wing_choices))
-
-    @property
-    def wing_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
-        return [
-            VehicleAttachmentDefinitionIndex.Gun20mm,
-            VehicleAttachmentDefinitionIndex.MissileIR,
-            VehicleAttachmentDefinitionIndex.MissileAA,
-            VehicleAttachmentDefinitionIndex.MissileTV,
-            VehicleAttachmentDefinitionIndex.MissileLaser,
-            VehicleAttachmentDefinitionIndex.Torpedo,
-            VehicleAttachmentDefinitionIndex.TorpedoCountermesure,
-            VehicleAttachmentDefinitionIndex.Noisemaker,
-            VehicleAttachmentDefinitionIndex.Bomb0,
-            VehicleAttachmentDefinitionIndex.Bomb1,
-            VehicleAttachmentDefinitionIndex.Bomb2,
-            VehicleAttachmentDefinitionIndex.FuelTank
-        ]
+    pass
 
 
 class AirUnitAux(AirUnit):
-    @property
-    def aux_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
-        return [
-            VehicleAttachmentDefinitionIndex.Flares,
-            VehicleAttachmentDefinitionIndex.SmokeBomb,
-            VehicleAttachmentDefinitionIndex.SmokeTrail,
-            VehicleAttachmentDefinitionIndex.SonicPulse
-        ]
+    pass
 
 
 class Razorbill(AirUnitAux):
-
-    def setup_attachments(self):
-        super(Razorbill, self).setup_attachments()
-        self.define_attachment_point(UnitAttachment(name="aux", position=3, choices=self.aux_choices))
-        self.define_attachment_point(UnitAttachment(name="aux", position=4, choices=self.aux_choices))
+    pass
 
 
 class Albatross(AirUnit):
-
-    def setup_attachments(self):
-        self.define_attachment_point(UnitAttachment(name="turret", position=1, choices=[
-                                                        VehicleAttachmentDefinitionIndex.AirObsCam
-                                                    ]))
-        self.define_attachment_point(UnitAttachment(name="wing", position=2, choices=self.wing_choices))
-        self.define_attachment_point(UnitAttachment(name="wing", position=3, choices=self.wing_choices))
-        self.define_attachment_point(UnitAttachment(name="wing", position=4, choices=self.wing_choices))
-        self.define_attachment_point(UnitAttachment(name="wing", position=5, choices=self.wing_choices))
+    pass
 
 
 class Petrel(Albatross):
@@ -387,54 +354,11 @@ class Petrel(Albatross):
 
 
 class Manta(Albatross, AirUnitAux):
-
-    @property
-    def payload_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
-        return [
-            VehicleAttachmentDefinitionIndex.AirObsCam
-        ]
-
-    def setup_attachments(self):
-        super(Manta, self).setup_attachments()
-        self.define_attachment_point(
-            UnitAttachment(name="bay", position=6, choices=self.payload_choices)
-        )
-        self.define_attachment_point(
-            UnitAttachment(name="aux", position=7, choices=self.aux_choices)
-        )
-        self.define_attachment_point(
-            UnitAttachment(name="aux", position=8, choices=self.aux_choices)
-        )
+    pass
 
 
 class GroundTurreted(Unit):
-
-    def setup_attachments(self):
-        self.define_attachment_point(UnitAttachment(name="turret", position=1, choices=self.turret_choices))
-        self.define_attachment_point(UnitAttachment(name="aux", position=2, choices=self.aux_choices))
-        self.define_attachment_point(UnitAttachment(name="aux", position=3, choices=self.aux_choices))
-
-    @property
-    def turret_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
-        return [
-            VehicleAttachmentDefinitionIndex.CIWS,
-            VehicleAttachmentDefinitionIndex.Gun30mm,
-            VehicleAttachmentDefinitionIndex.Gun40mm,
-            VehicleAttachmentDefinitionIndex.Radar,
-            VehicleAttachmentDefinitionIndex.ObsCam,
-            VehicleAttachmentDefinitionIndex.MissileIRLauncher,
-        ]
-
-    @property
-    def aux_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
-        return [
-            VehicleAttachmentDefinitionIndex.SmallCam,
-            VehicleAttachmentDefinitionIndex.SmokeBomb,
-            VehicleAttachmentDefinitionIndex.SonicPulse,
-            VehicleAttachmentDefinitionIndex.SmokeTrail,
-            VehicleAttachmentDefinitionIndex.Flares,
-        ]
-
+    pass
 
 class Seal(GroundTurreted):
     pass
@@ -445,42 +369,11 @@ class Walrus(GroundTurreted):
 
 
 class Bear(GroundTurreted):
-
-    @property
-    def turret_choices(self) -> List[VehicleAttachmentDefinitionIndex]:
-        return super(Bear, self).turret_choices + [
-            VehicleAttachmentDefinitionIndex.Gun100mm,
-            VehicleAttachmentDefinitionIndex.Gun100mmHeavy,
-            VehicleAttachmentDefinitionIndex.Gun120mm,
-            VehicleAttachmentDefinitionIndex.MissileAALauncher,
-        ]
-
-    def setup_attachments(self):
-        self.define_attachment_point(UnitAttachment(name="turret", position=2, choices=self.turret_choices))
-        self.define_attachment_point(UnitAttachment(name="aux", position=1, choices=self.aux_choices + [VehicleAttachmentDefinitionIndex.Gun40mm]))
-        self.define_attachment_point(UnitAttachment(name="aux", position=3, choices=self.aux_choices))
+    pass
 
 
 class Ship(Unit):
-    @staticmethod
-    def ship_attachments() -> List[VehicleAttachmentDefinitionIndex]:
-        return [
-            VehicleAttachmentDefinitionIndex.ShipCam,
-            VehicleAttachmentDefinitionIndex.ShipCIWS,
-            VehicleAttachmentDefinitionIndex.ShipTorpedo,
-            VehicleAttachmentDefinitionIndex.ShipGun160mm,
-            VehicleAttachmentDefinitionIndex.MissileAALauncher,
-            VehicleAttachmentDefinitionIndex.CruiseMissile,
-            VehicleAttachmentDefinitionIndex.Gun100mm,
-            VehicleAttachmentDefinitionIndex.Gun100mmHeavy,
-            VehicleAttachmentDefinitionIndex.Gun40mm,
-            VehicleAttachmentDefinitionIndex.Gun30mm,
-            VehicleAttachmentDefinitionIndex.RocketPod,
-            VehicleAttachmentDefinitionIndex.Flares,
-            VehicleAttachmentDefinitionIndex.AWACS,
-            VehicleAttachmentDefinitionIndex.MissileIRLauncher,
-            VehicleAttachmentDefinitionIndex.SmokeTrail
-        ]
+    pass
 
 
 class Carrier(Ship):
@@ -501,26 +394,11 @@ class Barge(Ship):
 
 
 class Needlefish(Ship):
-
-    def setup_attachments(self):
-        self.define_attachment_point(UnitAttachment(name="deck",
-                                                    position=1,
-                                                    choices=self.ship_attachments()))
-        self.define_attachment_point(UnitAttachment(name="deck",
-                                                    position=2,
-                                                    choices=self.ship_attachments()))
+    pass
 
 
 class Swordfish(Needlefish):
-
-    def setup_attachments(self):
-        super(Swordfish, self).setup_attachments()
-        self.define_attachment_point(UnitAttachment(name="deck",
-                                                    position=3,
-                                                    choices=self.ship_attachments()))
-        self.define_attachment_point(UnitAttachment(name="deck",
-                                                    position=4,
-                                                    choices=self.ship_attachments()))
+    pass
 
 
 class Spawn(Unit):
@@ -532,7 +410,7 @@ class Spawn(Unit):
     def __str__(self):
         return f"{self.display_ident}"
 
-    def setup_attachments(self):
+    def xsetup_attachments(self):
         data_attachments = self.spawn().data.attachments.items()
         for item in data_attachments:
             self.define_attachment_point(UnitAttachment(name="",

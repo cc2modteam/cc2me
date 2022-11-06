@@ -1,7 +1,7 @@
 import tkinter
 from typing import Optional, Any, List
 from tkinter import ttk
-from ..savedata.types.objects import CC2MapItem
+from ..savedata.types.objects import CC2MapItem, Unit
 from .mapmarkers import CC2DataMarker
 
 
