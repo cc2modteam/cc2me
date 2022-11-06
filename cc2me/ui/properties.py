@@ -1,7 +1,7 @@
 import tkinter
 from typing import Optional, Any, List
 from tkinter import ttk
-from ..savedata.types.objects import CC2MapItem, Unit
+from ..savedata.types.objects import CC2MapItem
 from .mapmarkers import CC2DataMarker
 
 
@@ -43,8 +43,9 @@ class PropertyItem:
 
 class Properties:
     def __init__(self, parent):
+        self.width = 400
         self.parent = parent
-        self.frame = tkinter.Frame(self.parent, relief=tkinter.SUNKEN)
+        self.frame = tkinter.Frame(self.parent, relief=tkinter.SUNKEN, width=self.width)
         self.title = tkinter.Variable(self.frame, value="Current object:")
         self.title_label = tkinter.Label(self.frame,
                                          anchor=tkinter.NW,
@@ -52,8 +53,9 @@ class Properties:
                                          width=40,
                                          height=1,
                                          bg="#cdcdcd")
-        self.title_label.pack(side=tkinter.TOP, expand=True, fill=tkinter.Y)
-        self.items = tkinter.Frame(self.frame)
+        self.title_label.pack(side=tkinter.TOP, expand=False, fill=tkinter.X)
+        self.rows = tkinter.Frame(self.frame)
+        self.row_frames = []
         self.option_items = []
         self._objects = None
         self.map_widget = None
@@ -100,24 +102,37 @@ class Properties:
                 item.value_widget.pack_forget()
                 item.value_widget.destroy()
             item.textvalue = None
+
         self.option_items.clear()
-        self.items.pack_forget()
+        for row in self.row_frames:
+            row.pack_forget()
+            row.destroy()
+        self.row_frames.clear()
+        self.rows.pack_forget()
         self.title.set("")
 
     def add_option_property(self, text: str, selected=None, values: Optional[list] = None):
+        row = tkinter.Frame(self.rows, width=self.width)
+
         opt = PropertyItem(self, text, selected, values)
-        opt.label = tkinter.Label(self.items, text=text, anchor=tkinter.W, width=40, justify=tkinter.LEFT)
+        opt.label = tkinter.Label(row,
+                                  text=text, anchor=tkinter.W, width=20, justify=tkinter.LEFT)
         if opt.choices is not None:
-            opt.textvalue = tkinter.StringVar(self.items)
+            opt.textvalue = tkinter.StringVar(self.rows)
             opt.textvalue.set(selected)
-            opt.value_widget = ttk.Combobox(self.items, textvariable=opt.textvalue)
+            opt.value_widget = ttk.Combobox(row, textvariable=opt.textvalue,
+                                            width=int(self.width * 0.7))
             opt.value_widget.bind("<<ComboboxSelected>>", opt.on_modified)
             opt.value_widget["values"] = opt.choices
         else:
-            opt.value_widget = tkinter.Label(self.items, text=str(selected), anchor=tkinter.W)
+            opt.value_widget = tkinter.Label(row, text=str(selected), anchor=tkinter.W,
+                                             width=int(self.width * 0.7))
 
-        opt.label.pack(side=tkinter.TOP, expand=True, fill=tkinter.Y)
-        opt.value_widget.pack(side=tkinter.TOP, expand=True, fill=tkinter.Y)
+        opt.label.pack(side=tkinter.LEFT, expand=False, fill=tkinter.NONE)
+        opt.value_widget.pack(side=tkinter.RIGHT, expand=False, fill=tkinter.NONE)
+
         self.option_items.append(opt)
-        self.items.pack()
+        self.row_frames.append(row)
+        row.pack(side=tkinter.TOP, fill=tkinter.NONE, expand=False)
+        self.rows.pack(fill=tkinter.NONE, expand=False)
 

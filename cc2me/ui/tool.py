@@ -98,7 +98,8 @@ class App(tkinter.Tk):
         self.status_bar.pack(fill=tkinter.X, expand=False, side=tkinter.BOTTOM)
 
         self.map_widget.pack(side=tkinter.LEFT, fill=tkinter.BOTH, expand=True)
-        self.properties.frame.pack(side=tkinter.TOP, expand=False)
+        self.properties.frame.pack(side=tkinter.TOP, expand=True, fill=tkinter.Y)
+        self.properties.frame.pack_propagate(False)
         self.properties.map_widget = self.map_widget
         self.middle.pack(fill=tkinter.BOTH, expand=True)
 
