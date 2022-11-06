@@ -2,14 +2,14 @@ import abc
 from typing import Tuple, cast, Optional, List, Union, Dict, Iterable
 
 from .attachment_attributes import UnitAttachment
-from .spawndata import VehicleSpawn
+from .spawndata import VehicleSpawn, VehicleSpawnAttachment
 from .tiles import Tile
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData
 from .vehicles.vehicle import Vehicle
 from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex, \
-    generate_island_seed, get_default_hitpoints
-from ..rules import get_unit_attachment_choices, get_unit_attachment_slots
+    generate_island_seed, get_default_hitpoints, TURRET_ATTACHMENTS
+from ..rules import get_unit_attachment_choices, get_unit_attachment_slots, HARDPOINT_ATTACHMENTS, SHIP_ATTACHMENTS
 from ..loader import CC2XMLSave
 
 LOC_SCALE_FACTOR = 1000
@@ -267,6 +267,7 @@ class Unit(CC2MapItem):
     def hitpoints_choices(self) -> List[float]:
         values = [
             self.hitpoints,
+            int(self.hitpoints / 5),
         ]
 
         default_max = get_default_hitpoints(self.vehicle_type)
@@ -410,22 +411,35 @@ class Spawn(Unit):
     def __str__(self):
         return f"{self.display_ident}"
 
-    def xsetup_attachments(self):
-        data_attachments = self.spawn().data.attachments.items()
-        for item in data_attachments:
-            self.define_attachment_point(UnitAttachment(name="",
-                                                        position=len(self.attachments),
-                                                        choices=[VehicleAttachmentDefinitionIndex.lookup(
-                                                            item.definition_index)]))
-
-    def get_attachment(self, attachment_index: int) -> Optional[VehicleAttachmentDefinitionIndex]:
+    def _get_attachment_item(self, attachment_index: int) -> Optional[VehicleSpawnAttachment]:
         items = self.spawn().data.attachments.items()
         if len(items) > attachment_index:
-            return VehicleAttachmentDefinitionIndex.lookup(items[attachment_index].definition_index)
+            return items[attachment_index]
         return None
 
-    def get_attachment_state(self, attachment_index: int) -> Optional[EmbeddedAttachmentStateData]:
+    def get_attachment(self, attachment_index: int) -> Optional[VehicleAttachmentDefinitionIndex]:
+        item = self._get_attachment_item(attachment_index)
+        if item is not None:
+            return VehicleAttachmentDefinitionIndex.lookup(item.definition_index)
         return None
+
+    def set_attachment(self, attachment_index: int, value: Optional[VehicleAttachmentDefinitionIndex]):
+        item = self._get_attachment_item(attachment_index)
+        if item is not None:
+            item.definition_index = VehicleAttachmentDefinitionIndex.reverse_lookup(value).value
+
+    def get_attachment_state(self, attachment_index: int) -> Optional[EmbeddedAttachmentStateData]:
+        item = self._get_attachment_item(attachment_index)
+        data = EmbeddedAttachmentStateData()
+        if item is not None:
+            data.ammo = item.ammo
+        return data
+
+    def set_attachment_state(self, attachment_index: int, data: EmbeddedAttachmentStateData):
+        item = self._get_attachment_item(attachment_index)
+        if item is not None:
+            if data:
+                item.ammo = data.ammo
 
     def vehicle(self) -> Optional[Vehicle]:
         return None
@@ -460,6 +474,13 @@ class Spawn(Unit):
         return VehicleSpawn(self.object.element)
 
 
+class Jetty(Unit):
+
+    @property
+    def viewable_properties(self) -> List[str]:
+        return ["team_owner", "loc", "alt"]
+
+
 def get_unit(vehicle: Vehicle) -> Unit:
     if vehicle.type == VehicleType.Seal:
         return Seal(vehicle)
@@ -483,5 +504,7 @@ def get_unit(vehicle: Vehicle) -> Unit:
         return Carrier(vehicle)
     elif vehicle.type == VehicleType.Barge:
         return Barge(vehicle)
+    elif vehicle.type == VehicleType.Jetty:
+        return Jetty(vehicle)
 
     return Unit(vehicle)

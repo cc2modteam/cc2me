@@ -3,21 +3,24 @@ from typing import cast, Iterable, Optional, List
 from .utils import ElementProxy, IsSetMixin, e_property, IntAttribute, FloatAttribute, WorldPosition, \
     MovableLocationMixin, Location, Bodies
 from .vehicles.attachments import Attachment
+from ..constants import get_spawn_attachment_type, VehicleAttachmentDefinitionIndex
 
 
-class VehicleSpawnAttachment(Attachment):
-    ammo = id = e_property(IntAttribute("ammo"))
+class VehicleSpawnAttachment(ElementProxy):
+    tag = "a"
+    ammo = e_property(IntAttribute("ammo"))
+
+    attachment_type = e_property(IntAttribute("attachment_type"))
 
     @property
-    def attachment_index(self) -> int:
-        return -1
+    def definition_index(self) -> int:
+        return int(self.element.attrib.get("definition_index", "0"))
 
-    @attachment_index.setter
-    def attachment_index(self, value):
-        pass
-
-    def bodies(self) -> Optional[Bodies]:
-        return None
+    @definition_index.setter
+    def definition_index(self, value: int):
+        self.element.attrib["definition_index"] = str(value)
+        att_type = get_spawn_attachment_type(VehicleAttachmentDefinitionIndex.lookup(value))
+        self.attachment_type = att_type
 
 
 class VehicleSpawnAttachments(ElementProxy):

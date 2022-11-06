@@ -61,6 +61,13 @@ class SpawnType(IntEnum):
     SwordfishNavalPatrol = 3
 
 
+class SpawnAttachmentType(IntEnum):
+    Seat = 0
+    Turret = 1
+    AirCam = 2
+    Hardpoint = 3
+
+
 class VehicleType(IntEnum):
     Albatross = 8
     Barge = 16
@@ -130,6 +137,43 @@ class VehicleAttachmentDefinitionIndex(IntEnum):
     TorpedoCountermesure = 74
     ShipTorpedo = 75
     VirusBot = 23
+
+
+HARDPOINT_ATTACHMENTS = [
+    VehicleAttachmentDefinitionIndex.Bomb0,
+    VehicleAttachmentDefinitionIndex.Bomb1,
+    VehicleAttachmentDefinitionIndex.Bomb2,
+    VehicleAttachmentDefinitionIndex.RocketPod,
+    VehicleAttachmentDefinitionIndex.MissileAA,
+    VehicleAttachmentDefinitionIndex.MissileIR,
+    VehicleAttachmentDefinitionIndex.MissileTV,
+    VehicleAttachmentDefinitionIndex.Gun20mm,
+    VehicleAttachmentDefinitionIndex.Torpedo,
+    VehicleAttachmentDefinitionIndex.Noisemaker,
+    VehicleAttachmentDefinitionIndex.TorpedoCountermesure,
+]
+
+TURRET_ATTACHMENTS = [
+    VehicleAttachmentDefinitionIndex.Gun100mm,
+    VehicleAttachmentDefinitionIndex.Gun100mmHeavy,
+    VehicleAttachmentDefinitionIndex.Gun120mm,
+    VehicleAttachmentDefinitionIndex.Gun15mm,
+    VehicleAttachmentDefinitionIndex.Gun30mm,
+    VehicleAttachmentDefinitionIndex.Gun40mm,
+    VehicleAttachmentDefinitionIndex.CIWS,
+    VehicleAttachmentDefinitionIndex.MissileIRLauncher,
+    VehicleAttachmentDefinitionIndex.VirusBot,
+]
+
+
+def get_spawn_attachment_type(definition: VehicleAttachmentDefinitionIndex) -> SpawnAttachmentType:
+    if definition == VehicleAttachmentDefinitionIndex.DriverSeat:
+        return SpawnAttachmentType.Seat
+
+    if definition in HARDPOINT_ATTACHMENTS:
+        return SpawnAttachmentType.Hardpoint
+
+    return SpawnAttachmentType.Turret
 
 
 class IslandTypes(IntEnum):
@@ -212,6 +256,7 @@ VEHICLE_DEFAULT_STATE = [
     Hitpoints(4000, VehicleType.Barge),
     Hitpoints(5000, VehicleType.Carrier),
     Hitpoints(400, VehicleType.Seal, VehicleType.Bear, VehicleType.Walrus, VehicleType.Mule),
+    Hitpoints(1000000, VehicleType.Jetty),
 ]
 
 
