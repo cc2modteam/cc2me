@@ -161,6 +161,7 @@ class Island(CC2MapItem):
             IslandTypes.Large_Munitions,
             IslandTypes.Small_Munitions,
             IslandTypes.Turrets,
+            IslandTypes.Utility,
             IslandTypes.Fuel
         ]
 
