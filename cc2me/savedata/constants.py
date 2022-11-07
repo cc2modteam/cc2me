@@ -96,9 +96,9 @@ class VehicleAttachmentDefinitionIndex(IntEnum):
     Bomb1 = 32
     Bomb2 = 33
     CIWS = 24
-    Ship28 = 28
-    Ship76 = 76
-    CruiseMissile = 29
+    ShipCruiseMissile = 28
+    ShipCounterMeasure = 76
+    ShipFlare = 29
     ShipCIWS = 26
     ShipCam = 30
     DriverSeat = 38
@@ -265,7 +265,7 @@ ATTACHMENT_CAPACITY = [
                        VehicleType.Needlefish, VehicleType.Swordfish),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipCIWS, 100,
                        VehicleType.Needlefish, VehicleType.Swordfish),
-    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.CruiseMissile, 10,
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipCruiseMissile, 10,
                        VehicleType.Needlefish, VehicleType.Swordfish),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.AWACS, 1,
                        VehicleType.Manta),
@@ -303,6 +303,15 @@ ATTACHMENT_CAPACITY = [
                      VehicleType.Albatross, VehicleType.Manta, VehicleType.Razorbill, VehicleType.Petrel),
 
     # silly warship weapons
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileLaser, 30,
+                       VehicleType.Swordfish, VehicleType.Needlefish),
+
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipCounterMeasure, 3,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipFlare, 10,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipCruiseMissile, 10,
+                       VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileIRLauncher, 10,
                        VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun30mm, 800,

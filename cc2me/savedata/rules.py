@@ -40,17 +40,21 @@ SHIP_ATTACHMENTS = [
     VehicleAttachmentDefinitionIndex.ShipCIWS,
     VehicleAttachmentDefinitionIndex.ShipTorpedo,
     VehicleAttachmentDefinitionIndex.ShipGun160mm,
-    VehicleAttachmentDefinitionIndex.MissileAALauncher,
-    VehicleAttachmentDefinitionIndex.CruiseMissile,
+    VehicleAttachmentDefinitionIndex.MissileAALauncher,  # doesnt actually work on player ships
+    VehicleAttachmentDefinitionIndex.ShipCruiseMissile,
+    VehicleAttachmentDefinitionIndex.ShipFlare,
+    VehicleAttachmentDefinitionIndex.Flares,
+    VehicleAttachmentDefinitionIndex.AWACS,
+    VehicleAttachmentDefinitionIndex.MissileIRLauncher,
+    VehicleAttachmentDefinitionIndex.SmokeTrail,
+    # some silly ones that work
+    VehicleAttachmentDefinitionIndex.RocketPod,
     VehicleAttachmentDefinitionIndex.Gun100mm,
     VehicleAttachmentDefinitionIndex.Gun100mmHeavy,
     VehicleAttachmentDefinitionIndex.Gun40mm,
     VehicleAttachmentDefinitionIndex.Gun30mm,
-    VehicleAttachmentDefinitionIndex.RocketPod,
-    VehicleAttachmentDefinitionIndex.Flares,
-    VehicleAttachmentDefinitionIndex.AWACS,
-    VehicleAttachmentDefinitionIndex.MissileIRLauncher,
-    VehicleAttachmentDefinitionIndex.SmokeTrail
+    # missile truck
+    VehicleAttachmentDefinitionIndex.MissileLaser,
 ]
 
 HARDPOINT_ATTACHMENTS = [
