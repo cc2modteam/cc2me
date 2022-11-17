@@ -55,6 +55,7 @@ SHIP_ATTACHMENTS = [
     VehicleAttachmentDefinitionIndex.Gun30mm,
     # missile truck
     VehicleAttachmentDefinitionIndex.MissileLaser,
+    VehicleAttachmentDefinitionIndex.MissileAA,
 ]
 
 HARDPOINT_ATTACHMENTS = [
@@ -89,24 +90,24 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
         DRIVER,
     ],
     VehicleType.Turret: [
-        SMALL_GROUND_TURRETS + HARDPOINT_ATTACHMENTS,
+        SMALL_GROUND_TURRETS,
     ],
     VehicleType.Seal: [
         DRIVER,
-        SMALL_GROUND_TURRETS,
+        SMALL_GROUND_TURRETS + HARDPOINT_ATTACHMENTS,
         SMALL_GROUND_AUX,
         SMALL_GROUND_AUX
     ],
     VehicleType.Walrus: [
         DRIVER,
-        SMALL_GROUND_TURRETS,
+        SMALL_GROUND_TURRETS + HARDPOINT_ATTACHMENTS,
         SMALL_GROUND_AUX,
         SMALL_GROUND_AUX,
     ],
     VehicleType.Bear: [
         DRIVER,
         SMALL_GROUND_AUX,
-        SMALL_GROUND_TURRETS + LARGE_GROUND_TURRETS,
+        SMALL_GROUND_TURRETS + LARGE_GROUND_TURRETS + HARDPOINT_ATTACHMENTS,
         SMALL_GROUND_AUX,
     ],
     VehicleType.Mule: [

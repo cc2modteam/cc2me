@@ -286,7 +286,7 @@ ATTACHMENT_CAPACITY = [
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun120mm, 25,
                        VehicleType.Bear),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileAALauncher, 8,
-                       VehicleType.Bear, VehicleType.Swordfish, VehicleType.Needlefish),
+                       VehicleType.Swordfish, VehicleType.Needlefish),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Flares, 20,
                        VehicleType.Bear, VehicleType.Walrus, VehicleType.Seal, VehicleType.Razorbill, VehicleType.Manta),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.SmokeBomb, 10,
@@ -348,6 +348,19 @@ for a_type in [VehicleAttachmentDefinitionIndex.MissileIR,
     ATTACHMENT_CAPACITY.append(
         AmmunitionCapacity(a_type, 1,
                            VehicleType.Manta, VehicleType.Petrel, VehicleType.Razorbill, VehicleType.Albatross))
+
+# mobile SAM
+ATTACHMENT_CAPACITY.append(
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileAA, 4,
+                       VehicleType.Seal, VehicleType.Walrus, VehicleType.Bear))
+
+# Ship launched VLS SAM
+ATTACHMENT_CAPACITY.append(
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileAA, 8,
+                       VehicleType.Needlefish))
+ATTACHMENT_CAPACITY.append(
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileAA, 24,
+                       VehicleType.Swordfish))
 
 
 def get_attachment_capacity(
