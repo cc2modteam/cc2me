@@ -362,6 +362,11 @@ class Manta(Albatross, AirUnitAux):
 class GroundTurreted(Unit):
     pass
 
+
+class Turret(GroundTurreted):
+    pass
+
+
 class Seal(GroundTurreted):
     pass
 
@@ -483,6 +488,8 @@ class Jetty(Unit):
 
 
 def get_unit(vehicle: Vehicle) -> Unit:
+    if vehicle.type == VehicleType.Turret:
+        return Turret(vehicle)
     if vehicle.type == VehicleType.Seal:
         return Seal(vehicle)
     elif vehicle.type == VehicleType.Walrus:

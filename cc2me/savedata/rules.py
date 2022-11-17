@@ -88,6 +88,9 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     VehicleType.Barge: [
         DRIVER,
     ],
+    VehicleType.Turret: [
+        SMALL_GROUND_TURRETS + HARDPOINT_ATTACHMENTS,
+    ],
     VehicleType.Seal: [
         DRIVER,
         SMALL_GROUND_TURRETS,
