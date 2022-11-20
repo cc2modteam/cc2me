@@ -90,7 +90,7 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
         DRIVER,
     ],
     VehicleType.Turret: [
-        SMALL_GROUND_TURRETS,
+        SMALL_GROUND_TURRETS + [VehicleAttachmentDefinitionIndex.Gun120mm],
     ],
     VehicleType.Seal: [
         DRIVER,
@@ -112,24 +112,24 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     ],
     VehicleType.Mule: [
         DRIVER,
+        GROUND_RESUPPLY + SMALL_GROUND_TURRETS,
+        GROUND_RESUPPLY + SMALL_GROUND_TURRETS,
         GROUND_RESUPPLY,
         GROUND_RESUPPLY,
         GROUND_RESUPPLY,
-        GROUND_RESUPPLY,
-        GROUND_RESUPPLY,
-        GROUND_RESUPPLY,
+        GROUND_RESUPPLY + [VehicleAttachmentDefinitionIndex.MissileAA],
     ],
     VehicleType.Needlefish: [
         DRIVER,
-        SHIP_ATTACHMENTS,
-        SHIP_ATTACHMENTS,
+        SHIP_ATTACHMENTS + GROUND_RESUPPLY + [VehicleAttachmentDefinitionIndex.VirusBot],
+        SHIP_ATTACHMENTS + GROUND_RESUPPLY,
     ],
     VehicleType.Swordfish: [
         DRIVER,
         SHIP_ATTACHMENTS,
         SHIP_ATTACHMENTS,
         SHIP_ATTACHMENTS,
-        SHIP_ATTACHMENTS,
+        SHIP_ATTACHMENTS + GROUND_RESUPPLY,
     ],
     VehicleType.Razorbill: [
         DRIVER,

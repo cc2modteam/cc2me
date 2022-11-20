@@ -17,14 +17,12 @@ from .toolbar import Toolbar
 from .saveslotchooser import SlotChooser
 from .mapmarkers import IslandMarker, UnitMarker, CC2DataMarker
 
-
 APP_NAME = "cc2me.ui.tool"
 
 parser = argparse.ArgumentParser(description=__doc__, prog=APP_NAME)
 
 
 class App(tkinter.Tk):
-
     WIDTH = 900
     HEIGHT = 750
     cc2dir = os.path.expandvars(r'%APPDATA%\\Carrier Command 2')
@@ -65,19 +63,30 @@ class App(tkinter.Tk):
         self.toolbar = Toolbar(self, relief=tkinter.RAISED)
         self.toolbar.add_button("open", "open", command=self.open_file)
         self.toolbar.add_button("openslot", "open-slot", command=self.open_slot)
-        self.toolbar.add_button("save", "save", command=self.save_file, state=tkinter.DISABLED)
-        self.toolbar.add_button("saveas", "saveas", command=self.save_as, state=tkinter.DISABLED)
-        self.toolbar.add_button("saveslot", "save-slot", command=self.save_slot, state=tkinter.DISABLED)
-        self.toolbar.add_button("delete", "delete", command=self.remove_item, state=tkinter.DISABLED)
-        self.toolbar.add_button("addisland", "add-island", command=self.add_new_island, state=tkinter.DISABLED)
+        self.toolbar.add_button("save", "save", command=self.save_file, state=tkinter.DISABLED, group="save")
+        self.toolbar.add_button("saveas", "saveas", command=self.save_as, state=tkinter.DISABLED, group="save")
+        self.toolbar.add_button("saveslot", "save-slot", command=self.save_slot, state=tkinter.DISABLED, group="save")
+        self.toolbar.add_button("delete", "delete", command=self.remove_item, state=tkinter.DISABLED, group="selected")
+        self.toolbar.add_button("addisland", "add-island", command=self.add_new_island, state=tkinter.DISABLED,
+                                group="none-selected")
 
-        self.toolbar.add_button("addseal", "seal", command=self.add_new_seal, state=tkinter.DISABLED)
-        self.toolbar.add_button("addwalrus", "walrus", command=self.add_new_walrus, state=tkinter.DISABLED)
-        self.toolbar.add_button("addbear", "bear", command=self.add_new_bear, state=tkinter.DISABLED)
+        self.toolbar.add_button("addseal", "seal", command=self.add_new_seal, state=tkinter.DISABLED,
+                                group="none-selected")
+        self.toolbar.add_button("addwalrus", "walrus", command=self.add_new_walrus, state=tkinter.DISABLED,
+                                group="none-selected")
+        self.toolbar.add_button("addbear", "bear", command=self.add_new_bear, state=tkinter.DISABLED,
+                                group="none-selected")
+        self.toolbar.add_button("addmule", "mule", command=self.add_new_mule, state=tkinter.DISABLED,
+                                group="none-selected")
 
-        self.toolbar.add_button("addneedlefish", "needlefish", command=self.add_new_needlefish, state=tkinter.DISABLED)
-        self.toolbar.add_button("addswordfish", "swordfish", command=self.add_new_swordfish, state=tkinter.DISABLED)
-        self.toolbar.add_button("addbarge", "barge", command=self.add_new_barge, state=tkinter.DISABLED)
+        self.toolbar.add_button("addneedlefish", "needlefish", command=self.add_new_needlefish, state=tkinter.DISABLED,
+                                group="none-selected")
+        self.toolbar.add_button("addswordfish", "swordfish", command=self.add_new_swordfish, state=tkinter.DISABLED,
+                                group="none-selected")
+        self.toolbar.add_button("addbarge", "barge", command=self.add_new_barge, state=tkinter.DISABLED,
+                                group="none-selected")
+        self.toolbar.add_button("addturret", "turret", command=self.add_new_turret, state=tkinter.DISABLED,
+                                group="none-selected")
 
         self.middle = tkinter.Frame(self)
         self.map_widget = CC2MeMapView(corner_radius=0)
@@ -143,10 +152,8 @@ class App(tkinter.Tk):
         self.properties.clear()
 
         self.toolbar.disable("delete")
-        for button in ["addisland", "addwalrus", "addbear",
-                       "addseal", "addbarge",
-                       "addneedlefish", "addswordfish"]:
-            self.toolbar.enable(button)
+        self.toolbar.disable_group("selected")
+        self.toolbar.enable_group("none-selected")
 
     def on_selection(self, mode, nw, se):
         # format is NW[y], NW[x], SW[y], SW[x]
@@ -163,12 +170,8 @@ class App(tkinter.Tk):
 
     def select_markers(self, markers):
         self.select_none()
-        for button in ["addisland", "addwalrus", "addbear",
-                       "addseal", "addbarge",
-                       "addneedlefish", "addswordfish"]:
-            self.toolbar.disable(button)
-
-        self.toolbar.enable("delete")
+        self.toolbar.disable_group("none-selected")
+        self.toolbar.enable_group("selected")
         for item in markers:
             item.select()
             self.map_widget.selected_markers.append(item)
@@ -213,8 +216,14 @@ class App(tkinter.Tk):
     def add_new_bear(self):
         self.add_new_unit(VehicleType.Bear)
 
+    def add_new_mule(self):
+        self.add_new_unit(VehicleType.Mule)
+
     def add_new_barge(self):
         self.add_new_unit(VehicleType.Barge)
+
+    def add_new_turret(self):
+        self.add_new_unit(VehicleType.Turret)
 
     def add_new_swordfish(self):
         self.add_new_unit(VehicleType.Swordfish)
@@ -318,11 +327,8 @@ class App(tkinter.Tk):
             for veh in self.cc2me.vehicles:
                 self.add_unit(veh)
         self.status_line.set(f"Loaded {filename} ({len(self.islands)} islands, {len(self.units)} units)")
-
-        for button in ["save", "saveas", "addisland", "saveslot",
-                       "addwalrus", "addseal", "addbear", "addbarge",
-                       "addneedlefish", "addswordfish"]:
-            self.toolbar.enable(button)
+        self.toolbar.enable_group("save")
+        self.select_none()
 
         self.map_widget.canvas.update_idletasks()
 

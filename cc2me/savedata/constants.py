@@ -257,6 +257,7 @@ VEHICLE_DEFAULT_STATE = [
     Hitpoints(5000, VehicleType.Carrier),
     Hitpoints(400, VehicleType.Seal, VehicleType.Bear, VehicleType.Walrus, VehicleType.Mule),
     Hitpoints(1000000, VehicleType.Jetty),
+    Hitpoints(800, VehicleType.Turret),
 ]
 
 
@@ -349,10 +350,41 @@ for a_type in [VehicleAttachmentDefinitionIndex.MissileIR,
         AmmunitionCapacity(a_type, 1,
                            VehicleType.Manta, VehicleType.Petrel, VehicleType.Razorbill, VehicleType.Albatross))
 
+ATTACHMENT_CAPACITY.append(
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun20mm,
+                       500, VehicleType.Mule
+                       )
+)
+ATTACHMENT_CAPACITY.append(
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Refuel,
+                       160, VehicleType.Mule
+                       )
+)
+ATTACHMENT_CAPACITY.append(
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.RearmIR,
+                       20, VehicleType.Mule
+                       )
+)
+ATTACHMENT_CAPACITY.append(
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Rearm20mm,
+                       400, VehicleType.Mule
+                       )
+)
+ATTACHMENT_CAPACITY.extend(
+    [
+        AmmunitionCapacity(VehicleAttachmentDefinitionIndex.BattleDroids,
+                           1, VehicleType.Mule, VehicleType.Needlefish, VehicleType.Swordfish,
+                           ),
+        AmmunitionCapacity(VehicleAttachmentDefinitionIndex.VirusBot,
+                           1, VehicleType.Mule, VehicleType.Needlefish, VehicleType.Swordfish,
+                           )
+     ]
+)
+
 # mobile SAM
 ATTACHMENT_CAPACITY.append(
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileAA, 4,
-                       VehicleType.Seal, VehicleType.Walrus, VehicleType.Bear))
+                       VehicleType.Seal, VehicleType.Walrus, VehicleType.Bear, VehicleType.Mule))
 
 # Ship launched VLS SAM
 ATTACHMENT_CAPACITY.append(
