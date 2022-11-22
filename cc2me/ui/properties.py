@@ -24,6 +24,10 @@ class PropertyItem:
                     self.textvalue: tkinter.StringVar
                     value = self.textvalue.get()
                     # try setting
+                    dynamic = obj.dynamic_attribs.get(self.name, None)
+                    if dynamic:
+                        dynamic.set(value)
+                        continue
                     try:
                         setattr(obj, self.name, value)
                     except AttributeError:
@@ -83,6 +87,16 @@ class Properties:
                     except AttributeError:
                         pass
                     self.add_option_property(prop, value, choices)
+
+                for attr_name in sorted(obj.dynamic_attribs.keys()):
+                    value = obj.dynamic_attribs[attr_name].get()
+                    choices = None
+                    try:
+                        choices = ["None"] + getattr(obj, f"{attr_name}_choices")
+                    except AttributeError:
+                        pass
+                    self.add_option_property(attr_name, value, choices)
+
             elif len(self._objects) > 1:
                 self.title.set(f"Multiple ({len(self.objects)}) objects selected")
                 obj: CC2MapItem = self.objects[0]

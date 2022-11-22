@@ -139,6 +139,70 @@ class VehicleAttachmentDefinitionIndex(IntEnum):
     VirusBot = 23
 
 
+class InventoryIndex(IntEnum):
+    Ammo30mm = 0
+    Seal = 1
+    Walrus = 2
+    Bear = 3
+    Albatross = 4
+    Manta = 5
+    Razorbill = 6
+    Petrel = 7
+    Reserved1 = 8
+    Turret30mm = 9
+    AircraftChaingun = 10
+    RocketPod = 11
+    TurretCIWS = 12
+    TurretIRMissile = 13
+    BombLight = 14
+    BombMedium = 15
+    BombHeavy = 16
+    MissilesIR = 17
+    MissilesLaser = 18
+    MissilesAir = 19
+    ActuatedCamera = 20
+    Reserved2 = 21
+    GimbalCamera = 22
+    ObservationCamera = 23
+    AWACS = 24
+    FuelTankAircraft = 25
+    FlareLauncher = 26
+    BattleCannon = 27
+    ArtilleryGun = 28
+    CruiseMissile= 29
+    Rocket = 30
+    Flares = 31
+    Ammo20mm = 32
+    Ammo100mm = 33
+    Ammo120mm = 34
+    Ammo160mm = 35
+    Fuel = 36
+    Torpedo = 37
+    TVMissile = 38
+    TorpedoNoise = 39
+    TorpedoCountermeasure = 40
+    Radar = 41
+    SonicPulseGenerator = 42
+    SmokeLauncherStream = 43
+    SmokeLauncherExplosive = 44
+    AmmoSonicPulse = 45
+    AmmoSmoke = 46
+    Turret40mm = 47
+    Ammo40mm = 48
+    HeavyCannon = 49
+    VirusModules = 50
+    Reserved3 = 51
+    Reserved4 = 52
+    Reserved5 = 53
+    Reserved6 = 54
+    Reserved7 = 55
+    Reserved8 = 56
+    Reserved9 = 57
+    Reserved10 = 58
+    Mule = 59
+    DeployableDroid = 60
+
+
 HARDPOINT_ATTACHMENTS = [
     VehicleAttachmentDefinitionIndex.Bomb0,
     VehicleAttachmentDefinitionIndex.Bomb1,
@@ -335,6 +399,8 @@ ATTACHMENT_CAPACITY = [
                        VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.RocketPod, 60,
                        VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.VirusBot, 1,
+                       VehicleType.Seal, VehicleType.Walrus)
 ]
 
 for a_type in [VehicleAttachmentDefinitionIndex.MissileIR,

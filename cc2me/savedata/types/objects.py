@@ -1,23 +1,50 @@
 import abc
-from typing import Tuple, cast, Optional, List, Union, Dict, Iterable
+from typing import Tuple, cast, Optional, List, Union, Dict, Iterable, Callable, Any, Protocol
 
 from .attachment_attributes import UnitAttachment
 from .spawndata import VehicleSpawn, VehicleSpawnAttachment
 from .tiles import Tile
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
-from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData
+from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData, Inventory, Quantity
 from .vehicles.vehicle import Vehicle
 from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex, \
-    generate_island_seed, get_default_hitpoints, TURRET_ATTACHMENTS
+    generate_island_seed, get_default_hitpoints, TURRET_ATTACHMENTS, InventoryIndex
 from ..rules import get_unit_attachment_choices, get_unit_attachment_slots, HARDPOINT_ATTACHMENTS, SHIP_ATTACHMENTS
 from ..loader import CC2XMLSave
 
 LOC_SCALE_FACTOR = 1000
 
 
+class DynamicGetter(Protocol):
+    def __call__(self, name: str) -> Any:
+        pass
+
+
+class DynamicSetter(Protocol):
+    def __call__(self, name: str, value: Any) -> None:
+        pass
+
+
+class DynamicNamedAttribute:
+    def __init__(self, name: str, getter: DynamicGetter, setter: DynamicSetter, argname: Optional[str] = None):
+        self.name = name
+        self.argname = name
+        if argname:
+            self.argname = argname
+        self.getter = getter
+        self.setter = setter
+
+    def get(self) -> Any:
+        return self.getter(self.argname)
+
+    def set(self, value: Any):
+        self.setter(self.argname, value)
+
+
 class CC2MapItem:
     def __init__(self, obj: ElementProxy):
         self.object = obj
+        self.dynamic_attribs: Dict[str, DynamicNamedAttribute] = {}
 
     @property
     def display_ident(self) -> str:
@@ -384,9 +411,33 @@ class Ship(Unit):
 
 
 class Carrier(Ship):
+
+    def __init__(self, unit: Union[Vehicle, VehicleSpawn]):
+        super(Carrier, self).__init__(unit)
+        self.dynamic_attribs["stored_fuel"] = DynamicNamedAttribute(
+            InventoryIndex.Fuel.name,
+            self.get_inventory_item,
+            self.set_inventory_item
+        )
+
     def setup_attachments(self):
         for i in range(14):
             self.define_attachment_point(UnitAttachment(name="carrier", position=i, choices=None))
+
+    def get_inventory(self) -> Inventory:
+        embedded_data = self.vehicle().state.data
+        values = cast(Inventory, embedded_data.get_default_child_by_tag(Inventory))
+        return values
+
+    def get_inventory_item(self, name: str) -> int:
+        offset: int = InventoryIndex.reverse_lookup(name).value
+        return self.get_inventory().item_quantities.items()[offset]
+
+    def set_inventory_item(self, name: str, count: int):
+        pass
+        #offset: int = InventoryIndex.reverse_lookup(name).value
+        #current = self.get_inventory()
+        #current.children()
 
 
 class Barge(Ship):

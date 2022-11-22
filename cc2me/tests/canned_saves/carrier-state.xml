@@ -1,0 +1,1526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data attached_to_vehicle_id="0"
+      internal_fuel_remaining="4.90603086e+04"
+      supporting_parent_vehicle_id="0"
+      waypoint_id_counter="0"
+      is_destroyed="false"
+      is_trigger_destroy="false"
+      trigger_destroy_reason="1"
+      operation_state="2"
+      dock_state="0"
+      countermeasure_sensor="0"
+      hitpoints="5000"
+      is_waypoint_reached="false"
+      preferred_bay_index="255"
+      control_mode="1"
+      override_target_velocity="0.00000000e+00"
+      override_power="0.00000000e+00"
+      override_taxi="false"
+      lift_vehicle_position="-9.00000000e+00"
+      lift_tower_position="-1.07838213e-02"
+      gantry_crane_rotation="0.00000000e+00"
+      lift_vehicle_floor_index="0"
+      lift_tower_floor_index="0"
+      cooldown_timer_aa="0"
+      cooldown_torpedo="0"
+      cooldown_torpedo_decoy="0"
+      is_engine_on="true"
+      is_alarm_on="false"
+      torpedo_delay="30"
+      torpedo_bearing="0"
+      headlight_rotation="0.00000000e+00"
+      death_state="0">
+	<game_object submergence_factor="2.42686585e-01">
+		<wheels/>
+		<force_emitters>
+			<f>
+				<value factor="0.00000000e+00" target_factor="0.00000000e+00">
+					<offset m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+				</value>
+			</f>
+			<f>
+				<value factor="0.00000000e+00" target_factor="0.00000000e+00">
+					<offset m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+				</value>
+			</f>
+			<f>
+				<value factor="0.00000000e+00" target_factor="0.00000000e+00">
+					<offset m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+				</value>
+			</f>
+			<f>
+				<value factor="0.00000000e+00" target_factor="0.00000000e+00">
+					<offset m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+				</value>
+			</f>
+			<f>
+				<value factor="0.00000000e+00" target_factor="0.00000000e+00">
+					<offset m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+				</value>
+			</f>
+			<f>
+				<value factor="0.00000000e+00" target_factor="-0.00000000e+00">
+					<offset m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+				</value>
+			</f>
+		</force_emitters>
+		<control_surfaces>
+			<c>
+				<value pitch="0.00000000e+00" target_pitch="0.00000000e+00"/>
+			</c>
+			<c>
+				<value pitch="0.00000000e+00" target_pitch="0.00000000e+00"/>
+			</c>
+		</control_surfaces>
+		<buoyancy>
+			<b>
+				<value submergence_factor="2.32067108e-01">
+					<velocity x="3.62581280e-01" y="6.30748128e-02" z="-7.48999425e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.27078676e-01">
+					<velocity x="2.49966770e-01" y="-8.51074384e-02" z="-7.25484275e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.18293726e-01">
+					<velocity x="3.47731794e-01" y="3.98103016e-02" z="-7.25724921e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.03363687e-01">
+					<velocity x="2.44051557e-01" y="-1.05866252e-01" z="-7.10989407e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.17028499e-01">
+					<velocity x="3.33003144e-01" y="1.67605646e-02" z="-7.05916070e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="1.90328836e-01">
+					<velocity x="2.40323119e-01" y="-1.20928930e-01" z="-7.01730687e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.23671347e-01">
+					<velocity x="3.17102660e-01" y="-7.26474057e-03" z="-6.87200348e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="1.84404343e-01">
+					<velocity x="2.34892731e-01" y="-1.33286528e-01" z="-6.95476280e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.37539709e-01">
+					<velocity x="3.00860703e-01" y="-3.29757749e-02" z="-6.66837283e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="1.88726664e-01">
+					<velocity x="2.25102679e-01" y="-1.46321360e-01" z="-6.91305174e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.63001442e-01">
+					<velocity x="2.83169222e-01" y="-6.25762804e-02" z="-6.45158386e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.03500181e-01">
+					<velocity x="2.12975530e-01" y="-1.57800523e-01" z="-6.92034762e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.93938696e-01">
+					<velocity x="2.64084661e-01" y="-9.76398646e-02" z="-6.18830923e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.24785894e-01">
+					<velocity x="1.97541455e-01" y="-1.71901297e-01" z="-6.93105766e-01"/>
+				</value>
+			</b>
+			<b>
+				<value submergence_factor="2.95279384e-01">
+					<velocity x="2.02168150e-01" y="-1.57131610e-01" z="-6.70281652e-01"/>
+				</value>
+			</b>
+		</buoyancy>
+		<buttons>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="true"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+			<b>
+				<value is_on="false"/>
+			</b>
+		</buttons>
+		<indicators>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+			<i>
+				<value is_on="false"/>
+			</i>
+		</indicators>
+		<dials>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+			<d>
+				<value value="0.00000000e+00" value_max="1.00000000e+00" value_min="0.00000000e+00"/>
+			</d>
+		</dials>
+		<doors>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="true" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="true" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="true" is_locked="false"/>
+			</d>
+			<d>
+				<value is_open="false" is_locked="false"/>
+			</d>
+		</doors>
+		<screens>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state is_map_init="false" map_x="0.00000000e+00" map_y="0.00000000e+00" map_size="6.55360000e+04" mode="1" is_vehicle_team_colors="true" is_island_team_colors="true" is_show_carrier_waypoints="false" is_show_cctv="true" is_show_grid="true"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state is_map_init="true" map_x="0.00000000e+00" map_y="0.00000000e+00" map_size="1.63840000e+04" mode="3" is_vehicle_team_colors="true" is_island_team_colors="true" is_island_names="true" is_vehicle_links="true" is_follow_carrier="true"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state is_map_init="false" map_x="0.00000000e+00" map_y="0.00000000e+00" map_size="3.27680000e+04" mode="1" is_vehicle_team_colors="true" is_island_team_colors="true" is_island_names="true" is_vehicle_links="true" is_follow_carrier="true"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state is_map_init="false" map_x="0.00000000e+00" map_y="0.00000000e+00" map_size="3.27680000e+04" mode="1" is_vehicle_team_colors="true" is_island_team_colors="true" is_island_names="true" is_vehicle_links="true" is_follow_carrier="true"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state active_tab="0" is_map_init="false" map_x="8.14380000e+04" map_y="9.17530000e+04" map_size="2.62144000e+05"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state view="1"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state is_map_init="true" map_x="5.29621387e+03" map_y="0.00000000e+00" map_size="2.90179004e+04" map_selection="0"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state is_mute="false"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state zoom="2"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state is_map_init="false" map_x="0.00000000e+00" map_y="0.00000000e+00" map_size="6.55360000e+04" mode="1" is_vehicle_team_colors="true" is_island_team_colors="true" is_show_carrier_waypoints="false" is_show_cctv="true" is_show_grid="true"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state is_map_init="false" map_x="0.00000000e+00" map_y="0.00000000e+00" map_size="6.55360000e+04" mode="1" is_vehicle_team_colors="true" is_island_team_colors="true" is_show_carrier_waypoints="false" is_show_cctv="true" is_show_grid="true"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state is_map_init="true" map_x="1.43644006e+03" map_y="-6.56707471e+03" map_size="1.63632295e+04" mode="1" is_vehicle_team_colors="true" is_island_team_colors="true" is_show_carrier_waypoints="false" is_show_cctv="true" is_show_grid="true"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state camera_index="0"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state active_tab="0" is_map_init="false" map_x="8.14380000e+04" map_y="9.17530000e+04" map_size="2.62144000e+05"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state is_map_init="false" map_x="0.00000000e+00" map_y="0.00000000e+00" map_size="6.55360000e+04" mode="1" is_vehicle_team_colors="true" is_island_team_colors="true" is_show_carrier_waypoints="false" is_show_cctv="true" is_show_grid="true"/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+			<s>
+				<value brightness="1.00000000e+00">
+					<state/>
+				</value>
+			</s>
+		</screens>
+		<damage_zones>
+			<d>
+				<value hitpoints="200" hitpoints_prev="200" hitpoints_updated_prev="200" armour="20" total_hitpoints="200" is_repairing="false" repair_factor="0.00000000e+00"/>
+			</d>
+			<d>
+				<value hitpoints="200" hitpoints_prev="200" hitpoints_updated_prev="200" armour="20" total_hitpoints="200" is_repairing="false" repair_factor="0.00000000e+00"/>
+			</d>
+			<d>
+				<value hitpoints="200" hitpoints_prev="200" hitpoints_updated_prev="200" armour="50" total_hitpoints="200" is_repairing="false" repair_factor="0.00000000e+00"/>
+			</d>
+			<d>
+				<value hitpoints="200" hitpoints_prev="200" hitpoints_updated_prev="200" armour="20" total_hitpoints="200" is_repairing="false" repair_factor="0.00000000e+00"/>
+			</d>
+			<d>
+				<value hitpoints="200" hitpoints_prev="200" hitpoints_updated_prev="200" armour="20" total_hitpoints="200" is_repairing="false" repair_factor="0.00000000e+00"/>
+			</d>
+			<d>
+				<value hitpoints="200" hitpoints_prev="200" hitpoints_updated_prev="200" armour="20" total_hitpoints="200" is_repairing="false" repair_factor="0.00000000e+00"/>
+			</d>
+			<d>
+				<value hitpoints="200" hitpoints_prev="200" hitpoints_updated_prev="200" armour="20" total_hitpoints="200" is_repairing="false" repair_factor="0.00000000e+00"/>
+			</d>
+			<d>
+				<value hitpoints="0" hitpoints_prev="0" hitpoints_updated_prev="0" armour="0" total_hitpoints="0" is_repairing="false" repair_factor="0.00000000e+00"/>
+			</d>
+		</damage_zones>
+	</game_object>
+	<vehicle_attachments>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="-1.00000000e+00" m01="0.00000000e+00" m02="8.74227766e-08" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="-8.74227766e-08" m21="0.00000000e+00" m22="-1.00000000e+00" tx="-3.17019224e-03" ty="5.00000000e+00" tz="-4.59080658e+01"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="0">
+				<attachment_transform m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+			</value>
+		</attachment>
+		<attachment>
+			<value attached_id="4">
+				<attachment_transform m00="-3.89309811e-08" m01="-1.98762216e-08" m02="1.00000000e+00" m10="-4.54714924e-01" m11="8.90637040e-01" m12="0.00000000e+00" m20="-8.90637040e-01" m21="-4.54714924e-01" m22="-4.37113883e-08" tx="-2.86176128e+01" ty="2.21638927e+01" tz="-2.82340012e+01"/>
+			</value>
+		</attachment>
+	</vehicle_attachments>
+	<supporting_vehicles>
+		<vehicles/>
+	</supporting_vehicles>
+	<waypoints/>
+	<docking_queue_data vehicle_id="0" tile_node_id="0" hangar_index="4294967295"/>
+	<attack_target is_target_vehicle="false" target_vehicle_id="0" type="0" altitude="400">
+		<position x="0.00000000e+00" y="0.00000000e+00"/>
+	</attack_target>
+	<override_target_position x="0.00000000e+00" y="0.00000000e+00" z="0.00000000e+00"/>
+	<override_target_direction x="0.00000000e+00" y="0.00000000e+00"/>
+	<gantry_crane_position x="0.00000000e+00" y="1.20000000e+01" z="-3.20000000e+01"/>
+	<control_factors x="1.26116862e-44" y="0.00000000e+00" z="0.00000000e+00"/>
+	<spotlight_1_rotation x="0.00000000e+00" y="0.00000000e+00"/>
+	<spotlight_2_rotation x="0.00000000e+00" y="0.00000000e+00"/>
+	<inventory total_weight="79020">
+		<item_quantities>
+			<q value="5000"/>
+			<q value="3"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="4"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="2"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="20"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="4"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+			<q value="0"/>
+		</item_quantities>
+	</inventory>
+	<docking_manager_surface mode="0" lane_stage="0" vehicle_id_docking_join="4294967295" vehicle_id_lane="4294967295" vehicle_id_undocking_leave="4294967295" path_factor="0.00000000e+00" path_velocity="2.50000000e+00" docking_timeout_time="366" vehicle_attachment_index="4294967295">
+		<docking_queue/>
+		<undocking_queue/>
+		<paths/>
+	</docking_manager_surface>
+	<docking_manager_air mode="0" is_crane_lifting="false" runway_state="0" vehicle_id_crane="4294967295" vehicle_id_lift="4294967295" vehicle_id_runway="4294967295" vehicle_attachment_index_crane="4294967295" vehicle_attachment_index_lift="4294967295" vehicle_attachment_index_runway="4294967295" path_factor_crane="0.00000000e+00" path_velocity_crane="0.00000000e+00" path_factor_lift="0.00000000e+00" path_velocity_lift="0.00000000e+00" path_factor_runway="0.00000000e+00" path_velocity_runway="0.00000000e+00" docking_join_time="0">
+		<crane_instructions/>
+		<docking_queue/>
+		<undocking_queue/>
+		<paths_crane/>
+		<paths_lift/>
+		<paths_runway/>
+		<transform_landing_on_rails m00="1.00000000e+00" m01="0.00000000e+00" m02="0.00000000e+00" m10="0.00000000e+00" m11="1.00000000e+00" m12="0.00000000e+00" m20="0.00000000e+00" m21="0.00000000e+00" m22="1.00000000e+00" tx="0.00000000e+00" ty="0.00000000e+00" tz="0.00000000e+00"/>
+	</docking_manager_air>
+	<docking_manager_lifeboat state="0" vehicle_id="4294967295" slide_position="0.00000000e+00" slide_velocity="0.00000000e+00"/>
+</data>

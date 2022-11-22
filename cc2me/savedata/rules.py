@@ -13,6 +13,7 @@ SMALL_GROUND_TURRETS = [
     VehicleAttachmentDefinitionIndex.Gun40mm,
     VehicleAttachmentDefinitionIndex.Radar,
     VehicleAttachmentDefinitionIndex.ObsCam,
+    VehicleAttachmentDefinitionIndex.VirusBot,
     VehicleAttachmentDefinitionIndex.MissileIRLauncher]
 
 SMALL_GROUND_AUX = [
