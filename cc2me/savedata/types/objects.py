@@ -63,8 +63,9 @@ class CC2MapItem:
     def team_owner_choices(self) -> List[int]:
         teams = []
         cc2obj: CC2XMLSave = self.object.cc2obj
-        for team in cc2obj.teams:
-            teams.append(team.id)
+        if cc2obj:
+            for team in cc2obj.teams:
+                teams.append(team.id)
         return teams
 
     @property
@@ -230,12 +231,15 @@ class Unit(CC2MapItem):
                 choices = self.find_attachment_choices(name)
                 if choices is not None:
                     return choices
+
             else:
                 for item in self.attachments.values():
                     item: UnitAttachment
                     if name == f"{item.name}{item.position}":
                         return self.get_attachment(item.position)
 
+        if name in dir(self):
+            return getattr(type(self), name).fget(self)
         raise AttributeError(name)
 
     def __setattr__(self, key: str, value):

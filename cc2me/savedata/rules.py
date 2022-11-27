@@ -141,11 +141,11 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     ],
     VehicleType.Petrel: [
         DRIVER,
-        [VehicleAttachmentDefinitionIndex.AirObsCam],
-        HARDPOINT_ATTACHMENTS,
-        HARDPOINT_ATTACHMENTS,
-        HARDPOINT_ATTACHMENTS,
-        HARDPOINT_ATTACHMENTS,
+        [VehicleAttachmentDefinitionIndex.AirObsCam, VehicleAttachmentDefinitionIndex.Gun40mm],
+        HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.Gun40mm],
+        HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.Gun40mm, VehicleAttachmentDefinitionIndex.Gun100mm],
+        HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.Gun40mm, VehicleAttachmentDefinitionIndex.Gun100mm],
+        HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.Gun40mm],
     ],
     VehicleType.Albatross: [
         DRIVER,

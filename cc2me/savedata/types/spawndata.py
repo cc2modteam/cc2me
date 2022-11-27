@@ -1,4 +1,5 @@
-from typing import cast, Iterable, Optional, List
+from typing import cast, Iterable, Optional, List, Any
+from xml.etree.ElementTree import Element
 
 from .utils import ElementProxy, IsSetMixin, e_property, IntAttribute, FloatAttribute, WorldPosition, \
     MovableLocationMixin, Location, Bodies
@@ -63,6 +64,7 @@ class VehicleSpawnData(ElementProxy):
 
 
 class VehicleSpawn(ElementProxy, MovableLocationMixin):
+
     def move(self, x: float, y: float, z: float) -> None:
         self.data.world_position.x = x
         self.data.world_position.y = y
@@ -94,7 +96,7 @@ class VehicleSpawnContainer(ElementProxy):
     def items(self) -> Iterable[VehicleSpawn]:
         ret = []
         for element in self.children():
-            ret.append(VehicleSpawn(element))
+            ret.append(VehicleSpawn(element, self.cc2obj))
         return ret
 
     def remove(self, child: VehicleSpawn):

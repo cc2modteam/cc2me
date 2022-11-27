@@ -138,7 +138,7 @@ class ElementProxy(ABC):
     def get_default_child_by_tag(self, proxy: callable) -> Element:
         for item in self.children():
             if item.tag == proxy.tag:
-                return proxy(item)
+                return proxy(item, cc2obj=self.cc2obj)
         try:
             added = proxy()
             self.element.append(added.element)

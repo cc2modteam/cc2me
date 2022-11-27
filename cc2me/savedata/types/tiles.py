@@ -80,7 +80,9 @@ class Tile(ElementProxy, MovableLocationMixin):
 
     @property
     def spawn_data(self) -> SpawnData:
-        return cast(SpawnData, self.get_default_child_by_tag(SpawnData))
+        sd = cast(SpawnData, self.get_default_child_by_tag(SpawnData))
+        sd.cc2obj = self.cc2obj
+        return sd
 
     @property
     def world_position(self) -> WorldPosition:
