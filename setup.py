@@ -2,7 +2,6 @@ from setuptools import setup, find_packages
 VERSION = "0.0.3"
 
 requirements = [
-    "xmlschema==2.1.1",
     "tkintermapview==1.15",
     "pillow==9.2.0",
 ]
@@ -20,7 +19,7 @@ setup(
     install_requires=requirements,
     packages=find_packages(where="."),
     package_dir={"": "."},
-    package_data={"cc2me": ["ui/icons/*.png", "save_schema*.xsd"]},
+    package_data={"cc2me": ["ui/icons/*.png"]},
     entry_points={
         "gui_scripts": [
             "cc2me = cc2me.ui.tool:run"

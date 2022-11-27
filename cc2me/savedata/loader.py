@@ -1,13 +1,11 @@
 from typing import Optional, List
 from xml.etree.ElementTree import Element
-import xmlschema
 import os
 import re
 from xml.etree import ElementTree
 from io import StringIO
 
 from .types.abstract import CC2Save
-from .types.spawndata import SpawnData
 from .types.teams import Team
 from .types.tiles import Tile
 from .types.vehicles.vehicle import Vehicle
@@ -323,7 +321,6 @@ def load_save_file(filename: str) -> CC2XMLSave:
     :return:
     """
     resp = {}
-    xs = xmlschema.XMLSchema(SCHEMA)
     buf = StoppableStringIO()
     logger.info(f"open {filename}")
     with open(filename, "r") as original:
@@ -331,16 +328,15 @@ def load_save_file(filename: str) -> CC2XMLSave:
         full_content = original.read()
         buf.write(re.sub(r"[\r\n]", " ", full_content))
     buf.seek(0, os.SEEK_SET)
-
-    for root in xs.root_elements:
-        logger.info(f"parsing {root.name}")
+    for root in ROOT_ORDER:
+        logger.info(f"parsing {root}")
         pre_feed = None
         if buf.tell() != 0:
             pre_feed = XML_START
 
-        element = CC2ElementTree(buf, root.name, pre_feed=pre_feed).cc2parse(buf.tell())
+        element = CC2ElementTree(buf, root, pre_feed=pre_feed).cc2parse(buf.tell())
         tree = ElementTree.ElementTree(element=element)
-        resp[root.name] = tree
+        resp[root] = tree
     logger.info("loaded")
     doc = CC2XMLSave()
     doc.roots = resp
