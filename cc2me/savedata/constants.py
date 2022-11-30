@@ -352,7 +352,7 @@ ATTACHMENT_CAPACITY = [
                        VehicleType.Bear),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileAALauncher, 8,
                        VehicleType.Swordfish, VehicleType.Needlefish),
-    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Flares, 20,
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Flares, 16,
                        VehicleType.Bear, VehicleType.Walrus, VehicleType.Seal, VehicleType.Razorbill, VehicleType.Manta),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.SmokeBomb, 10,
                        VehicleType.Bear, VehicleType.Walrus, VehicleType.Seal, VehicleType.Razorbill,
@@ -399,6 +399,8 @@ ATTACHMENT_CAPACITY = [
                        VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.RocketPod, 60,
                        VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.RocketPod, 20,
+                       VehicleType.Manta, VehicleType.Albatross, VehicleType.Petrel, VehicleType.Razorbill),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.VirusBot, 1,
                        VehicleType.Seal, VehicleType.Walrus)
 ]

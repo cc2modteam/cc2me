@@ -71,7 +71,8 @@ HARDPOINT_ATTACHMENTS = [
     VehicleAttachmentDefinitionIndex.Bomb0,
     VehicleAttachmentDefinitionIndex.Bomb1,
     VehicleAttachmentDefinitionIndex.Bomb2,
-    VehicleAttachmentDefinitionIndex.FuelTank
+    VehicleAttachmentDefinitionIndex.FuelTank,
+    VehicleAttachmentDefinitionIndex.RocketPod,
 ]
 
 GROUND_RESUPPLY = [
