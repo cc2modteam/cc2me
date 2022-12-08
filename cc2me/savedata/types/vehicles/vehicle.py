@@ -145,12 +145,13 @@ class Vehicle(ElementProxy, MovableLocationMixin):
             new_attachment_state.attachment_index = attachment_index
 
             capacity = get_attachment_capacity(self.definition_index, value)
-            data = new_attachment_state.data
-            for attrib_name in capacity.attribs:
-                setattr(data, attrib_name, capacity.count)
+            if capacity is not None:
+                data = new_attachment_state.data
+                for attrib_name in capacity.attribs:
+                    setattr(data, attrib_name, capacity.count)
 
-            new_attachment_state.data = data
-            self.state.attachments.replace(new_attachment_state)
+                new_attachment_state.data = data
+                self.state.attachments.replace(new_attachment_state)
         else:
             del self.attachments[attachment_index]
             del self.state.attachments[attachment_index]

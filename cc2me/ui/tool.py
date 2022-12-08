@@ -67,6 +67,7 @@ class App(tkinter.Tk):
         self.toolbar.add_button("saveas", "saveas", command=self.save_as, state=tkinter.DISABLED, group="save")
         self.toolbar.add_button("saveslot", "save-slot", command=self.save_slot, state=tkinter.DISABLED, group="save")
         self.toolbar.add_button("delete", "delete", command=self.remove_item, state=tkinter.DISABLED, group="selected")
+        self.toolbar.add_button("clone", "dupe", command=self.duplicate_selected, state=tkinter.DISABLED, group="selected")
         self.toolbar.add_button("addisland", "add-island", command=self.add_new_island, state=tkinter.DISABLED,
                                 group="none-selected")
 
@@ -199,13 +200,45 @@ class App(tkinter.Tk):
         marker.draw()
         self.select_markers([marker])
 
-    def add_new_unit(self, vtype: VehicleType):
+    def add_new_unit(self, vtype: VehicleType) -> UnitMarker:
         loc = self.map_widget.convert_canvas_coords_to_decimal_coords(200, 200)
         # self.map_widget.set_zoom(15)
         v = self.cc2me.new_vehicle(vtype)
         marker = self.add_unit(v)
         marker.unit.move(loc[0], loc[1])
         self.select_markers([marker])
+        return marker
+
+    def duplicate_units(self, units: List[Unit]) -> List[UnitMarker]:
+        # loop through each unit
+        new_units = []
+        for unit in units:
+            new_unit = self.add_new_unit(unit.vehicle_type)
+            new_unit.unit.team_owner = unit.team_owner
+            new_unit.unit.alt = unit.alt
+            new_unit.unit.move(unit.loc[0] + 0.1, unit.loc[1] + 0.1)
+
+            for attachment in unit.attachments:
+                definition = unit.get_attachment(attachment)
+                state = unit.get_attachment_state(attachment)
+                if definition is not None:
+                    new_unit.unit.set_attachment(attachment, definition)
+                    if state:
+                        new_unit.unit.set_attachment_state(attachment, state)
+
+            new_units.append(new_unit)
+
+        return new_units
+
+    def duplicate_selected(self):
+        markers = self.selected_markers()
+
+        units = [x.unit for x in markers if isinstance(x, UnitMarker)]
+        if units:
+            new_units = self.duplicate_units(units)
+            if new_units:
+                self.select_markers(new_units)
+
 
     def add_new_seal(self):
         self.add_new_unit(VehicleType.Seal)

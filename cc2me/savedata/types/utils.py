@@ -115,9 +115,9 @@ class ElementProxy(ABC):
             element = Element(self.tag)
             apply_defaults = True
         self.element = element
+        self.cc2obj: "CC2Save" = cc2obj
         if apply_defaults:
             self.defaults()
-        self.cc2obj: "CC2Save" = cc2obj
 
     @property
     def human_controlled(self) -> bool:

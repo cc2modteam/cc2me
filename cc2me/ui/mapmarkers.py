@@ -9,7 +9,7 @@ from .cc2constants import get_team_color
 from .image_loader import load_icon
 from .mapshapes import CanvasShape
 from ..savedata.constants import VehicleType, IslandTypes
-from ..savedata.types.objects import CC2MapItem, Island, Unit, Spawn
+from ..savedata.types.objects import CC2MapItem, Island, Unit, Spawn, LOC_SCALE_FACTOR
 from ..savedata.types.utils import MovableLocationMixin
 
 
@@ -239,15 +239,19 @@ class IslandMarker(CC2DataMarker):
 
     def border_polygon_coords(self):
         tile = self.island.tile()
-        nw_x, nw_y = self.get_canvas_pos(
-            (self.object.loc[0] + tile.bounds.min.z / 1000, self.object.loc[1] + tile.bounds.min.x / 1000))
-        ne_x, ne_y = self.get_canvas_pos(
-            (self.object.loc[0] + tile.bounds.min.z / 1000, self.object.loc[1] + tile.bounds.max.x / 1000))
-        se_x, se_y = self.get_canvas_pos(
-            (self.object.loc[0] + tile.bounds.max.z / 1000, self.object.loc[1] + tile.bounds.max.x / 1000))
-        sw_x, sw_y = self.get_canvas_pos(
-            (self.object.loc[0] + tile.bounds.max.z / 1000, self.object.loc[1] + tile.bounds.min.x / 1000))
-        return [nw_x, nw_y, ne_x, ne_y, se_x, se_y, sw_x, sw_y]
+        try:
+            nw_x, nw_y = self.get_canvas_pos(
+                (self.object.loc[0] + tile.bounds.min.z / LOC_SCALE_FACTOR, self.object.loc[1] + tile.bounds.min.x / LOC_SCALE_FACTOR))
+            ne_x, ne_y = self.get_canvas_pos(
+                (self.object.loc[0] + tile.bounds.min.z / LOC_SCALE_FACTOR, self.object.loc[1] + tile.bounds.max.x / LOC_SCALE_FACTOR))
+            se_x, se_y = self.get_canvas_pos(
+                (self.object.loc[0] + tile.bounds.max.z / LOC_SCALE_FACTOR, self.object.loc[1] + tile.bounds.max.x / LOC_SCALE_FACTOR))
+            sw_x, sw_y = self.get_canvas_pos(
+                (self.object.loc[0] + tile.bounds.max.z / LOC_SCALE_FACTOR, self.object.loc[1] + tile.bounds.min.x / LOC_SCALE_FACTOR))
+            return [nw_x, nw_y, ne_x, ne_y, se_x, se_y, sw_x, sw_y]
+        except ValueError as err:
+            assert True
+            raise
 
     def draw(self, event=None):
         super(IslandMarker, self).draw(event)

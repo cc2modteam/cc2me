@@ -5,8 +5,8 @@ from typing import cast, List, Optional, Union
 
 MAX_INTEGER = 4294967295
 
-MIN_TILE_SEED = 6000
-MAX_TILE_SEED = 20000
+MIN_TILE_SEED = 2000
+MAX_TILE_SEED = 30000
 
 POS_Y_SEABOTTOM = -1
 
@@ -14,6 +14,8 @@ BIOME_GREEN_PINES = 0
 BIOME_SNOW_PINES = 1
 BIOME_SANDY_PINES = 3
 BIOME_DARK_MESAS = 7
+
+BIOMES = [BIOME_DARK_MESAS, BIOME_GREEN_PINES, BIOME_SNOW_PINES, BIOME_SANDY_PINES]
 
 VEHICLE_DEF_CARRIER = 0
 
@@ -475,7 +477,17 @@ def get_attachment_capacity(
         if item.attachment == attachment:
             if vehicle in item.vtypes:
                 return item
-    return None
+
+    cap = None
+    if attachment in TURRET_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.Gun20mm]:
+        # default 100 rounds
+        cap = AmmunitionCapacity(attachment, 100, vehicle)
+    elif attachment in HARDPOINT_ATTACHMENTS:
+        cap = AmmunitionCapacity(attachment, 1, vehicle)
+    if attachment in [VehicleAttachmentDefinitionIndex.FuelTank]:
+        cap = FuelTankCapacity(attachment, 100, vehicle)
+
+    return cap
 
 
 def get_default_hitpoints(v_type: VehicleType) -> Optional[float]:

@@ -8,11 +8,11 @@ from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData, Inventory, Quantity
 from .vehicles.vehicle import Vehicle
 from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex, \
-    generate_island_seed, get_default_hitpoints, TURRET_ATTACHMENTS, InventoryIndex
+    generate_island_seed, get_default_hitpoints, TURRET_ATTACHMENTS, InventoryIndex, BIOMES
 from ..rules import get_unit_attachment_choices, get_unit_attachment_slots, HARDPOINT_ATTACHMENTS, SHIP_ATTACHMENTS
 from ..loader import CC2XMLSave
 
-LOC_SCALE_FACTOR = 1000
+LOC_SCALE_FACTOR = 2000
 
 
 class DynamicGetter(Protocol):
@@ -107,12 +107,40 @@ class Island(CC2MapItem):
         return self.name
 
     @property
+    def difficulty(self) -> float:
+        return self.tile().difficulty_factor
+
+    @difficulty.setter
+    def difficulty(self, value):
+        if isinstance(value, str):
+            value = float(value)
+        if isinstance(value, float):
+            self.tile().difficulty_factor = value
+
+    @property
+    def difficulty_choices(self) -> List[str]:
+        return [
+            "0.0",
+            "0.5",
+            "0.7",
+            "1.0"
+        ]
+
+    @property
     def alt(self) -> float:
         return self.tile().loc.y
 
     @property
     def biome(self) -> int:
         return self.tile().biome_type
+
+    @biome.setter
+    def biome(self, type: int):
+        self.tile().biome_type = type
+
+    @property
+    def biome_choices(self) -> List[str]:
+        return [str(x) for x in BIOMES]
 
     @property
     def size(self) -> float:
@@ -129,6 +157,7 @@ class Island(CC2MapItem):
             "1000",
             "2000",
             "3500",
+            "5000",
             "6000",
             "7500",
         ]
@@ -152,7 +181,7 @@ class Island(CC2MapItem):
 
     @property
     def viewable_properties(self) -> List[str]:
-        return super(Island, self).viewable_properties + ["name", "island_type", "alt", "seed", "biome", "size"]
+        return super(Island, self).viewable_properties + ["name", "island_type", "alt", "seed", "biome", "size", "difficulty"]
 
     @property
     def team_owner(self) -> int:
@@ -363,7 +392,9 @@ class Unit(CC2MapItem):
         return EmbeddedAttachmentStateData(element=None)
 
     def set_attachment_state(self, attachment_index: int, data: EmbeddedAttachmentStateData):
-        self.vehicle().state.attachments[attachment_index].data = data
+        if self.vehicle().state.attachments[attachment_index] is not None:
+            # not all attachments have state
+            self.vehicle().state.attachments[attachment_index].data = data
 
 
 class AirUnit(Unit):

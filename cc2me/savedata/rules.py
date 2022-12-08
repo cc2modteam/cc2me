@@ -150,7 +150,7 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     ],
     VehicleType.Albatross: [
         DRIVER,
-        [VehicleAttachmentDefinitionIndex.AirObsCam],
+        [VehicleAttachmentDefinitionIndex.AirObsCam, VehicleAttachmentDefinitionIndex.CIWS, VehicleAttachmentDefinitionIndex.Gun40mm],
         HARDPOINT_ATTACHMENTS,
         HARDPOINT_ATTACHMENTS,
         HARDPOINT_ATTACHMENTS,
@@ -163,7 +163,7 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
         HARDPOINT_ATTACHMENTS,
         HARDPOINT_ATTACHMENTS,
         HARDPOINT_ATTACHMENTS,
-        [VehicleAttachmentDefinitionIndex.AWACS],
+        [VehicleAttachmentDefinitionIndex.AWACS, VehicleAttachmentDefinitionIndex.Gun40mm],
         SMALL_AIR_AUX,
         SMALL_AIR_AUX,
     ]
