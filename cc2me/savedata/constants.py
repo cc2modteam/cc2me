@@ -139,6 +139,7 @@ class VehicleAttachmentDefinitionIndex(IntEnum):
     TorpedoCountermesure = 74
     ShipTorpedo = 75
     VirusBot = 23
+    Autocannon = 99
 
 
 class InventoryIndex(IntEnum):
@@ -353,7 +354,7 @@ ATTACHMENT_CAPACITY = [
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun120mm, 25,
                        VehicleType.Bear),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileAALauncher, 8,
-                       VehicleType.Swordfish, VehicleType.Needlefish),
+                       VehicleType.Swordfish, VehicleType.Needlefish, VehicleType.Turret),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Flares, 16,
                        VehicleType.Bear, VehicleType.Walrus, VehicleType.Seal, VehicleType.Razorbill, VehicleType.Manta),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.SmokeBomb, 10,
@@ -486,6 +487,9 @@ def get_attachment_capacity(
         cap = AmmunitionCapacity(attachment, 1, vehicle)
     if attachment in [VehicleAttachmentDefinitionIndex.FuelTank]:
         cap = FuelTankCapacity(attachment, 100, vehicle)
+
+    if attachment == VehicleAttachmentDefinitionIndex.Autocannon:
+        cap = AmmunitionCapacity(attachment, 250, vehicle)
 
     return cap
 

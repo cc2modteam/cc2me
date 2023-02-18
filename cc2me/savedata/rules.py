@@ -92,7 +92,7 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
         DRIVER,
     ],
     VehicleType.Turret: [
-        SMALL_GROUND_TURRETS + [VehicleAttachmentDefinitionIndex.Gun120mm],
+        SMALL_GROUND_TURRETS + [VehicleAttachmentDefinitionIndex.Gun120mm, VehicleAttachmentDefinitionIndex.MissileAALauncher],
     ],
     VehicleType.Seal: [
         DRIVER,
@@ -103,8 +103,8 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     VehicleType.Walrus: [
         DRIVER,
         SMALL_GROUND_TURRETS + HARDPOINT_ATTACHMENTS,
-        SMALL_GROUND_AUX,
-        SMALL_GROUND_AUX,
+        SMALL_GROUND_AUX + [VehicleAttachmentDefinitionIndex.Autocannon],
+        SMALL_GROUND_AUX + [VehicleAttachmentDefinitionIndex.Autocannon],
     ],
     VehicleType.Bear: [
         DRIVER,
@@ -137,8 +137,8 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
         DRIVER,
         HARDPOINT_ATTACHMENTS,
         HARDPOINT_ATTACHMENTS,
-        SMALL_AIR_AUX,
-        SMALL_AIR_AUX,
+        SMALL_AIR_AUX + [VehicleAttachmentDefinitionIndex.Autocannon],
+        SMALL_AIR_AUX + [VehicleAttachmentDefinitionIndex.Autocannon],
     ],
     VehicleType.Petrel: [
         DRIVER,
