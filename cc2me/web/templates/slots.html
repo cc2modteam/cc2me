@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Save Slot Selection</title>
+</head>
+<body>
+<h1>Select a slot to work on</h1>
+<ul>
+    {% for slot in slots %}
+        <li><a href="/map/{{ slot['filename'] }}">{{ slot["display"] }}</a></li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

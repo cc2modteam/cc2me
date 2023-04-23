@@ -1,7 +1,10 @@
+import os
 import random
 from abc import ABC
 from enum import Enum
-from typing import cast, List, Optional, Union
+from typing import cast, List, Optional, Union, Dict
+from xml.etree import ElementTree
+from xml.etree.ElementTree import Element
 
 MAX_INTEGER = 4294967295
 
@@ -508,3 +511,33 @@ def get_default_state(v_type: VehicleType) -> List[Capacity]:
         if v_type in item.vtypes:
             values.append(item)
     return values
+
+
+def get_cc2_appdata() -> str:
+    cc2dir = os.path.expandvars(r'%APPDATA%\\Carrier Command 2')
+    return cc2dir
+
+
+def get_persistent_file_path() -> str:
+    persistent = os.path.join(get_cc2_appdata(), "persistent_data.xml")
+    return persistent
+
+
+def read_save_slots(slots_file: Optional[str] = None) -> List[Dict[str, str]]:
+    if slots_file is None:
+        slots_file = get_persistent_file_path()
+    slots = []
+    with open(slots_file, "r") as xmlfile:
+        xml = xmlfile.read()
+    etree = ElementTree.fromstring(xml)
+    for item in etree:
+        if isinstance(item, Element):
+            filename = item.attrib.get("save_name")
+            text = item.attrib.get("display_name")
+            if filename:
+                slots.append({
+                    "filename": filename,
+                    "display": text
+                })
+    return slots
+

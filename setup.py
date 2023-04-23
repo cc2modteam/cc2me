@@ -4,6 +4,8 @@ VERSION = "0.0.5"
 requirements = [
     "tkintermapview==1.15",
     "pillow==9.2.0",
+    "pandas",
+    "flask",
 ]
 
 setup(
@@ -25,7 +27,7 @@ setup(
             "cc2me = cc2me.ui.tool:run"
         ],
         "console_scripts": [
-            "cc2mec = cc2me.ui.tool:run"
+            "cce = cc2me.web.tool:run"
         ]
     },
 )

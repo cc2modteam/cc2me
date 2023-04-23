@@ -5,6 +5,8 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 from tkinter import simpledialog
 
+from cc2me.savedata.constants import read_save_slots
+
 
 class SlotChooser(simpledialog.Dialog):
 
@@ -22,22 +24,10 @@ class SlotChooser(simpledialog.Dialog):
                                  command=callback)
             btn.pack(fill=tkinter.X)
 
-    def __init__(self, app, persistent_file: str, choice: dict, title="Load a save slot",  ):
+    def __init__(self, app, persistent_file: str, choice: dict, title="Load a save slot"):
         self.persistent_file = persistent_file
-        self.slots = []
+        self.slots = read_save_slots(persistent_file)
         self.choice = choice
-        with open(self.persistent_file, "r") as xmlfile:
-            xml = xmlfile.read()
-        self.etree = ElementTree.fromstring(xml)
-        for item in self.etree:
-            if isinstance(item, Element):
-                filename = item.attrib.get("save_name")
-                text = item.attrib.get("display_name")
-                if filename:
-                    self.slots.append({
-                        "filename": filename,
-                        "display": text
-                    })
 
         super(SlotChooser, self).__init__(parent=app, title=title)
 
