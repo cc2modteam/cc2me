@@ -5,8 +5,20 @@ from ..savedata.types.utils import Location
 SCALE_MAP_COORDS = 10000
 
 
+def cc2_to_minutes(num: float) -> float:
+    return num / SCALE_MAP_COORDS
+
+
+def latlong_to_cc2loc(lat: float, lon: float) -> Location:
+    loc = Location()
+    loc.x = lon * SCALE_MAP_COORDS
+    loc.z = lat * SCALE_MAP_COORDS
+    return loc
+
+
 @dataclass
 class GPoint:
+
     lon: float
     lat: float
 
@@ -16,7 +28,7 @@ class GPoint:
         return self
 
     def as_list(self):
-        return [self.lon, self.lat]
+        return [self.lat, self.lon]
 
 
 def loc_to_geo(loc: Location) -> GPoint:

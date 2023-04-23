@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
             integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin="">
     </script>
+    <script src="/static/Path.Drag.min.js"></script>
 
     <style>
         #map {
@@ -20,22 +21,43 @@
 <body>
 <div id="map"></div>
 <script>
+
     window.onload = function () {
         let map = L.map("map");
         const tiles = L.tileLayer('/static/ocean.png', {
 		    maxZoom: 19,
 		    attribution: ''
 	    }).addTo(map);
-
         map.setView([3, 5], 6)
+
         $.getJSON("/geo/{{ slot }}/tiles",
             function (island_data) {
-                let islands = L.geoJson(island_data, {
-                    onEachFeature: function (feature, layer) {
-
-                    }
+                $.each(island_data.features, function (tile_idx) {
+                    let tile = island_data.features[tile_idx];
+                    let island = L.polygon(tile.geometry.coordinates,
+                        {
+                            color: tile.properties.team_color,
+                            draggable: true
+                        }
+                    );
+                    island.cc2obj = tile;
+                    island.bindTooltip(tile.properties.name).openTooltip();
+                    island.on("dragend", function (event) {
+                        let moved = island.getCenter()
+                        console.log(moved)
+                        $.ajax({
+                            type: "POST",
+                            url: "/move/{{ slot }}/tile/" + tile.id,
+                            data: JSON.stringify({
+                                "lat": moved.lat,
+                                "lon": moved.lng,
+                            }),
+                            contentType: "application/json"
+                        })
+                    });
+                    island.addTo(map);
+                    console.log(island)
                 });
-                islands.addTo(map);
             });
     }
 </script>

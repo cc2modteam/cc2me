@@ -1,10 +1,12 @@
 """Flask webserver for CC2E"""
 from pathlib import Path
-from flask import Flask, render_template
+
+from flask import Flask, render_template, request
 from functools import lru_cache
 from ..savedata.constants import read_save_slots, get_cc2_appdata, get_island_name
 from ..savedata.loader import CC2XMLSave, load_save_file
-from .utils import loc_to_geo_box, loc_to_geo
+from ..ui.cc2constants import get_team_color
+from .utils import loc_to_geo_box, loc_to_geo, cc2_to_minutes, latlong_to_cc2loc
 
 WEB_DIR = Path(__file__).parent.absolute()
 STATIC_DIR = WEB_DIR / "static"
@@ -48,14 +50,18 @@ def geojson_route(slot, layer):
                 "type": "Feature",
                 "id": tile.id,
                 "properties": {
+                    "kind": "tile",
                     "name": get_island_name(tile.id),
                     "team": tile.team_control,
+                    "team_color": get_team_color(tile.team_control),
                     "difficulty": tile.difficulty_factor,
                     "facility.category": tile.facility.category,
+                    "radius": cc2_to_minutes(tile.island_radius),
+                    "loc": loc_to_geo(tile.loc),
                 },
                 "geometry": {
                     "type": "Polygon",
-                    "coordinates": [loc_to_geo_box(tile.loc, tile.island_radius, tile.island_radius)]
+                    "coordinates": loc_to_geo_box(tile.loc, tile.island_radius, tile.island_radius)
                 }
             }
             geo["features"].append(item)
@@ -67,3 +73,22 @@ def geojson_route(slot, layer):
 def map_route(slot):
     save = get_map_slot(slot)
     return render_template("map.html", save=save, slot=slot)
+
+
+@app.route("/move/<slot>/<kind>/<int:item>", methods=["POST"])
+def move_item(slot: str, kind: str, item: int):
+    data = request.json
+    moved = latlong_to_cc2loc(data["lat"], data["lon"])
+    save = get_map_slot(slot)
+    if kind == "tile":
+        island = save.tile(item)
+        previous = island.loc
+        island.move(moved.x, island.loc.y, moved.z)
+        # move all island-related things (spawns etc) by the same amount
+        dx = previous.x - moved.x
+        dz = previous.z - moved.z
+
+    return {
+        "dx": dx,
+        "dz": dz
+    }
