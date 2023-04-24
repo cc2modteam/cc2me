@@ -21,44 +21,113 @@
 <body>
 <div id="map"></div>
 <script>
-
     window.onload = function () {
         let map = L.map("map");
-        const tiles = L.tileLayer('/static/ocean.png', {
+        let _islands = []
+        let _vehicles = []
+        let _spawns = []
+
+        L.tileLayer('/static/ocean.png', {
 		    maxZoom: 19,
 		    attribution: ''
 	    }).addTo(map);
         map.setView([3, 5], 6)
 
-        $.getJSON("/geo/{{ slot }}/tiles",
-            function (island_data) {
-                $.each(island_data.features, function (tile_idx) {
-                    let tile = island_data.features[tile_idx];
-                    let island = L.polygon(tile.geometry.coordinates,
-                        {
-                            color: tile.properties.team_color,
-                            draggable: true
+        function on_moved(latlong, kind, ident) {
+            console.log(`moved ${kind} ${ident} ${latlong}`);
+            $.ajax({
+                type: "POST",
+                url: `/move/{{ slot }}/${kind}/${ident}`,
+                data: JSON.stringify({
+                    "lat": latlong.lat,
+                    "lng": latlong.lng,
+                }),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (resp) {
+                    resp.moved.forEach(function (item) {
+                        // remove and re-add each of these map items
+                        if (item.kind == "spawn") {
+                            del_spawn(item.id)
+                            get_spawn(item.id)
                         }
-                    );
-                    island.cc2obj = tile;
-                    island.bindTooltip(tile.properties.name).openTooltip();
-                    island.on("dragend", function (event) {
-                        let moved = island.getCenter()
-                        console.log(moved)
-                        $.ajax({
-                            type: "POST",
-                            url: "/move/{{ slot }}/tile/" + tile.id,
-                            data: JSON.stringify({
-                                "lat": moved.lat,
-                                "lon": moved.lng,
-                            }),
-                            contentType: "application/json"
-                        })
+                        console.log(item)
                     });
-                    island.addTo(map);
-                    console.log(island)
-                });
+                }
+            })
+        }
+
+        function add_island(tile) {
+            let island = L.polygon(tile.geometry.coordinates,
+                {
+                    color: tile.properties.team_color,
+                    draggable: true
+                }
+            );
+            _islands[tile.id] = island
+            island.cc2obj = tile;
+            island.bindTooltip(tile.properties.name).openTooltip();
+            island.on("dragend", function (event) {
+                on_moved(island.getCenter(), "tile", tile.id)
             });
+            island.addTo(map);
+            console.log(`add island ${tile.id}`)
+        }
+
+        function get_islands() {
+            $.getJSON("/geo/{{ slot }}/tiles",
+                function (data) {
+                    $.each(data.features, function (item_idx) {
+                        let tile = data.features[item_idx];
+                        add_island(tile)
+                    });
+                });
+        }
+
+        function add_spawn(vspawn) {
+            let spawn = L.circle(vspawn.geometry.coordinates,
+                {
+                    color: vspawn.properties.team_color,
+                    draggable: true
+                }
+            );
+            spawn.cc2obj = vspawn;
+            _spawns[vspawn.id] = spawn
+            spawn.on("dragend", function (event) {
+                on_moved(vspawn.geometry.coordinates, "spawndata", vspawn.id)
+            });
+            spawn.addTo(map);
+
+            console.log(`add spawndata ${vspawn.id}`)
+        }
+
+        function del_spawn(vspawn_id) {
+            console.log(`del spawndata ${vspawn_id}`)
+            let spawn = _spawns[vspawn_id]
+            spawn.remove()
+        }
+
+        function get_spawns() {
+            $.getJSON("/geo/{{ slot }}/spawns",
+                function (data) {
+                    $.each(data.features, function (item_idx) {
+                        let vspawn = data.features[item_idx];
+                        add_spawn(vspawn)
+                    });
+                });
+        }
+        function get_spawn(spawnid) {
+            $.getJSON(`/geo/{{ slot }}/spawns/${spawnid}`,
+                function (data) {
+                    $.each(data.features, function (item_idx) {
+                        let vspawn = data.features[item_idx];
+                        add_spawn(vspawn)
+                    });
+                });
+        }
+
+        get_islands()
+        get_spawns()
     }
 </script>
 </body>

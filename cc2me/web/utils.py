@@ -1,6 +1,6 @@
-from typing import Tuple, List
+from typing import Tuple, List, Dict, Any, Union
 from dataclasses import dataclass
-from ..savedata.types.utils import Location
+from ..savedata.types.utils import Location, Point3D
 
 SCALE_MAP_COORDS = 10000
 
@@ -19,19 +19,19 @@ def latlong_to_cc2loc(lat: float, lon: float) -> Location:
 @dataclass
 class GPoint:
 
-    lon: float
+    lng: float
     lat: float
 
     def move(self, dx: float = 0, dy: float = 0) -> "GPoint":
-        self.lon += dx
+        self.lng += dx
         self.lat += dy
         return self
 
     def as_list(self):
-        return [self.lat, self.lon]
+        return [self.lat, self.lng]
 
 
-def loc_to_geo(loc: Location) -> GPoint:
+def loc_to_geo(loc: Union[Location, Point3D]) -> GPoint:
     return GPoint(loc.x / SCALE_MAP_COORDS, loc.z / SCALE_MAP_COORDS)
 
 
@@ -45,3 +45,13 @@ def loc_to_geo_box(loc: Location, w: float, h: float) -> List:
         loc_to_geo(loc).move(dx=width / -2, dy=height / 2).as_list(),
         loc_to_geo(loc).move(dx=width / -2, dy=height / -2).as_list(),
     ]
+
+
+def make_geodata(**kwargs) -> Dict[str, Any]:
+    res = {
+        "type": "Feature",
+        "properties": {},
+    }
+    for name, value in kwargs.items():
+        res[name] = value
+    return res

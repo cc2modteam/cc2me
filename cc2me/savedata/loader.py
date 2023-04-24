@@ -8,9 +8,9 @@ from io import StringIO
 from .types.abstract import CC2Save
 from .types.teams import Team
 from .types.tiles import Tile
+from .types.spawndata import VehicleSpawnData, VehicleSpawn
 from .types.vehicles.vehicle import Vehicle
 from .types.vehicles.vehicle_state import VehicleStateContainer
-from ..paths import SCHEMA
 from .logging import logger
 from .constants import POS_Y_SEABOTTOM, BIOME_SANDY_PINES, VehicleType, get_default_state
 
@@ -124,6 +124,13 @@ class CC2XMLSave(CC2Save):
                 return item
 
         raise KeyError(tile_id)
+
+    def spawn(self, spawn_id: int) -> Optional[VehicleSpawn]:
+        for tile in self.tiles:
+            for spawn in tile.spawn_data.vehicles.items():
+                if spawn.data.respawn_id == spawn_id:
+                    return spawn
+        return None
 
     def find_vehicles_by_definition(self, definition_id: int):
         return [

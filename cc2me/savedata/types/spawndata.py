@@ -70,6 +70,11 @@ class VehicleSpawn(ElementProxy, MovableLocationMixin):
         self.data.world_position.y = y
         self.data.world_position.z = z
 
+    def translate(self, dx: float, dy: float, dz: float) -> None:
+        self.move(self.data.world_position.x + dx,
+                  self.data.world_position.y + dy,
+                  self.data.world_position.z + dz)
+
     @property
     def loc(self) -> Location:
         pos = self.data.world_position
@@ -115,7 +120,7 @@ class SpawnData(ElementProxy, IsSetMixin):
     team_id = e_property(IntAttribute("team_id", default_value=0))
 
     def defaults(self):
-        self.is_set = False
+        self.is_set = True
 
     @property
     def vehicles(self) -> VehicleSpawnContainer:
