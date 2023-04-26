@@ -11,7 +11,7 @@
             integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin="">
     </script>
     <script src="/static/Path.Drag.min.js"></script>
-
+    <script src="/static/Leaflet.Editable.js"></script>
     <style>
         #map {
             height: 5in;
@@ -22,16 +22,65 @@
 <div id="map"></div>
 <script>
     window.onload = function () {
-        let map = L.map("map");
+        let map = L.map("map", {editable: true});
+        map.setView([3, 5], 6)
         let _islands = []
         let _vehicles = []
         let _spawns = []
+
+        let _selected = []
+
+        L.EditControl = L.Control.extend({
+
+            options: {
+                position: 'topleft',
+                callback: null,
+                kind: '',
+                html: ''
+            },
+            onAdd: function (map) {
+                let container = L.DomUtil.create('div', 'leaflet-control leaflet-bar'),
+                    link = L.DomUtil.create('a', '', container);
+
+                link.href = '#';
+                link.title = this.options.tooltip
+                link.innerHTML = this.options.html;
+                L.DomEvent.on(link, 'click', L.DomEvent.stop)
+                          .on(link, 'click', function () {
+                            window.LAYER = this.options.callback.call(map.editTools);
+                          }, this);
+
+                return container;
+            }
+
+        })
+
+        L.SelectRectangleControl = L.EditControl.extend({
+
+            options: {
+                position: 'topleft',
+                callback: map.editTools.startRectangle,
+                kind: 'rectangle',
+                html: '&#11034;',
+                tooltip: "select multiple"
+            }
+
+        });
+        map.addControl(new L.SelectRectangleControl())
+
+        map.on("editable:drawing:commit", function (e) {
+            console.log("done")
+            let box = e.layer
+
+            let bounds = box.getBounds()
+            console.log(bounds)
+            box.remove()
+        })
 
         L.tileLayer('/static/ocean.png', {
 		    maxZoom: 19,
 		    attribution: ''
 	    }).addTo(map);
-        map.setView([3, 5], 6)
 
         function on_moved(latlong, kind, ident) {
             console.log(`moved ${kind} ${ident} ${latlong}`);
@@ -47,7 +96,7 @@
                 success: function (resp) {
                     resp.moved.forEach(function (item) {
                         // remove and re-add each of these map items
-                        if (item.kind == "spawn") {
+                        if (item.kind === "spawn") {
                             del_spawn(item.id)
                             get_spawn(item.id)
                         }
