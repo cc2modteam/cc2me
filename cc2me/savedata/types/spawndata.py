@@ -1,4 +1,4 @@
-from typing import cast, Iterable, Optional, List, Any
+from typing import cast, Iterable, Optional, List, Any, Union
 from xml.etree.ElementTree import Element
 
 from .utils import ElementProxy, IsSetMixin, e_property, IntAttribute, FloatAttribute, WorldPosition, \
@@ -104,11 +104,16 @@ class VehicleSpawnContainer(ElementProxy):
             ret.append(VehicleSpawn(element, self.cc2obj))
         return ret
 
-    def remove(self, child: VehicleSpawn):
+    def remove(self, child: Union[VehicleSpawn, int]):
+        remove_ident = -1
+        if isinstance(child, VehicleSpawn):
+            remove_ident = child.data.respawn_id
+        elif isinstance(child, int):
+            remove_ident = child
         children = self.items()
         for item in children:
             item: VehicleSpawn
-            if item.data.respawn_id == child.data.respawn_id:
+            if item.data.respawn_id == remove_ident:
                 self.element.remove(item.element)
 
     def append(self, item: VehicleSpawn):

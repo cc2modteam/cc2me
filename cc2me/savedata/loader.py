@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from xml.etree.ElementTree import Element
 import os
 import re
@@ -132,6 +132,13 @@ class CC2XMLSave(CC2Save):
                     return spawn
         return None
 
+    def get_spawn_tile(self, spawn_id: int) -> Tuple[Optional[Tile], Optional[VehicleSpawn]]:
+        for tile in self.tiles:
+            for spawn in tile.spawn_data.vehicles.items():
+                if spawn.data.respawn_id == spawn_id:
+                    return tile, spawn
+        return None, None
+
     def find_vehicles_by_definition(self, definition_id: int):
         return [
             x for x in self.vehicles if x.definition_index == definition_id
@@ -197,6 +204,15 @@ class CC2XMLSave(CC2Save):
             ve = [x for x in vparent if x.attrib.get("id") == vid]
             if ve:
                 vparent.remove(ve[0])
+            # if there was a spawn, remove that too
+            spawn = self.spawn(vehicle.id)
+            if spawn:
+                self.remove_spawn(vehicle.id)
+
+    def remove_spawn(self, spawn_id: int):
+        tile, spawn = self.get_spawn_tile(spawn_id)
+        if spawn and tile:
+            tile.spawn_data.vehicles.remove(spawn_id)
 
     @property
     def _teams(self) -> List[Element]:

@@ -271,7 +271,11 @@ class App(tkinter.Tk):
                 self.cc2me.remove_tile(tile)
             if isinstance(marker, UnitMarker):
                 vehicle = marker.unit.vehicle()
-                self.cc2me.remove_vehicle(vehicle)
+                if vehicle is not None:
+                    self.cc2me.remove_vehicle(vehicle)
+                if isinstance(marker.unit, Spawn):
+                    self.cc2me.remove_spawn(marker.object.object.data.respawn_id)
+
             marker.delete()
         self.select_none()
 
