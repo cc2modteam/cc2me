@@ -424,10 +424,14 @@ for a_type in [VehicleAttachmentDefinitionIndex.MissileIR,
         AmmunitionCapacity(a_type, 1,
                            VehicleType.Manta, VehicleType.Petrel, VehicleType.Razorbill, VehicleType.Albatross))
 
-ATTACHMENT_CAPACITY.append(
+ATTACHMENT_CAPACITY.extend([
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun20mm,
                        500, VehicleType.Mule
+                       ),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun40mm,
+                       500, VehicleType.Mule
                        )
+    ]
 )
 ATTACHMENT_CAPACITY.append(
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Refuel,
@@ -442,6 +446,11 @@ ATTACHMENT_CAPACITY.append(
 ATTACHMENT_CAPACITY.append(
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Rearm20mm,
                        400, VehicleType.Mule
+                       )
+)
+ATTACHMENT_CAPACITY.append(
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Rearm40mm,
+                       300, VehicleType.Mule
                        )
 )
 ATTACHMENT_CAPACITY.extend(

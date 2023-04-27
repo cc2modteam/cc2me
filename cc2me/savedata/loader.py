@@ -195,6 +195,17 @@ class CC2XMLSave(CC2Save):
         vsparent = self.vehicle_states_parent
 
         if vehicle:
+            if vehicle.definition_index == VehicleType.Jetty.value:
+                return  # dont' delete a jetty, it causes problems if the carrier isnt launched
+            if vehicle.definition_index == VehicleType.Carrier.value:
+                # if this is the last carrier a team has, mark the team as destroyed.
+                team_carriers = [x for x in self.vehicles
+                                 if x.team_id == vehicle.team_id and x.definition_index == vehicle.definition_index]
+                if len(team_carriers) == 1:
+                    # destroy the team
+                    team = self.team(vehicle.team_id)
+                    team.is_destroyed = True
+
             vid = str(vehicle.id)
             state = vehicle.state
             if state:
