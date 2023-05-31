@@ -1,7 +1,10 @@
+import os
 import random
 from abc import ABC
 from enum import Enum
-from typing import cast, List, Optional, Union
+from typing import cast, List, Optional, Union, Dict
+from xml.etree import ElementTree
+from xml.etree.ElementTree import Element
 
 MAX_INTEGER = 4294967295
 
@@ -421,10 +424,14 @@ for a_type in [VehicleAttachmentDefinitionIndex.MissileIR,
         AmmunitionCapacity(a_type, 1,
                            VehicleType.Manta, VehicleType.Petrel, VehicleType.Razorbill, VehicleType.Albatross))
 
-ATTACHMENT_CAPACITY.append(
+ATTACHMENT_CAPACITY.extend([
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun20mm,
                        500, VehicleType.Mule
+                       ),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Gun40mm,
+                       500, VehicleType.Mule
                        )
+    ]
 )
 ATTACHMENT_CAPACITY.append(
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Refuel,
@@ -439,6 +446,11 @@ ATTACHMENT_CAPACITY.append(
 ATTACHMENT_CAPACITY.append(
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Rearm20mm,
                        400, VehicleType.Mule
+                       )
+)
+ATTACHMENT_CAPACITY.append(
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Rearm40mm,
+                       300, VehicleType.Mule
                        )
 )
 ATTACHMENT_CAPACITY.extend(
@@ -508,3 +520,33 @@ def get_default_state(v_type: VehicleType) -> List[Capacity]:
         if v_type in item.vtypes:
             values.append(item)
     return values
+
+
+def get_cc2_appdata() -> str:
+    cc2dir = os.path.expandvars(r'%APPDATA%\\Carrier Command 2')
+    return cc2dir
+
+
+def get_persistent_file_path() -> str:
+    persistent = os.path.join(get_cc2_appdata(), "persistent_data.xml")
+    return persistent
+
+
+def read_save_slots(slots_file: Optional[str] = None) -> List[Dict[str, str]]:
+    if slots_file is None:
+        slots_file = get_persistent_file_path()
+    slots = []
+    with open(slots_file, "r") as xmlfile:
+        xml = xmlfile.read()
+    etree = ElementTree.fromstring(xml)
+    for item in etree:
+        if isinstance(item, Element):
+            filename = item.attrib.get("save_name")
+            text = item.attrib.get("display_name")
+            if filename:
+                slots.append({
+                    "filename": filename,
+                    "display": text
+                })
+    return slots
+

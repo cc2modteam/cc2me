@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from xml.etree.ElementTree import Element
 import os
 import re
@@ -8,9 +8,9 @@ from io import StringIO
 from .types.abstract import CC2Save
 from .types.teams import Team
 from .types.tiles import Tile
+from .types.spawndata import VehicleSpawnData, VehicleSpawn
 from .types.vehicles.vehicle import Vehicle
 from .types.vehicles.vehicle_state import VehicleStateContainer
-from ..paths import SCHEMA
 from .logging import logger
 from .constants import POS_Y_SEABOTTOM, BIOME_SANDY_PINES, VehicleType, get_default_state
 
@@ -125,6 +125,20 @@ class CC2XMLSave(CC2Save):
 
         raise KeyError(tile_id)
 
+    def spawn(self, spawn_id: int) -> Optional[VehicleSpawn]:
+        for tile in self.tiles:
+            for spawn in tile.spawn_data.vehicles.items():
+                if spawn.data.respawn_id == spawn_id:
+                    return spawn
+        return None
+
+    def get_spawn_tile(self, spawn_id: int) -> Tuple[Optional[Tile], Optional[VehicleSpawn]]:
+        for tile in self.tiles:
+            for spawn in tile.spawn_data.vehicles.items():
+                if spawn.data.respawn_id == spawn_id:
+                    return tile, spawn
+        return None, None
+
     def find_vehicles_by_definition(self, definition_id: int):
         return [
             x for x in self.vehicles if x.definition_index == definition_id
@@ -181,6 +195,17 @@ class CC2XMLSave(CC2Save):
         vsparent = self.vehicle_states_parent
 
         if vehicle:
+            if vehicle.definition_index == VehicleType.Jetty.value:
+                return  # dont' delete a jetty, it causes problems if the carrier isnt launched
+            if vehicle.definition_index == VehicleType.Carrier.value:
+                # if this is the last carrier a team has, mark the team as destroyed.
+                team_carriers = [x for x in self.vehicles
+                                 if x.team_id == vehicle.team_id and x.definition_index == vehicle.definition_index]
+                if len(team_carriers) == 1:
+                    # destroy the team
+                    team = self.team(vehicle.team_id)
+                    team.is_destroyed = True
+
             vid = str(vehicle.id)
             state = vehicle.state
             if state:
@@ -190,6 +215,15 @@ class CC2XMLSave(CC2Save):
             ve = [x for x in vparent if x.attrib.get("id") == vid]
             if ve:
                 vparent.remove(ve[0])
+            # if there was a spawn, remove that too
+            spawn = self.spawn(vehicle.id)
+            if spawn:
+                self.remove_spawn(vehicle.id)
+
+    def remove_spawn(self, spawn_id: int):
+        tile, spawn = self.get_spawn_tile(spawn_id)
+        if spawn and tile:
+            tile.spawn_data.vehicles.remove(spawn_id)
 
     @property
     def _teams(self) -> List[Element]:

@@ -190,6 +190,10 @@ class MovableLocationMixin(LocationMixin, ABC):
     def move(self, x: float, y: float, z: float) -> None:
         pass
 
+    @abstractmethod
+    def translate(self, dx: float, dy: float, dz: float) -> None:
+        pass
+
 
 class WorldPosition(Point3D):
     tag = "world_position"

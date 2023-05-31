@@ -118,6 +118,11 @@ class Tile(ElementProxy, MovableLocationMixin):
     def move(self, x: float, y: float, z: float) -> None:
         self.set_position(x=x, y=y, z=z)
 
+    def translate(self, dx: float, dy: float, dz: float) -> None:
+        self.set_position(x=self.loc.x + dx,
+                          y=self.loc.y + dy,
+                          z=self.loc.z + dz)
+
     @property
     def loc(self) -> Location:
         return Location(self.world_position.x, self.world_position.y, self.world_position.z)

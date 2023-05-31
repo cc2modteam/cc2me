@@ -8,7 +8,7 @@ from tkinter import filedialog
 from typing import Optional, List
 
 from .properties import Properties
-from ..savedata.constants import get_island_name, VehicleType, VehicleAttachmentDefinitionIndex
+from ..savedata.constants import VehicleType, VehicleAttachmentDefinitionIndex, get_persistent_file_path, get_cc2_appdata
 from ..savedata.types.objects import Island, Unit, get_unit, Spawn
 from ..savedata.types.tiles import Tile
 from ..savedata.loader import CC2XMLSave, load_save_file
@@ -25,8 +25,8 @@ parser = argparse.ArgumentParser(description=__doc__, prog=APP_NAME)
 class App(tkinter.Tk):
     WIDTH = 900
     HEIGHT = 750
-    cc2dir = os.path.expandvars(r'%APPDATA%\\Carrier Command 2')
-    persistent = os.path.join(cc2dir, "persistent_data.xml")
+    cc2dir = get_cc2_appdata()
+    persistent = get_persistent_file_path()
 
     def __init__(self, *args, **kwargs):
         tkinter.Tk.__init__(self, *args, **kwargs)
@@ -239,7 +239,6 @@ class App(tkinter.Tk):
             if new_units:
                 self.select_markers(new_units)
 
-
     def add_new_seal(self):
         self.add_new_unit(VehicleType.Seal)
 
@@ -272,7 +271,11 @@ class App(tkinter.Tk):
                 self.cc2me.remove_tile(tile)
             if isinstance(marker, UnitMarker):
                 vehicle = marker.unit.vehicle()
-                self.cc2me.remove_vehicle(vehicle)
+                if vehicle is not None:
+                    self.cc2me.remove_vehicle(vehicle)
+                if isinstance(marker.unit, Spawn):
+                    self.cc2me.remove_spawn(marker.object.object.data.respawn_id)
+
             marker.delete()
         self.select_none()
 

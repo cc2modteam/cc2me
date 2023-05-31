@@ -110,6 +110,11 @@ class Vehicle(ElementProxy, MovableLocationMixin):
     def move(self, x: float, y: float, z: float) -> None:
         self.set_location(x, y, z)
 
+    def translate(self, dx: float, dy: float, dz: float) -> None:
+        self.set_location(self.loc.x + dx,
+                          self.loc.y + dy,
+                          self.loc.z + dz)
+
     @property
     def loc(self) -> Location:
         return Location(self.transform.tx, self.transform.ty, self.transform.tz)
