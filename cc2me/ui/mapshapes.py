@@ -1,6 +1,8 @@
 import tkinter
 from typing import List, Optional
 
+from tkintermapview.canvas_path import CanvasPath
+
 
 class CanvasShape:
     def __init__(self, canvas: tkinter.Canvas, func: callable, *coords, **kwargs):
@@ -74,3 +76,18 @@ class CanvasShape:
             canvas.delete(self.canvas_id)
             self.canvas_id = -1
 
+
+class CustomCanvasPath(CanvasPath):
+
+    def __init__(self, *args, width=1, **kwargs, ):
+        super().__init__(*args, **kwargs)
+        self.width = width
+
+    def draw(self, move=False):
+        super().draw(move=move)
+        if self.canvas_line is not None:
+            self.map_widget.canvas.delete(self.canvas_line)
+            self.canvas_line = self.map_widget.canvas.create_line(self.canvas_line_positions,
+                                                                  width=self.width, fill=self.path_color,
+                                                                  capstyle=tkinter.ROUND, joinstyle=tkinter.ROUND,
+                                                                  tag="path")

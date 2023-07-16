@@ -2,15 +2,15 @@ import tkinter
 from abc import ABC, abstractmethod
 from typing import Optional, Callable, List, cast, Union
 
+from tkintermapview.canvas_path import CanvasPath
 from tkintermapview.canvas_position_marker import CanvasPositionMarker
 from tkintermapview import TkinterMapView
-
 from .cc2constants import get_team_color
 from .image_loader import load_icon
 from .mapshapes import CanvasShape
 from ..savedata.constants import VehicleType, TileTypes
 from ..savedata.types.objects import MapItem, MapTile, MapVehicle, Spawn, LOC_SCALE_FACTOR, MapWaypoint
-from ..savedata.types.utils import MovableLocationMixin
+from .cc2memapview import CC2MeMapView
 
 
 class Marker(CanvasPositionMarker, ABC):
@@ -33,7 +33,7 @@ class Marker(CanvasPositionMarker, ABC):
 class ShapeMarker(Marker, ABC):
 
     def __init__(self,
-                 map_widget: "TkinterMapView",
+                 map_widget: "CC2MeMapView",
                  text: Optional[str] = None,
                  text_color: Optional[str] = "#652A22",
                  command: Optional[Callable] = None,
@@ -77,13 +77,17 @@ class ShapeMarker(Marker, ABC):
         for shape in shapes:
             self._shapes.append(shape)
 
+    @property
+    def zoom_scale(self) -> float:
+        return self.map_widget.zoom * self._zoom_scale_factor
+
     def render(self, event=None):
         if self.is_visible():
             x, y = self.get_canvas_pos(self.position)
             for shape in self._shapes:
                 if shape.canvas_id == -1:
-                    shape.render(x, y, self.map_widget.zoom * self._zoom_scale_factor)
-                shape.update(self.map_widget.canvas, x, y, self.map_widget.zoom * self._zoom_scale_factor)
+                    shape.render(x, y, self.zoom_scale)
+                shape.update(self.map_widget.canvas, x, y, self.zoom_scale)
             if self.show_label():
                 if self.label and self.label.canvas_id != -1:
                     self.map_widget.canvas.itemconfig(self.label.canvas_id, text=self.text)
@@ -151,9 +155,12 @@ class MapItemMarker(ShapeMarker):
     def color(self) -> str:
         return self._color
 
+    def set_color(self, value):
+        self._color = value
+
     @color.setter
     def color(self, value: str):
-        self._color = value
+        self.set_color(value)
 
     def select(self):
         self.selected = True
@@ -277,7 +284,7 @@ class WaypointMarker(MapItemMarker):
         super(WaypointMarker, self).__init__(map_widget, mapitem)
         self.size = 0.7
         self.origin = origin
-        self.color = "#cdcdcd"
+        self._color = "#cdcdcd"
 
         a = CanvasShape(map_widget.canvas,
                         map_widget.canvas.create_polygon,
@@ -300,6 +307,13 @@ class WaypointMarker(MapItemMarker):
 
         self.add_shapes(a, b)
 
+    def set_color(self, value):
+        pass
+
+    @property
+    def zoom_scale(self) -> float:
+        return 5.2
+
     def render(self, event=None):
         super().render(event=event)
 
@@ -321,6 +335,8 @@ class VehicleMarker(MapItemMarker):
 
     def __init__(self, map_widget: TkinterMapView, mapitem: MapVehicle, on_click: Optional[callable] = None):
         super(VehicleMarker, self).__init__(map_widget, mapitem)
+        self.waypoint_path = None
+        self.waypoints = []
         # fill the middle for spawns
         fill = ""
         if isinstance(mapitem, Spawn):
@@ -350,3 +366,23 @@ class VehicleMarker(MapItemMarker):
                            )
 
         self.add_shapes(back, unit)
+
+    def update_waypoints(self, redraw=True) -> None:
+        path_points = [self.position]
+        unit = self.unit
+        wpm = unit
+        for wpt in self.waypoints:
+            self.map_widget.delete(wpt)
+        if self.waypoint_path is not None:
+            self.map_widget.delete(self.waypoint_path)
+
+        for wpt in unit.vehicle().waypoints:
+            wpm = WaypointMarker(self.map_widget, MapWaypoint(unit, wpt), wpm)
+            self.waypoints.append(wpm)
+            path_points.append(wpm.position)
+            self.map_widget.add_marker(wpm)
+
+        if redraw:
+            if len(path_points) > 1:
+                map_path: CanvasPath = self.map_widget.set_path(path_points)
+                self.waypoint_path = map_path

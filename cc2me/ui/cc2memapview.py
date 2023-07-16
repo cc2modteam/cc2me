@@ -4,9 +4,11 @@ from typing import Tuple, Callable, Optional, Any, List
 
 from PIL.ImageTk import PhotoImage, Image
 from tkintermapview import TkinterMapView
+from tkintermapview.canvas_path import CanvasPath
 from tkintermapview.canvas_position_marker import CanvasPositionMarker
 
 from .cc2constants import TILE_SIZE
+from .mapshapes import CustomCanvasPath
 from ..savedata.logging import logger
 
 
@@ -40,10 +42,17 @@ class CC2MeMapView(TkinterMapView):
         self.last_mouse_move_position: Optional[Tuple] = None
         self.on_mouse_release: Optional[Callable] = None
 
+    def set_path(self, position_list: list, **kwargs) -> CanvasPath:
+        path = CustomCanvasPath(self, position_list, width=1, **kwargs)
+        path.draw()
+        self.canvas_path_list.append(path)
+        return path
+
     def manage_z_order(self):
         super(CC2MeMapView, self).manage_z_order()
         try:
             self.canvas.tag_lower("island", "unit")
+            self.canvas.tag_lower("path")
             self.canvas.tag_raise("text")
             self.canvas.tag_raise("icon")
         except tkinter.TclError:

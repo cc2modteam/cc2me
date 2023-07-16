@@ -7,6 +7,8 @@ import tkinter.messagebox
 from tkinter import filedialog
 from typing import Optional, List
 
+from tkintermapview.canvas_path import CanvasPath
+
 from .properties import Properties
 from ..savedata.constants import VehicleType, VehicleAttachmentDefinitionIndex, get_persistent_file_path, get_cc2_appdata
 from ..savedata.types.objects import MapTile, MapVehicle, get_unit, Spawn, MapWaypoint
@@ -52,6 +54,7 @@ class App(tkinter.Tk):
         self.units: List[VehicleMarker] = []
         self.waypoints: List[WaypointMarker] = []
         self.spawns: List[VehicleMarker] = []
+        self.paths: List = []
 
         self.title(APP_NAME)
         self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
@@ -301,7 +304,7 @@ class App(tkinter.Tk):
         self.map_widget.canvas_marker_list = []
         self.map_widget.selected_markers.clear()
 
-        for markers in [self.islands, self.units, self.spawns, self.waypoints]:
+        for markers in [self.islands, self.units, self.spawns, self.waypoints, self.paths]:
             for item in markers:
                 item.delete()
             markers.clear()
@@ -324,6 +327,11 @@ class App(tkinter.Tk):
     def unit_clicked(self, unitmarker):
         if not self.marker_clicked(unitmarker):
             self.select_markers([unitmarker])
+            self.map_widget.set_mouse_move()
+
+    def waypoint_clicked(self, marker):
+        if not self.marker_clicked(marker):
+            self.select_markers([marker])
             self.map_widget.set_mouse_move()
 
     def open_slot(self):
@@ -394,11 +402,7 @@ class App(tkinter.Tk):
         marker.on_hover_start = self.hover_unit
         self.map_widget.add_marker(marker)
         if unit.vehicle() is not None:
-            wpm = unit
-            for wpt in unit.vehicle().waypoints:
-                wpm = WaypointMarker(self.map_widget, MapWaypoint(unit, wpt), wpm)
-                self.map_widget.add_marker(wpm)
-                self.waypoints.append(wpm)
+            marker.update_waypoints()
 
         return marker
 
@@ -462,12 +466,19 @@ class App(tkinter.Tk):
 
             for marker in self.selected_markers():
                 marker.draw()
+                if isinstance(marker, VehicleMarker):
+                    rm_path = marker.waypoint_path
+                    if rm_path:
+                        self.map_widget.delete(rm_path)
+                    # marker.update_waypoints(redraw=False)
             self.map_widget.update_idletasks()
             return True  # swallow
 
         return False  # bubble up
 
     def on_mouse_release(self):
+        if self.dragging_marker:
+            self.dragging_marker.update_waypoints()
         self.dragging_marker = None
 
 
