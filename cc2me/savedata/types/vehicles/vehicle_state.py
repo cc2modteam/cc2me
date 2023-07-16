@@ -1,6 +1,7 @@
 from typing import cast, List, Optional
 
 from xml.etree import ElementTree
+
 from .embedded_xmlstates.vehicles import EmbeddedVehicleStateData, EmbeddedAttachmentStateData
 from ..utils import ElementProxy, e_property, StrAttribute, IntAttribute
 
@@ -73,9 +74,21 @@ class VehicleStateContainer(ElementProxy):
             root = ElementTree.fromstring(self.state)
         except ElementTree.ParseError:
             pass
-        return EmbeddedVehicleStateData(element=root)
+        state = EmbeddedVehicleStateData(element=root)
+        return state
 
     @data.setter
     def data(self, value: EmbeddedVehicleStateData):
         self.state = value.to_string()
 
+    @property
+    def waypoints(self) -> List[ElementProxy]:
+        ret = []
+        for child in self.data.children():
+            if child.tag == "waypoints":
+                wpts = list(child)
+                for w in wpts:
+                    cc2w = ElementProxy(w, self.cc2obj)
+                    ret.append(cc2w)
+                break
+        return ret
