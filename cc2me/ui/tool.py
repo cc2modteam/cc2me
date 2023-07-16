@@ -9,13 +9,13 @@ from typing import Optional, List
 
 from .properties import Properties
 from ..savedata.constants import VehicleType, VehicleAttachmentDefinitionIndex, get_persistent_file_path, get_cc2_appdata
-from ..savedata.types.objects import Island, Unit, get_unit, Spawn, UnitWaypoint
+from ..savedata.types.objects import MapTile, MapVehicle, get_unit, Spawn, MapWaypoint
 from ..savedata.types.tiles import Tile
 from ..savedata.loader import CC2XMLSave, load_save_file
 from .cc2memapview import CC2MeMapView
 from .toolbar import Toolbar
 from .saveslotchooser import SlotChooser
-from .mapmarkers import IslandMarker, UnitMarker, CC2DataMarker, WaypointMarker
+from .mapmarkers import TileMarker, VehicleMarker, MapItemMarker, WaypointMarker
 
 APP_NAME = "cc2me.ui.tool"
 
@@ -48,10 +48,10 @@ class App(tkinter.Tk):
         self.save_filename: Optional[str] = None
         self.cc2me: Optional[CC2XMLSave] = None
 
-        self.islands: List[IslandMarker] = []
-        self.units: List[UnitMarker] = []
+        self.islands: List[TileMarker] = []
+        self.units: List[VehicleMarker] = []
         self.waypoints: List[WaypointMarker] = []
-        self.spawns: List[UnitMarker] = []
+        self.spawns: List[VehicleMarker] = []
 
         self.title(APP_NAME)
         self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
@@ -126,21 +126,21 @@ class App(tkinter.Tk):
         self.map_widget.on_mouse_drag = self.on_mouse_drag
         self.map_widget.on_mouse_release = self.on_mouse_release
 
-        self.current_marker: Optional[CC2DataMarker] = None
+        self.current_marker: Optional[MapItemMarker] = None
         self.dragging_marker = None
 
     def start_selection_units(self):
         self.map_widget.selection_mode = "units"
 
-    def all_markers(self) -> List[CC2DataMarker]:
-        found: List[CC2DataMarker] = []
+    def all_markers(self) -> List[MapItemMarker]:
+        found: List[MapItemMarker] = []
         for item in self.islands:
             found.append(item)
         for item in self.units + self.spawns:
             found.append(item)
         return found
 
-    def selected_markers(self) -> List[CC2DataMarker]:
+    def selected_markers(self) -> List[MapItemMarker]:
         return [x for x in self.all_markers() if x.selected]
 
     def select_none(self):
@@ -180,11 +180,11 @@ class App(tkinter.Tk):
         if len(markers) == 1:
             # populate properties panel
             self.properties.clear()
-            obj = markers[0].object
+            obj = markers[0].mapitem
             self.properties.objects = [obj]
         else:
             self.properties.clear()
-            self.properties.objects = [x.object for x in markers]
+            self.properties.objects = [x.mapitem for x in markers]
 
         print(f"selected {len(markers)}")
 
@@ -201,7 +201,7 @@ class App(tkinter.Tk):
         marker.draw()
         self.select_markers([marker])
 
-    def add_new_unit(self, vtype: VehicleType) -> UnitMarker:
+    def add_new_unit(self, vtype: VehicleType) -> VehicleMarker:
         loc = self.map_widget.convert_canvas_coords_to_decimal_coords(200, 200)
         # self.map_widget.set_zoom(15)
         v = self.cc2me.new_vehicle(vtype)
@@ -210,7 +210,7 @@ class App(tkinter.Tk):
         self.select_markers([marker])
         return marker
 
-    def duplicate_units(self, units: List[Unit]) -> List[UnitMarker]:
+    def duplicate_units(self, units: List[MapVehicle]) -> List[VehicleMarker]:
         # loop through each unit
         new_units = []
         for unit in units:
@@ -234,7 +234,7 @@ class App(tkinter.Tk):
     def duplicate_selected(self):
         markers = self.selected_markers()
 
-        units = [x.unit for x in markers if isinstance(x, UnitMarker)]
+        units = [x.unit for x in markers if isinstance(x, VehicleMarker)]
         if units:
             new_units = self.duplicate_units(units)
             if new_units:
@@ -267,15 +267,15 @@ class App(tkinter.Tk):
     def remove_item(self):
         selected = self.selected_markers()
         for marker in selected:
-            if isinstance(marker, IslandMarker):
+            if isinstance(marker, TileMarker):
                 tile = marker.island.tile()
                 self.cc2me.remove_tile(tile)
-            if isinstance(marker, UnitMarker):
+            if isinstance(marker, VehicleMarker):
                 vehicle = marker.unit.vehicle()
                 if vehicle is not None:
                     self.cc2me.remove_vehicle(vehicle)
                 if isinstance(marker.unit, Spawn):
-                    self.cc2me.remove_spawn(marker.object.object.data.respawn_id)
+                    self.cc2me.remove_spawn(marker.mapitem.object.data.respawn_id)
 
             marker.delete()
         self.select_none()
@@ -311,7 +311,7 @@ class App(tkinter.Tk):
         self.map_widget.update()
         self.dragging_marker = None
 
-    def marker_clicked(self, marker: CC2DataMarker) -> bool:
+    def marker_clicked(self, marker: MapItemMarker) -> bool:
         if marker.selected:
             return True
         return False  # let click bubble up
@@ -368,8 +368,8 @@ class App(tkinter.Tk):
         self.map_widget.canvas.update_idletasks()
 
     def add_island(self, island_tile: Tile):
-        island = Island(island_tile)
-        marker = IslandMarker(self.map_widget, island, on_click=self.island_clicked)
+        island = MapTile(island_tile)
+        marker = TileMarker(self.map_widget, island, on_click=self.island_clicked)
         marker.on_hover_start = self.hover_island
         marker.on_hover_end = self.end_hover
         marker.text = island.display_ident
@@ -388,7 +388,7 @@ class App(tkinter.Tk):
 
     def _add_unit_marker(self, unit):
         print(str(unit))
-        marker = UnitMarker(self.map_widget, unit)
+        marker = VehicleMarker(self.map_widget, unit)
         marker.command = self.unit_clicked
         marker.on_hover_end = self.end_hover
         marker.on_hover_start = self.hover_unit
@@ -396,18 +396,18 @@ class App(tkinter.Tk):
         if unit.vehicle() is not None:
             wpm = unit
             for wpt in unit.vehicle().waypoints:
-                wpm = WaypointMarker(self.map_widget, UnitWaypoint(unit, wpt), wpm)
+                wpm = WaypointMarker(self.map_widget, MapWaypoint(unit, wpt), wpm)
                 self.map_widget.add_marker(wpm)
                 self.waypoints.append(wpm)
 
         return marker
 
-    def add_spawn(self, spawn) -> UnitMarker:
+    def add_spawn(self, spawn) -> VehicleMarker:
         marker = self._add_unit_marker(spawn)
         self.spawns.append(marker)
         return marker
 
-    def add_unit(self, vehicle) -> UnitMarker:
+    def add_unit(self, vehicle) -> VehicleMarker:
         u = get_unit(vehicle)
         marker = self._add_unit_marker(u)
         self.units.append(marker)
@@ -420,7 +420,7 @@ class App(tkinter.Tk):
         else:
             self.map_widget.set_mouse_choose()
 
-    def hover_unit(self, marker: UnitMarker):
+    def hover_unit(self, marker: VehicleMarker):
         self.hover_marker(marker)
         vtype = marker.unit.vehicle_type
         text = f"{vtype.name} "
@@ -433,7 +433,7 @@ class App(tkinter.Tk):
 
         self.status_line.set(text)
 
-    def hover_island(self, marker: IslandMarker):
+    def hover_island(self, marker: TileMarker):
         self.hover_marker(marker)
         self.status_line.set(f"Island {marker.text} ({marker.island.tile().id})")
 

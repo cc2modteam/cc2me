@@ -41,7 +41,7 @@ class DynamicNamedAttribute:
         self.setter(self.argname, value)
 
 
-class CC2MapItem:
+class MapItem:
     def __init__(self, obj: ElementProxy):
         self.object = obj
         self.dynamic_attribs: Dict[str, DynamicNamedAttribute] = {}
@@ -95,9 +95,9 @@ class CC2MapItem:
         return out
 
 
-class UnitWaypoint(CC2MapItem):
+class MapWaypoint(MapItem):
 
-    def __init__(self, unit: "Unit", obj: ElementProxy):
+    def __init__(self, unit: "MapVehicle", obj: ElementProxy):
         self.unit = unit
         super().__init__(obj)
 
@@ -124,9 +124,9 @@ class UnitWaypoint(CC2MapItem):
         return lon / LOC_SCALE_FACTOR, lat / LOC_SCALE_FACTOR
 
 
-class Island(CC2MapItem):
+class MapTile(MapItem):
     def __init__(self, tile: Tile):
-        super(Island, self).__init__(tile)
+        super(MapTile, self).__init__(tile)
 
     def tile(self) -> Tile:
         return cast(Tile, self.object)
@@ -210,7 +210,7 @@ class Island(CC2MapItem):
 
     @property
     def viewable_properties(self) -> List[str]:
-        return super(Island, self).viewable_properties + ["name", "island_type", "alt", "seed", "biome", "size", "difficulty"]
+        return super(MapTile, self).viewable_properties + ["name", "island_type", "alt", "seed", "biome", "size", "difficulty"]
 
     @property
     def team_owner(self) -> int:
@@ -252,9 +252,9 @@ class Island(CC2MapItem):
         ]
 
 
-class Unit(CC2MapItem):
+class MapVehicle(MapItem):
     def __init__(self, unit: Union[Vehicle, VehicleSpawn]):
-        super(Unit, self).__init__(unit)
+        super(MapVehicle, self).__init__(unit)
         self.attachments: Dict[int, UnitAttachment] = {}
         self.setup_attachments()
 
@@ -307,7 +307,7 @@ class Unit(CC2MapItem):
                 self.set_attachment(attachment.position, value)
                 return
 
-        super(Unit, self).__setattr__(key, value)
+        super(MapVehicle, self).__setattr__(key, value)
 
     @property
     def team_owner(self) -> int:
@@ -337,7 +337,7 @@ class Unit(CC2MapItem):
     @property
     def viewable_properties(self) -> List[str]:
         attachment_names = self.dynamic_attachment_names
-        return super(Unit, self).viewable_properties + ["vehicle_type", "alt", "hitpoints"] + list(attachment_names)
+        return super(MapVehicle, self).viewable_properties + ["vehicle_type", "alt", "hitpoints"] + list(attachment_names)
 
     @property
     def hitpoints(self) -> float:
@@ -426,7 +426,7 @@ class Unit(CC2MapItem):
             self.vehicle().state.attachments[attachment_index].data = data
 
 
-class AirUnit(Unit):
+class AirUnit(MapVehicle):
     pass
 
 
@@ -450,7 +450,7 @@ class Manta(Albatross, AirUnitAux):
     pass
 
 
-class GroundTurreted(Unit):
+class GroundTurreted(MapVehicle):
     pass
 
 
@@ -470,7 +470,7 @@ class Bear(GroundTurreted):
     pass
 
 
-class Ship(Unit):
+class Ship(MapVehicle):
     pass
 
 
@@ -523,7 +523,7 @@ class Swordfish(Needlefish):
     pass
 
 
-class Spawn(Unit):
+class Spawn(MapVehicle):
 
     def __init__(self, vspawn: VehicleSpawn, island: Tile):
         super(Spawn, self).__init__(vspawn)
@@ -595,14 +595,14 @@ class Spawn(Unit):
         return VehicleSpawn(self.object.element)
 
 
-class Jetty(Unit):
+class Jetty(MapVehicle):
 
     @property
     def viewable_properties(self) -> List[str]:
         return ["team_owner", "loc", "alt"]
 
 
-def get_unit(vehicle: Vehicle) -> Unit:
+def get_unit(vehicle: Vehicle) -> MapVehicle:
     if vehicle.type == VehicleType.Turret:
         return Turret(vehicle)
     if vehicle.type == VehicleType.Seal:
@@ -630,4 +630,4 @@ def get_unit(vehicle: Vehicle) -> Unit:
     elif vehicle.type == VehicleType.Jetty:
         return Jetty(vehicle)
 
-    return Unit(vehicle)
+    return MapVehicle(vehicle)

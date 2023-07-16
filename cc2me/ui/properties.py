@@ -1,8 +1,8 @@
 import tkinter
 from typing import Optional, Any, List
 from tkinter import ttk
-from ..savedata.types.objects import CC2MapItem
-from .mapmarkers import CC2DataMarker
+from ..savedata.types.objects import MapItem
+from .mapmarkers import MapItemMarker
 
 
 class PropertyItem:
@@ -20,7 +20,7 @@ class PropertyItem:
         if owner is not None:
             if self.textvalue is not None:
                 for obj in self.owner.objects:
-                    obj: CC2MapItem
+                    obj: MapItem
                     self.textvalue: tkinter.StringVar
                     value = self.textvalue.get()
                     # try setting
@@ -38,8 +38,8 @@ class PropertyItem:
                         pass
 
             for marker in owner.map_widget.canvas_marker_list:
-                if isinstance(marker, CC2DataMarker):
-                    marker: CC2DataMarker
+                if isinstance(marker, MapItemMarker):
+                    marker: MapItemMarker
                     if marker.selected:
                         marker.update_shape_outline()
                         marker.redraw()
@@ -65,16 +65,16 @@ class Properties:
         self.map_widget = None
 
     @property
-    def objects(self) -> List[CC2MapItem]:
+    def objects(self) -> List[MapItem]:
         return self._objects
 
     @objects.setter
-    def objects(self, new_value: List[CC2MapItem]):
+    def objects(self, new_value: List[MapItem]):
         self.clear()
         self._objects = list(new_value)
         if new_value is not None:
             if len(self.objects) == 1:
-                obj: CC2MapItem = self.objects[0]
+                obj: MapItem = self.objects[0]
                 self.title.set(obj.display_ident)
                 # show normal props
 
@@ -99,7 +99,7 @@ class Properties:
 
             elif len(self._objects) > 1:
                 self.title.set(f"Multiple ({len(self.objects)}) objects selected")
-                obj: CC2MapItem = self.objects[0]
+                obj: MapItem = self.objects[0]
                 # multiple objects,
                 # allow only change of team
                 self.add_option_property("team_owner", selected="None",

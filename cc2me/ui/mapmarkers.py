@@ -9,7 +9,7 @@ from .cc2constants import get_team_color
 from .image_loader import load_icon
 from .mapshapes import CanvasShape
 from ..savedata.constants import VehicleType, IslandTypes
-from ..savedata.types.objects import CC2MapItem, Island, Unit, Spawn, LOC_SCALE_FACTOR, UnitWaypoint
+from ..savedata.types.objects import MapItem, MapTile, MapVehicle, Spawn, LOC_SCALE_FACTOR, MapWaypoint
 from ..savedata.types.utils import MovableLocationMixin
 
 
@@ -102,27 +102,27 @@ class ShapeMarker(Marker, ABC):
                 self.map_widget.canvas.tag_bind(shape.canvas_id, "<Button-1>", self.click)
 
 
-class CC2DataMarker(ShapeMarker):
-    def __init__(self, map_widget: "TkinterMapView", cc2obj: CC2MapItem):
-        super(CC2DataMarker, self).__init__(map_widget,
-                                            text=cc2obj.text)
-        self.object = cc2obj
+class MapItemMarker(ShapeMarker):
+    def __init__(self, map_widget: "TkinterMapView", mapitem: MapItem):
+        super(MapItemMarker, self).__init__(map_widget,
+                                            text=mapitem.text)
+        self.mapitem = mapitem
         self.selected = False
         self._color = "#ff0000"
         self.on_hover_start: callable = None
         self.on_hover_end: callable = None
         self.hovering = False
-        if cc2obj:
-            self.color = get_team_color(cc2obj.team_owner)
+        if mapitem:
+            self.color = get_team_color(mapitem.team_owner)
 
     def render(self, event=None):
         self.update_shape_outline()
-        super(CC2DataMarker, self).render(event)
+        super(MapItemMarker, self).render(event)
 
     @property
     def position(self) -> tuple:
-        if self.object:
-            return self.object.loc
+        if self.mapitem:
+            return self.mapitem.loc
         return 0, 0
 
     @position.setter
@@ -130,10 +130,10 @@ class CC2DataMarker(ShapeMarker):
         pass
 
     def move(self, lat: float, lon: float):
-        self.object.move(lat, lon)
+        self.mapitem.move(lat, lon)
 
     def click(self, event=None):
-        super(CC2DataMarker, self).click(event)
+        super(MapItemMarker, self).click(event)
 
     def mouse_enter(self, event=None):
         self.hovering = True
@@ -167,20 +167,20 @@ class CC2DataMarker(ShapeMarker):
 
     def update_shape_outline(self):
         # resync the shape outline if it has changed
-        self.color = get_team_color(self.object.team_owner)
+        self.color = get_team_color(self.mapitem.team_owner)
 
         for shape in self.shapes:
             if shape.outline:
                 if shape.outline != "#000000":
                     shape.outline = self.color
             if shape.fill:
-                if isinstance(self.object, Spawn):
+                if isinstance(self.mapitem, Spawn):
                     pass
                 else:
                     shape.fill = self.color
 
 
-class IslandMarker(CC2DataMarker):
+class TileMarker(MapItemMarker):
     ICONS = {
         IslandTypes.Warehouse: "warehouse-island",
         IslandTypes.Turrets: "turret-island",
@@ -196,8 +196,8 @@ class IslandMarker(CC2DataMarker):
     def get_icon(self):
         return load_icon(self.ICONS[self.island.island_type])
 
-    def __init__(self, map_widget: "TkinterMapView", cc2obj: Island, on_click: Optional[callable] = None):
-        super(IslandMarker, self).__init__(map_widget, cc2obj)
+    def __init__(self, map_widget: "TkinterMapView", mapitem: MapTile, on_click: Optional[callable] = None):
+        super(TileMarker, self).__init__(map_widget, mapitem)
         self.command = on_click
 
         self.icon = CanvasShape(map_widget.canvas,
@@ -241,20 +241,20 @@ class IslandMarker(CC2DataMarker):
         tile = self.island.tile()
         try:
             nw_x, nw_y = self.get_canvas_pos(
-                (self.object.loc[0] + tile.bounds.min.z / LOC_SCALE_FACTOR, self.object.loc[1] + tile.bounds.min.x / LOC_SCALE_FACTOR))
+                (self.mapitem.loc[0] + tile.bounds.min.z / LOC_SCALE_FACTOR, self.mapitem.loc[1] + tile.bounds.min.x / LOC_SCALE_FACTOR))
             ne_x, ne_y = self.get_canvas_pos(
-                (self.object.loc[0] + tile.bounds.min.z / LOC_SCALE_FACTOR, self.object.loc[1] + tile.bounds.max.x / LOC_SCALE_FACTOR))
+                (self.mapitem.loc[0] + tile.bounds.min.z / LOC_SCALE_FACTOR, self.mapitem.loc[1] + tile.bounds.max.x / LOC_SCALE_FACTOR))
             se_x, se_y = self.get_canvas_pos(
-                (self.object.loc[0] + tile.bounds.max.z / LOC_SCALE_FACTOR, self.object.loc[1] + tile.bounds.max.x / LOC_SCALE_FACTOR))
+                (self.mapitem.loc[0] + tile.bounds.max.z / LOC_SCALE_FACTOR, self.mapitem.loc[1] + tile.bounds.max.x / LOC_SCALE_FACTOR))
             sw_x, sw_y = self.get_canvas_pos(
-                (self.object.loc[0] + tile.bounds.max.z / LOC_SCALE_FACTOR, self.object.loc[1] + tile.bounds.min.x / LOC_SCALE_FACTOR))
+                (self.mapitem.loc[0] + tile.bounds.max.z / LOC_SCALE_FACTOR, self.mapitem.loc[1] + tile.bounds.min.x / LOC_SCALE_FACTOR))
             return [nw_x, nw_y, ne_x, ne_y, se_x, se_y, sw_x, sw_y]
         except ValueError as err:
             assert True
             raise
 
     def draw(self, event=None):
-        super(IslandMarker, self).draw(event)
+        super(TileMarker, self).draw(event)
         if self.polygon != -1:
             self.map_widget.canvas.coords(self.polygon, *self.border_polygon_coords())
             # ensure everything is on top of the polygon
@@ -266,15 +266,15 @@ class IslandMarker(CC2DataMarker):
         self.icon.kwargs["image"] = self.get_icon()
 
     @property
-    def island(self) -> Island:
-        return cast(Island, self.object)
+    def island(self) -> MapTile:
+        return cast(MapTile, self.mapitem)
 
 
-class WaypointMarker(CC2DataMarker):
-    def __init__(self, map_widget: TkinterMapView, cc2obj: UnitWaypoint,
-                 origin: Union[Unit, UnitWaypoint],
+class WaypointMarker(MapItemMarker):
+    def __init__(self, map_widget: TkinterMapView, mapitem: MapWaypoint,
+                 origin: Union[MapVehicle, MapWaypoint],
                  on_click: Optional[callable] = None):
-        super(WaypointMarker, self).__init__(map_widget, cc2obj)
+        super(WaypointMarker, self).__init__(map_widget, mapitem)
         self.size = 0.7
         self.origin = origin
         self.color = "#cdcdcd"
@@ -304,11 +304,11 @@ class WaypointMarker(CC2DataMarker):
         super().render(event=event)
 
 
-class UnitMarker(CC2DataMarker):
+class VehicleMarker(MapItemMarker):
 
     @property
-    def unit(self) -> Unit:
-        return cast(Unit, self.object)
+    def unit(self) -> MapVehicle:
+        return cast(MapVehicle, self.mapitem)
 
     @property
     def size(self) -> float:
@@ -319,11 +319,11 @@ class UnitMarker(CC2DataMarker):
 
         return 0.5
 
-    def __init__(self, map_widget: TkinterMapView, cc2obj: Unit, on_click: Optional[callable] = None):
-        super(UnitMarker, self).__init__(map_widget, cc2obj)
+    def __init__(self, map_widget: TkinterMapView, mapitem: MapVehicle, on_click: Optional[callable] = None):
+        super(VehicleMarker, self).__init__(map_widget, mapitem)
         # fill the middle for spawns
         fill = ""
-        if isinstance(cc2obj, Spawn):
+        if isinstance(mapitem, Spawn):
             fill = "white"
 
         back = CanvasShape(map_widget.canvas,
