@@ -109,6 +109,7 @@ class VehicleAttachmentDefinitionIndex(IntEnum):
     DriverSeat = 38
     Flares = 43
     FuelTank = 42
+    GimbalGun = 101
     Gun100mm = 18
     Gun100mmHeavy = 86
     Gun120mm = 19
@@ -207,6 +208,10 @@ class InventoryIndex(IntEnum):
     Reserved10 = 58
     Mule = 59
     DeployableDroid = 60
+
+
+class WaypointTypes(IntEnum):
+    Move = 0
 
 
 HARDPOINT_ATTACHMENTS = [
@@ -492,7 +497,7 @@ def get_attachment_capacity(
                 return item
 
     cap = None
-    if attachment in TURRET_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.Gun20mm]:
+    if attachment in TURRET_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.Gun20mm, VehicleAttachmentDefinitionIndex.GimbalGun]:
         # default 100 rounds
         cap = AmmunitionCapacity(attachment, 100, vehicle)
     elif attachment in HARDPOINT_ATTACHMENTS:
