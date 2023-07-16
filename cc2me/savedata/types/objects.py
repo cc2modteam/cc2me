@@ -7,7 +7,7 @@ from .tiles import Tile
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData, Inventory, Quantity
 from .vehicles.vehicle import Vehicle, Waypoint
-from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex, \
+from ..constants import get_island_name, TileTypes, VehicleType, VehicleAttachmentDefinitionIndex, \
     generate_island_seed, get_default_hitpoints, TURRET_ATTACHMENTS, InventoryIndex, BIOMES
 from ..rules import get_unit_attachment_choices, get_unit_attachment_slots, HARDPOINT_ATTACHMENTS, SHIP_ATTACHMENTS
 from ..loader import CC2XMLSave
@@ -228,27 +228,27 @@ class MapTile(MapItem):
 
     @property
     def island_type(self):
-        return IslandTypes.lookup(self.tile().facility.category)
+        return TileTypes.lookup(self.tile().facility.category)
 
     @island_type.setter
-    def island_type(self, value: Union[IslandTypes, str]):
+    def island_type(self, value: Union[TileTypes, str]):
         if value != "None":
             if isinstance(value, str):
-                value = IslandTypes.reverse_lookup(value)
+                value = TileTypes.reverse_lookup(value)
             self.tile().facility.category = value.value
 
     @property
-    def island_type_choices(self) -> List[IslandTypes]:
+    def island_type_choices(self) -> List[TileTypes]:
         return [
-            IslandTypes.Warehouse,
-            IslandTypes.Air_Units,
-            IslandTypes.Barges,
-            IslandTypes.Surface_Units,
-            IslandTypes.Large_Munitions,
-            IslandTypes.Small_Munitions,
-            IslandTypes.Turrets,
-            IslandTypes.Utility,
-            IslandTypes.Fuel
+            TileTypes.Warehouse,
+            TileTypes.Air_Units,
+            TileTypes.Barges,
+            TileTypes.Surface_Units,
+            TileTypes.Large_Munitions,
+            TileTypes.Small_Munitions,
+            TileTypes.Turrets,
+            TileTypes.Utility,
+            TileTypes.Fuel
         ]
 
 

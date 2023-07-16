@@ -8,7 +8,7 @@ from tkintermapview import TkinterMapView
 from .cc2constants import get_team_color
 from .image_loader import load_icon
 from .mapshapes import CanvasShape
-from ..savedata.constants import VehicleType, IslandTypes
+from ..savedata.constants import VehicleType, TileTypes
 from ..savedata.types.objects import MapItem, MapTile, MapVehicle, Spawn, LOC_SCALE_FACTOR, MapWaypoint
 from ..savedata.types.utils import MovableLocationMixin
 
@@ -182,15 +182,15 @@ class MapItemMarker(ShapeMarker):
 
 class TileMarker(MapItemMarker):
     ICONS = {
-        IslandTypes.Warehouse: "warehouse-island",
-        IslandTypes.Turrets: "turret-island",
-        IslandTypes.Surface_Units: "land-island",
-        IslandTypes.Air_Units: "air-island",
-        IslandTypes.Utility: "utility-island",
-        IslandTypes.Fuel: "fuel-island",
-        IslandTypes.Small_Munitions: "ammo-island",
-        IslandTypes.Large_Munitions: "large-ammo-island",
-        IslandTypes.Barges: "barge-island",
+        TileTypes.Warehouse: "warehouse-island",
+        TileTypes.Turrets: "turret-island",
+        TileTypes.Surface_Units: "land-island",
+        TileTypes.Air_Units: "air-island",
+        TileTypes.Utility: "utility-island",
+        TileTypes.Fuel: "fuel-island",
+        TileTypes.Small_Munitions: "ammo-island",
+        TileTypes.Large_Munitions: "large-ammo-island",
+        TileTypes.Barges: "barge-island",
     }
 
     def get_icon(self):
@@ -284,7 +284,7 @@ class WaypointMarker(MapItemMarker):
                         -1 * self.size, -1 * self.size,
                         self.size, self.size,
                         fill="",
-                        width=3,
+                        width=5,
                         outline=self.color,
                         tag="\\",
                         )
@@ -293,7 +293,7 @@ class WaypointMarker(MapItemMarker):
                         -1 * self.size, self.size,
                         self.size, -1 * self.size,
                         fill="",
-                        width=1,
+                        width=5,
                         outline=self.color,
                         tag="//",
                         )

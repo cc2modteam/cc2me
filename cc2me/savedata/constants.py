@@ -251,7 +251,7 @@ def get_spawn_attachment_type(definition: VehicleAttachmentDefinitionIndex) -> S
     return SpawnAttachmentType.Turret
 
 
-class IslandTypes(IntEnum):
+class TileTypes(IntEnum):
     Warehouse = 0
     Small_Munitions = 1
     Large_Munitions = 2
