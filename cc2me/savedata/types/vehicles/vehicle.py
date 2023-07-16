@@ -1,4 +1,5 @@
-from typing import cast, Optional, Union
+from typing import cast, Optional, Union, List, Any
+from xml.etree.ElementTree import Element
 
 from .attachments import Attachments, Attachment
 from .embedded_xmlstates.vehicles import EmbeddedVehicleStateData
@@ -116,6 +117,14 @@ class Vehicle(ElementProxy, MovableLocationMixin):
                           self.loc.z + dz)
 
     @property
+    def waypoints(self) -> List["Waypoint"]:
+        ret = []
+        wlist = self.state.waypoints
+        for w in wlist:
+            ret.append(Waypoint(w, cc2obj=self.cc2obj, vehicle=self))
+        return ret
+
+    @property
     def loc(self) -> Location:
         return Location(self.transform.tx, self.transform.ty, self.transform.tz)
 
@@ -160,3 +169,42 @@ class Vehicle(ElementProxy, MovableLocationMixin):
         else:
             del self.attachments[attachment_index]
             del self.state.attachments[attachment_index]
+
+
+class Waypoint(ElementProxy, MovableLocationMixin):
+
+    def __init__(self, element: Optional[Element] = None, cc2obj: Optional[Any] = None, vehicle: Optional[Vehicle] = None):
+        super().__init__(element, cc2obj)
+        self.vehicle = vehicle
+
+    def set_location(self,
+                     x: Optional[float] = None,
+                     y: Optional[float] = None,
+                     z: Optional[float] = None
+                     ):
+        if z is not None:
+            self.element.set("altitude", str(z))
+        position = self.element.find("position")
+        if position is not None:
+            if x is not None:
+                position.set("x", str(x))
+            if y is not None:
+                position.set("y", str(x))
+
+    def move(self, x: float, y: float, z: float) -> None:
+        self.set_location(x, y, z)
+
+    @property
+    def loc(self) -> Location:
+        position = self.element.find("position")
+        location = Location(float(position.get("x")),
+                            float(position.get("y")),
+                            float(self.element.get("altitude")))
+        return location
+
+    def translate(self, dx: float, dy: float, dz: float) -> None:
+        self.set_location(self.loc.x + dx,
+                          self.loc.y + dy,
+                          self.loc.z + dz)
+
+    tag = "v"

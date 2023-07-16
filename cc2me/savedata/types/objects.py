@@ -6,7 +6,7 @@ from .spawndata import VehicleSpawn, VehicleSpawnAttachment
 from .tiles import Tile
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData, Inventory, Quantity
-from .vehicles.vehicle import Vehicle
+from .vehicles.vehicle import Vehicle, Waypoint
 from ..constants import get_island_name, IslandTypes, VehicleType, VehicleAttachmentDefinitionIndex, \
     generate_island_seed, get_default_hitpoints, TURRET_ATTACHMENTS, InventoryIndex, BIOMES
 from ..rules import get_unit_attachment_choices, get_unit_attachment_slots, HARDPOINT_ATTACHMENTS, SHIP_ATTACHMENTS
@@ -93,6 +93,35 @@ class CC2MapItem:
         for prop in self.viewable_properties:
             out += f" {prop} {getattr(self, prop)}\n"
         return out
+
+
+class UnitWaypoint(CC2MapItem):
+
+    def __init__(self, unit: "Unit", obj: ElementProxy):
+        self.unit = unit
+        super().__init__(obj)
+
+    @property
+    def text(self) -> Optional[str]:
+        return f"({self.unit.vehicle().id})"
+
+    def waypoint(self) -> Waypoint:
+        return cast(Waypoint, self.object)
+
+    @property
+    def team_owner(self) -> int:
+        return self.unit.team_owner
+
+    @property
+    def loc(self) -> Optional[Tuple[float, float]]:
+        temp = self.waypoint().vehicle
+        # map uses lat+long (y, then x) remember to swap!
+        # in CC2 saves, Z is lattitude, X is longditude, Y is altitude
+        offset = self.waypoint().loc
+        lat = offset.x
+        lon = offset.y
+
+        return lon / LOC_SCALE_FACTOR, lat / LOC_SCALE_FACTOR
 
 
 class Island(CC2MapItem):

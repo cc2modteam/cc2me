@@ -1,6 +1,6 @@
 import tkinter
 from abc import ABC, abstractmethod
-from typing import Optional, Callable, List, cast
+from typing import Optional, Callable, List, cast, Union
 
 from tkintermapview.canvas_position_marker import CanvasPositionMarker
 from tkintermapview import TkinterMapView
@@ -9,7 +9,7 @@ from .cc2constants import get_team_color
 from .image_loader import load_icon
 from .mapshapes import CanvasShape
 from ..savedata.constants import VehicleType, IslandTypes
-from ..savedata.types.objects import CC2MapItem, Island, Unit, Spawn, LOC_SCALE_FACTOR
+from ..savedata.types.objects import CC2MapItem, Island, Unit, Spawn, LOC_SCALE_FACTOR, UnitWaypoint
 from ..savedata.types.utils import MovableLocationMixin
 
 
@@ -268,6 +268,40 @@ class IslandMarker(CC2DataMarker):
     @property
     def island(self) -> Island:
         return cast(Island, self.object)
+
+
+class WaypointMarker(CC2DataMarker):
+    def __init__(self, map_widget: TkinterMapView, cc2obj: UnitWaypoint,
+                 origin: Union[Unit, UnitWaypoint],
+                 on_click: Optional[callable] = None):
+        super(WaypointMarker, self).__init__(map_widget, cc2obj)
+        self.size = 0.7
+        self.origin = origin
+        self.color = "#cdcdcd"
+
+        a = CanvasShape(map_widget.canvas,
+                        map_widget.canvas.create_polygon,
+                        -1 * self.size, -1 * self.size,
+                        self.size, self.size,
+                        fill="",
+                        width=3,
+                        outline=self.color,
+                        tag="\\",
+                        )
+        b = CanvasShape(map_widget.canvas,
+                        map_widget.canvas.create_polygon,
+                        -1 * self.size, self.size,
+                        self.size, -1 * self.size,
+                        fill="",
+                        width=1,
+                        outline=self.color,
+                        tag="//",
+                        )
+
+        self.add_shapes(a, b)
+
+    def render(self, event=None):
+        super().render(event=event)
 
 
 class UnitMarker(CC2DataMarker):

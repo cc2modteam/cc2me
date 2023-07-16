@@ -9,13 +9,13 @@ from typing import Optional, List
 
 from .properties import Properties
 from ..savedata.constants import VehicleType, VehicleAttachmentDefinitionIndex, get_persistent_file_path, get_cc2_appdata
-from ..savedata.types.objects import Island, Unit, get_unit, Spawn
+from ..savedata.types.objects import Island, Unit, get_unit, Spawn, UnitWaypoint
 from ..savedata.types.tiles import Tile
 from ..savedata.loader import CC2XMLSave, load_save_file
 from .cc2memapview import CC2MeMapView
 from .toolbar import Toolbar
 from .saveslotchooser import SlotChooser
-from .mapmarkers import IslandMarker, UnitMarker, CC2DataMarker
+from .mapmarkers import IslandMarker, UnitMarker, CC2DataMarker, WaypointMarker
 
 APP_NAME = "cc2me.ui.tool"
 
@@ -50,6 +50,7 @@ class App(tkinter.Tk):
 
         self.islands: List[IslandMarker] = []
         self.units: List[UnitMarker] = []
+        self.waypoints: List[WaypointMarker] = []
         self.spawns: List[UnitMarker] = []
 
         self.title(APP_NAME)
@@ -300,12 +301,10 @@ class App(tkinter.Tk):
         self.map_widget.canvas_marker_list = []
         self.map_widget.selected_markers.clear()
 
-        for markers in [self.islands, self.units, self.spawns]:
+        for markers in [self.islands, self.units, self.spawns, self.waypoints]:
             for item in markers:
                 item.delete()
-        self.islands.clear()
-        self.units.clear()
-        self.spawns.clear()
+            markers.clear()
 
         self.cc2me = None
         self.map_widget.set_zoom(1, 0.0, 0.0)
@@ -394,6 +393,13 @@ class App(tkinter.Tk):
         marker.on_hover_end = self.end_hover
         marker.on_hover_start = self.hover_unit
         self.map_widget.add_marker(marker)
+        if unit.vehicle() is not None:
+            wpm = unit
+            for wpt in unit.vehicle().waypoints:
+                wpm = WaypointMarker(self.map_widget, UnitWaypoint(unit, wpt), wpm)
+                self.map_widget.add_marker(wpm)
+                self.waypoints.append(wpm)
+
         return marker
 
     def add_spawn(self, spawn) -> UnitMarker:
