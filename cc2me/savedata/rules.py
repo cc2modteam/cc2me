@@ -86,6 +86,13 @@ GROUND_RESUPPLY = [
     VehicleAttachmentDefinitionIndex.BattleDroids
 ]
 
+AIR_GIMBAL_TURRETS = [
+    VehicleAttachmentDefinitionIndex.AirObsCam,
+    VehicleAttachmentDefinitionIndex.GimbalGun,
+    VehicleAttachmentDefinitionIndex.BattleDroids,
+    VehicleAttachmentDefinitionIndex.Radar,
+]
+
 
 UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentDefinitionIndex]]]] = {
     VehicleType.Barge: [
@@ -142,7 +149,7 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     ],
     VehicleType.Petrel: [
         DRIVER,
-        [VehicleAttachmentDefinitionIndex.AirObsCam, VehicleAttachmentDefinitionIndex.Gun40mm],
+        AIR_GIMBAL_TURRETS,
         HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.Gun40mm],
         HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.Gun40mm, VehicleAttachmentDefinitionIndex.Gun100mm],
         HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.Gun40mm, VehicleAttachmentDefinitionIndex.Gun100mm],
@@ -150,7 +157,7 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     ],
     VehicleType.Albatross: [
         DRIVER,
-        [VehicleAttachmentDefinitionIndex.AirObsCam, VehicleAttachmentDefinitionIndex.CIWS, VehicleAttachmentDefinitionIndex.Gun40mm],
+        AIR_GIMBAL_TURRETS,
         HARDPOINT_ATTACHMENTS,
         HARDPOINT_ATTACHMENTS,
         HARDPOINT_ATTACHMENTS,
@@ -158,7 +165,7 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     ],
     VehicleType.Manta: [
         DRIVER,
-        [VehicleAttachmentDefinitionIndex.AirObsCam],
+        AIR_GIMBAL_TURRETS,
         HARDPOINT_ATTACHMENTS,
         HARDPOINT_ATTACHMENTS,
         HARDPOINT_ATTACHMENTS,
