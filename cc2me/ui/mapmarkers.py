@@ -278,12 +278,13 @@ class TileMarker(MapItemMarker):
 
 
 class WaypointMarker(MapItemMarker):
-    def __init__(self, map_widget: TkinterMapView, mapitem: MapWaypoint,
-                 origin: Union[MapVehicle, MapWaypoint],
+    def __init__(self, map_widget: TkinterMapView,
+                 mapitem: MapWaypoint,
+                 owner: MapVehicle,
                  on_click: Optional[callable] = None):
         super(WaypointMarker, self).__init__(map_widget, mapitem)
         self.size = 0.7
-        self.origin = origin
+        self.owner = owner
         self._color = "#cdcdcd"
 
         a = CanvasShape(map_widget.canvas,
@@ -309,6 +310,9 @@ class WaypointMarker(MapItemMarker):
 
     def set_color(self, value):
         pass
+
+    def get_vehicle(self) -> MapVehicle:
+        return self.owner
 
     @property
     def zoom_scale(self) -> float:
@@ -367,17 +371,20 @@ class VehicleMarker(MapItemMarker):
 
         self.add_shapes(back, unit)
 
-    def update_waypoints(self, redraw=True) -> None:
+    def update_waypoints(self, redraw=True, start_hover=None, end_hover=None, command=None) -> None:
         path_points = [self.position]
         unit = self.unit
-        wpm = unit
+
         for wpt in self.waypoints:
             self.map_widget.delete(wpt)
         if self.waypoint_path is not None:
             self.map_widget.delete(self.waypoint_path)
 
         for wpt in unit.vehicle().waypoints:
-            wpm = WaypointMarker(self.map_widget, MapWaypoint(unit, wpt), wpm)
+            wpm = WaypointMarker(self.map_widget, MapWaypoint(unit, wpt), unit)
+            wpm.command = command
+            wpm.on_hover_start = start_hover
+            wpm.on_hover_end = end_hover
             self.waypoints.append(wpm)
             path_points.append(wpm.position)
             self.map_widget.add_marker(wpm)

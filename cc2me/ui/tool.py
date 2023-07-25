@@ -141,6 +141,9 @@ class App(tkinter.Tk):
             found.append(item)
         for item in self.units + self.spawns:
             found.append(item)
+            for wpt in item.waypoints:
+                found.append(wpt)
+
         return found
 
     def selected_markers(self) -> List[MapItemMarker]:
@@ -304,7 +307,10 @@ class App(tkinter.Tk):
         self.map_widget.canvas_marker_list = []
         self.map_widget.selected_markers.clear()
 
-        for markers in [self.islands, self.units, self.spawns, self.waypoints, self.paths]:
+        for item in self.all_markers():
+            item.delete()
+
+        for markers in [self.paths]:
             for item in markers:
                 item.delete()
             markers.clear()
@@ -402,7 +408,9 @@ class App(tkinter.Tk):
         marker.on_hover_start = self.hover_unit
         self.map_widget.add_marker(marker)
         if unit.vehicle() is not None:
-            marker.update_waypoints()
+            marker.update_waypoints(
+                command=self.waypoint_clicked,
+                start_hover=self.hover_waypoint, end_hover=self.end_hover)
 
         return marker
 
@@ -423,6 +431,10 @@ class App(tkinter.Tk):
             self.map_widget.set_mouse_move()
         else:
             self.map_widget.set_mouse_choose()
+
+    def hover_waypoint(self, marker):
+        self.hover_marker(marker)
+        self.status_line.set(f"waypoint {marker}")
 
     def hover_unit(self, marker: VehicleMarker):
         self.hover_marker(marker)
@@ -470,7 +482,6 @@ class App(tkinter.Tk):
                     rm_path = marker.waypoint_path
                     if rm_path:
                         self.map_widget.delete(rm_path)
-                    # marker.update_waypoints(redraw=False)
             self.map_widget.update_idletasks()
             return True  # swallow
 
@@ -478,7 +489,10 @@ class App(tkinter.Tk):
 
     def on_mouse_release(self):
         if self.dragging_marker:
-            self.dragging_marker.update_waypoints()
+            if isinstance(self.dragging_marker, VehicleMarker):
+                self.dragging_marker.update_waypoints(
+                    command=self.waypoint_clicked,
+                    start_hover=self.hover_waypoint, end_hover=self.end_hover)
         self.dragging_marker = None
 
 

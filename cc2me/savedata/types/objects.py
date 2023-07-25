@@ -102,6 +102,18 @@ class MapWaypoint(MapItem):
         super().__init__(obj)
 
     @property
+    def display_ident(self) -> str:
+        return f"waypoint of {self.unit.display_ident}"
+
+    @property
+    def viewable_properties(self) -> List[str]:
+        return ["team_owner", "loc", "alt"]
+
+    @property
+    def alt(self) -> int:
+        return int(self.waypoint().loc.y)
+
+    @property
     def text(self) -> Optional[str]:
         return f"({self.unit.vehicle().id})"
 
@@ -114,14 +126,17 @@ class MapWaypoint(MapItem):
 
     @property
     def loc(self) -> Optional[Tuple[float, float]]:
-        temp = self.waypoint().vehicle
-        # map uses lat+long (y, then x) remember to swap!
-        # in CC2 saves, Z is lattitude, X is longditude, Y is altitude
         offset = self.waypoint().loc
         lat = offset.x
-        lon = offset.y
+        lon = offset.z
 
         return lon / LOC_SCALE_FACTOR, lat / LOC_SCALE_FACTOR
+
+    def move(self, world_lat, world_lon):
+        wpt = self.waypoint()
+
+        wpt.set_location(x=world_lat * LOC_SCALE_FACTOR,
+                         z=world_lon * LOC_SCALE_FACTOR)
 
 
 class MapTile(MapItem):
@@ -324,7 +339,7 @@ class MapVehicle(MapItem):
 
     @property
     def display_ident(self) -> str:
-        return f"{self.vehicle().type.name} ({self.vehicle().id}"
+        return f"{self.vehicle().type.name} (ID {self.vehicle().id})"
 
     @property
     def dynamic_attachment_names(self) -> List[str]:

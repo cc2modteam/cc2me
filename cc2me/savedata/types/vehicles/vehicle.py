@@ -178,18 +178,18 @@ class Waypoint(ElementProxy, MovableLocationMixin):
         self.vehicle = vehicle
 
     def set_location(self,
-                     x: Optional[float] = None,
-                     y: Optional[float] = None,
-                     z: Optional[float] = None
+                     x: Optional[float] = None,  # y in xml
+                     y: Optional[float] = None,  # alt in xml
+                     z: Optional[float] = None   # x in xml
                      ):
-        if z is not None:
-            self.element.set("altitude", str(z))
+        if y is not None:
+            self.element.set("altitude", str(y))
         position = self.element.find("position")
         if position is not None:
             if x is not None:
-                position.set("x", str(x))
-            if y is not None:
                 position.set("y", str(x))
+            if z is not None:
+                position.set("x", str(z))
 
     def move(self, x: float, y: float, z: float) -> None:
         self.set_location(x, y, z)
@@ -198,8 +198,9 @@ class Waypoint(ElementProxy, MovableLocationMixin):
     def loc(self) -> Location:
         position = self.element.find("position")
         location = Location(float(position.get("x")),
-                            float(position.get("y")),
-                            float(self.element.get("altitude")))
+                            float(self.element.get("altitude")),
+                            float(position.get("y")))
+        print(f"{location}")
         return location
 
     def translate(self, dx: float, dy: float, dz: float) -> None:
@@ -207,4 +208,4 @@ class Waypoint(ElementProxy, MovableLocationMixin):
                           self.loc.y + dy,
                           self.loc.z + dz)
 
-    tag = "v"
+    tag = "w"
