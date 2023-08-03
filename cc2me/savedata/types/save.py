@@ -381,8 +381,6 @@ class Team(ElementProxy):
     start_tile_id = e_property(IntAttribute("start_tile_id"))
 
 
-
-
 class Vehicle(ElementProxy, MovableLocationMixin):
     tag = "v"
 
@@ -393,6 +391,9 @@ class Vehicle(ElementProxy, MovableLocationMixin):
         if self._state is None:
             self._state = self.cc2obj.vehicle_state(self.id)
         return self._state
+
+    def sync(self):
+        self.state.state = self.state.data.to_string()
 
     @state.setter
     def state(self, value: Optional[VehicleStateContainer]):
@@ -540,7 +541,10 @@ class Vehicle(ElementProxy, MovableLocationMixin):
 
 class Waypoint(ElementProxy, MovableLocationMixin):
 
-    def __init__(self, element: Optional[Element] = None, cc2obj: Optional[Any] = None, vehicle: Optional[Vehicle] = None):
+    def __init__(self,
+                 element: Optional[Element] = None,
+                 cc2obj: Optional[Any] = None,
+                 vehicle: Optional[Vehicle] = None):
         super().__init__(element, cc2obj)
         self.vehicle = vehicle
 
@@ -575,7 +579,6 @@ class Waypoint(ElementProxy, MovableLocationMixin):
                           self.loc.z + dz)
 
     tag = "w"
-
 
 
 class Facility(ElementProxy):
@@ -922,6 +925,10 @@ class CC2XMLSave:
 
         while len(self.tiles) > 63:
             self.remove_tile(self.tiles[-1])
+
+        for items in [self.vehicles, self.tiles]:
+            for x in items:
+                x.sync()
 
         buf = StringIO()
         buf.write(XML_START)

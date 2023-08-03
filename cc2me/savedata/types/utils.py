@@ -130,6 +130,9 @@ class ElementProxy(ABC):
         if apply_defaults:
             self.defaults()
 
+    def sync(self):
+        pass
+
     @property
     def human_controlled(self) -> bool:
         return False

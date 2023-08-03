@@ -140,6 +140,7 @@ class MapWaypoint(MapItem):
 
         wpt.set_location(x=world_lat * LOC_SCALE_FACTOR,
                          z=world_lon * LOC_SCALE_FACTOR)
+        self.object.sync()
 
 
 class MapTile(MapItem):
@@ -271,6 +272,9 @@ class MapTile(MapItem):
 
 
 class MapVehicle(MapItem):
+
+    show_waypoints = True
+
     def __init__(self, unit: Union[Vehicle, VehicleSpawn]):
         super(MapVehicle, self).__init__(unit)
         self.attachments: Dict[int, UnitAttachment] = {}
@@ -366,10 +370,8 @@ class MapVehicle(MapItem):
         if isinstance(value, str):
             if value.isdecimal():
                 value = float(value)
-        if value:
-            data = self.vehicle().state.data
-            data.hitpoints = value
-            self.vehicle().state.data = data
+        self.vehicle().state.data.hitpoints = value
+        self.vehicle().sync()
 
     @property
     def hitpoints_choices(self) -> List[float]:
@@ -614,6 +616,8 @@ class Spawn(MapVehicle):
 
 
 class Jetty(MapVehicle):
+
+    show_waypoints = False
 
     @property
     def viewable_properties(self) -> List[str]:

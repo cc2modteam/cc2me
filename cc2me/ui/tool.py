@@ -407,10 +407,11 @@ class App(tkinter.Tk):
         marker.on_hover_end = self.end_hover
         marker.on_hover_start = self.hover_unit
         self.map_widget.add_marker(marker)
-        if unit.vehicle() is not None:
-            marker.update_waypoints(
-                command=self.waypoint_clicked,
-                start_hover=self.hover_waypoint, end_hover=self.end_hover)
+        if unit.show_waypoints:
+            if unit.vehicle() is not None:
+                marker.update_waypoints(
+                    command=self.waypoint_clicked,
+                    start_hover=self.hover_waypoint, end_hover=self.end_hover)
 
         return marker
 
