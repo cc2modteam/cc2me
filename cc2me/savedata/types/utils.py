@@ -38,7 +38,10 @@ class ElementAttributeProxy(ABC):
 
 
 class e_property(property):
-    def __init__(self, attribute: ElementAttributeProxy, side_effect: Optional[callable] = None):
+    def __init__(self, attribute: ElementAttributeProxy,
+                 side_effect: Optional[callable] = None,
+                 get_filter: Optional[callable] = None,
+                 ):
         super(e_property, self).__init__(
             self.do_get,
             self.do_set,
@@ -46,12 +49,16 @@ class e_property(property):
             f"get/set {attribute.name}")
         self.attribute = attribute
         self.side_effect: callable = side_effect
+        self.get_filter: callable = get_filter
 
     # x = property(getx, setx, delx, "I'm the 'x' property.")
     def do_get(self, owner: "ElementProxy"):
         if owner is not None:
             self.attribute.parent = owner
-        return self.attribute.get()
+        value = self.attribute.get()
+        if self.get_filter is not None:
+            value = self.get_filter(owner, value)
+        return value
 
     def do_set(self, owner, value):
         if owner is not None:

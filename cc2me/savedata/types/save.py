@@ -178,9 +178,15 @@ class EmbeddedAttachmentStateData(EmbeddedData):
 class VehicleAttachmentState(ElementProxy):
     tag = "a"
     attachment_index = e_property(IntAttribute("attachment_index"))
-    state = e_property(StrAttribute("state"))
 
-    _cached_data = None
+    def get_updated_state(self, original_state: str) -> str:
+        if self._state_data is not None:
+            return self._state_data.to_string()
+        return original_state
+
+    state = e_property(StrAttribute("state"), get_filter=get_updated_state)
+
+    _state_data: Optional[EmbeddedAttachmentStateData] = None
 
     def defaults(self):
         data = self.data
@@ -188,19 +194,18 @@ class VehicleAttachmentState(ElementProxy):
 
     @property
     def data(self) -> EmbeddedAttachmentStateData:
-        if self._cached_data is None:
+        if self._state_data is None:
             root = None
             try:
                 root = ElementTree.fromstring(self.state)
             except ElementTree.ParseError:
                 pass
-            self._cached_data = EmbeddedAttachmentStateData(element=root)
-        return self._cached_data
+            self._state_data = EmbeddedAttachmentStateData(element=root)
+        return self._state_data
 
     @data.setter
     def data(self, value: EmbeddedAttachmentStateData):
-        self._cached_data = value
-        self.state = value.to_string()
+        self._state_data = value
 
 
 class VehicleAttachmentStates(ElementProxy):
@@ -231,9 +236,17 @@ class VehicleAttachmentStates(ElementProxy):
 class VehicleStateContainer(ElementProxy):
     tag = "v"
     id = e_property(IntAttribute("id", default_value=0))
-    state = e_property(StrAttribute("state", default_value=""))
 
-    _cached_state = None
+    _state_data: Optional[EmbeddedVehicleStateData] = None
+
+    def get_updated_state(self, original: str) -> str:
+        if self._state_data is not None:
+            return self._state_data.to_string()
+        return original
+
+    state = e_property(StrAttribute("state", default_value=""),
+                       get_filter=get_updated_state)
+
     _cached_waypoints = []
 
     def defaults(self):
@@ -246,38 +259,28 @@ class VehicleStateContainer(ElementProxy):
 
     @property
     def data(self) -> EmbeddedVehicleStateData:
-        return self.get_embdata()
-
-    def get_embdata(self):
-        if self._cached_state is None:
+        if self._state_data is None:
             root = None
             try:
                 root = ElementTree.fromstring(self.state)
             except ElementTree.ParseError:
                 pass
-            state = EmbeddedVehicleStateData(element=root)
-            self._cached_state = state
-        else:
-            assert True
-        return self._cached_state
+            self._state_data = EmbeddedVehicleStateData(element=root)
+
+        return self._state_data
 
     @data.setter
-    def data(self, value: EmbeddedVehicleStateData):
-        self.set_embdata(value)
-        self.state = value.to_string()
-
-    def set_embdata(self, value: EmbeddedVehicleStateData):
-        self.state = value
+    def data(self, value: Optional[EmbeddedVehicleStateData]):
+        self._state_data = value
 
     @property
     def waypoints(self) -> List[Element]:
         ret = []
-        for child in self.get_embdata().children():
+        for child in self.data.children():
             if child.tag == "waypoints":
                 ret = child.findall("w")
                 break
         return ret
-
 
 
 class VehicleSpawnData(ElementProxy):
