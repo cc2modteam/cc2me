@@ -57,7 +57,6 @@ def test_add_attachments():
     irstate = v1.get_attachment_state(1)
     irstate_data = irstate.data
     irstate_data.ammo = 32
-    irstate.data = irstate_data
 
     saved = cc2.export()
     assert saved

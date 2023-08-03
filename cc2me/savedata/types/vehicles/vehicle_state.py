@@ -12,21 +12,26 @@ class VehicleAttachmentState(ElementProxy):
     attachment_index = e_property(IntAttribute("attachment_index"))
     state = e_property(StrAttribute("state"))
 
+    _cached_data = None
+
     def defaults(self):
         data = self.data
         self.data = data
 
     @property
     def data(self) -> EmbeddedAttachmentStateData:
-        root = None
-        try:
-            root = ElementTree.fromstring(self.state)
-        except ElementTree.ParseError:
-            pass
-        return EmbeddedAttachmentStateData(element=root)
+        if self._cached_data is None:
+            root = None
+            try:
+                root = ElementTree.fromstring(self.state)
+            except ElementTree.ParseError:
+                pass
+            self._cached_data = EmbeddedAttachmentStateData(element=root)
+        return self._cached_data
 
     @data.setter
     def data(self, value: EmbeddedAttachmentStateData):
+        self._cached_data = value
         self.state = value.to_string()
 
 
@@ -60,9 +65,12 @@ class VehicleStateContainer(ElementProxy):
     id = e_property(IntAttribute("id", default_value=0))
     state = e_property(StrAttribute("state", default_value=""))
 
+    _cached_state = None
+    _cached_waypoints = []
+
     def defaults(self):
         data = self.data
-        self.data = data
+        self.data = data  # uuuh..
 
     @property
     def attachments(self) -> VehicleAttachmentStates:
@@ -70,23 +78,34 @@ class VehicleStateContainer(ElementProxy):
 
     @property
     def data(self) -> EmbeddedVehicleStateData:
-        root = None
-        try:
-            root = ElementTree.fromstring(self.state)
-        except ElementTree.ParseError:
-            pass
-        state = EmbeddedVehicleStateData(element=root)
-        return state
+        return self.get_embdata()
+
+    def get_embdata(self):
+        if self._cached_state is None:
+            root = None
+            try:
+                root = ElementTree.fromstring(self.state)
+            except ElementTree.ParseError:
+                pass
+            state = EmbeddedVehicleStateData(element=root)
+            self._cached_state = state
+        else:
+            assert True
+        return self._cached_state
 
     @data.setter
     def data(self, value: EmbeddedVehicleStateData):
+        self.set_embdata(value)
         self.state = value.to_string()
+
+    def set_embdata(self, value: EmbeddedVehicleStateData):
+        self.state = value
 
     @property
     def waypoints(self) -> List[Element]:
         ret = []
-        for child in self.data.children():
+        for child in self.get_embdata().children():
             if child.tag == "waypoints":
-                ret = list(child)
+                ret = child.findall("w")
                 break
         return ret

@@ -432,9 +432,9 @@ class App(tkinter.Tk):
         else:
             self.map_widget.set_mouse_choose()
 
-    def hover_waypoint(self, marker):
+    def hover_waypoint(self, marker: WaypointMarker):
         self.hover_marker(marker)
-        self.status_line.set(f"waypoint {marker}")
+        self.status_line.set(f"waypoint {marker.mapitem.display_ident}")
 
     def hover_unit(self, marker: VehicleMarker):
         self.hover_marker(marker)
@@ -490,10 +490,16 @@ class App(tkinter.Tk):
     def on_mouse_release(self):
         if self.dragging_marker:
             if isinstance(self.dragging_marker, VehicleMarker):
-                self.dragging_marker.update_waypoints(
-                    command=self.waypoint_clicked,
-                    start_hover=self.hover_waypoint, end_hover=self.end_hover)
+                self.update_vehicle_marker(self.dragging_marker)
+            elif isinstance(self.dragging_marker, WaypointMarker):
+                self.update_vehicle_marker(self.dragging_marker.vehicle_marker)
         self.dragging_marker = None
+
+    def update_vehicle_marker(self, marker):
+        marker.update_waypoints(
+            command=self.waypoint_clicked,
+            start_hover=self.hover_waypoint,
+            end_hover=self.end_hover)
 
 
 def run(args=None):

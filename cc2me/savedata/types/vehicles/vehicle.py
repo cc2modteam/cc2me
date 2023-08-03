@@ -200,7 +200,6 @@ class Waypoint(ElementProxy, MovableLocationMixin):
         location = Location(float(position.get("x")),
                             float(self.element.get("altitude")),
                             float(position.get("y")))
-        print(f"{location}")
         return location
 
     def translate(self, dx: float, dy: float, dz: float) -> None:

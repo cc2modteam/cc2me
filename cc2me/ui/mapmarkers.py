@@ -281,10 +281,12 @@ class WaypointMarker(MapItemMarker):
     def __init__(self, map_widget: TkinterMapView,
                  mapitem: MapWaypoint,
                  owner: MapVehicle,
+                 vehicle_marker: "VehicleMarker",
                  on_click: Optional[callable] = None):
         super(WaypointMarker, self).__init__(map_widget, mapitem)
         self.size = 0.7
         self.owner = owner
+        self.vehicle_marker = vehicle_marker
         self._color = "#cdcdcd"
 
         a = CanvasShape(map_widget.canvas,
@@ -371,17 +373,20 @@ class VehicleMarker(MapItemMarker):
 
         self.add_shapes(back, unit)
 
-    def update_waypoints(self, redraw=True, start_hover=None, end_hover=None, command=None) -> None:
+    def update_waypoints(self, start_hover=None, end_hover=None, command=None) -> None:
         path_points = [self.position]
         unit = self.unit
 
         for wpt in self.waypoints:
             self.map_widget.delete(wpt)
+        self.waypoints.clear()
+
         if self.waypoint_path is not None:
             self.map_widget.delete(self.waypoint_path)
+            self.waypoint_path = None
 
         for wpt in unit.vehicle().waypoints:
-            wpm = WaypointMarker(self.map_widget, MapWaypoint(unit, wpt), unit)
+            wpm = WaypointMarker(self.map_widget, MapWaypoint(unit, wpt), unit, self)
             wpm.command = command
             wpm.on_hover_start = start_hover
             wpm.on_hover_end = end_hover
@@ -389,7 +394,6 @@ class VehicleMarker(MapItemMarker):
             path_points.append(wpm.position)
             self.map_widget.add_marker(wpm)
 
-        if redraw:
-            if len(path_points) > 1:
-                map_path: CanvasPath = self.map_widget.set_path(path_points)
-                self.waypoint_path = map_path
+        if len(path_points) > 1:
+            map_path: CanvasPath = self.map_widget.set_path(path_points)
+            self.waypoint_path = map_path

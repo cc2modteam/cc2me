@@ -109,13 +109,13 @@ class FloatAttribute(ElementAttributeProxy):
 class ElementProxy(ABC):
     tag: str = "X"
 
-    def __init__(self, element: Optional[Element] = None, cc2obj: Optional[Any] = None):
+    def __init__(self, element: Optional[Element] = None, cc2obj: Optional["CC2XMLSave"] = None):
         apply_defaults = False
         if element is None:
             element = Element(self.tag)
             apply_defaults = True
         self.element = element
-        self.cc2obj: "CC2Save" = cc2obj
+        self.cc2obj: "CC2XMLSave" = cc2obj
         if apply_defaults:
             self.defaults()
 
