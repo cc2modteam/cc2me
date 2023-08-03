@@ -1,7 +1,7 @@
 from typing import cast, List, Optional
 
-from ...constants import VehicleAttachmentDefinitionIndex
-from ..utils import ElementProxy, e_property, IntAttribute, Bodies
+from ..constants import VehicleAttachmentDefinitionIndex
+from .utils import ElementProxy, e_property, IntAttribute, Bodies
 
 
 class Attachment(ElementProxy):

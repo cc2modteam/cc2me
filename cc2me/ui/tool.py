@@ -12,8 +12,8 @@ from tkintermapview.canvas_path import CanvasPath
 from .properties import Properties
 from ..savedata.constants import VehicleType, VehicleAttachmentDefinitionIndex, get_persistent_file_path, get_cc2_appdata
 from ..savedata.types.objects import MapTile, MapVehicle, get_unit, Spawn, MapWaypoint
-from ..savedata.types.tiles import Tile
-from ..savedata.loader import CC2XMLSave, load_save_file
+from ..savedata.loader import load_save_file
+from cc2me.savedata.types.save import CC2XMLSave, Tile
 from .cc2memapview import CC2MeMapView
 from .toolbar import Toolbar
 from .saveslotchooser import SlotChooser

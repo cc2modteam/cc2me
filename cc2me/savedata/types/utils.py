@@ -3,6 +3,10 @@ from dataclasses import dataclass
 from typing import Optional, Any, List, cast
 from xml.etree.ElementTree import Element
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .save import CC2XMLSave
+
 
 class ElementAttributeProxy(ABC):
 

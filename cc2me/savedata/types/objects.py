@@ -1,16 +1,19 @@
 import abc
-from typing import Tuple, cast, Optional, List, Union, Dict, Iterable, Callable, Any, Protocol
+from typing import Tuple, cast, Optional, List, Union, Dict, Any, Protocol
 
 from .attachment_attributes import UnitAttachment
-from .spawndata import VehicleSpawn, VehicleSpawnAttachment
-from .tiles import Tile
+from .save import (
+    VehicleSpawn, VehicleSpawnAttachment, Tile, Vehicle, Waypoint,
+    EmbeddedAttachmentStateData, Inventory)
 from .utils import ElementProxy, LocationMixin, MovableLocationMixin
-from .vehicles.embedded_xmlstates.vehicles import EmbeddedAttachmentStateData, Inventory, Quantity
-from .vehicles.vehicle import Vehicle, Waypoint
-from ..constants import get_island_name, TileTypes, VehicleType, VehicleAttachmentDefinitionIndex, \
-    generate_island_seed, get_default_hitpoints, TURRET_ATTACHMENTS, InventoryIndex, BIOMES
-from ..rules import get_unit_attachment_choices, get_unit_attachment_slots, HARDPOINT_ATTACHMENTS, SHIP_ATTACHMENTS
-from ..loader import CC2XMLSave
+from ..constants import (
+    get_island_name, TileTypes, VehicleType, VehicleAttachmentDefinitionIndex,
+    generate_island_seed, get_default_hitpoints, InventoryIndex,
+    BIOMES)
+from ..rules import (
+    get_unit_attachment_choices, get_unit_attachment_slots)
+
+from .save import CC2XMLSave
 
 LOC_SCALE_FACTOR = 2000
 

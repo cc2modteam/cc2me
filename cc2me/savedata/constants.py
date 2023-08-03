@@ -6,6 +6,15 @@ from typing import cast, List, Optional, Union, Dict
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
+XML_START = '<?xml version="1.0" encoding="UTF-8"?>'
+META_ROOT = "meta"
+SCENE_ROOT = "scene"
+VEHICLES_ROOT = "vehicles"
+MISSILES_ROOT = "missiles"
+ROOT_ORDER = [META_ROOT, SCENE_ROOT, VEHICLES_ROOT, MISSILES_ROOT]
+CARRIER_VEH_DEF_INDEX = "0"
+
+
 MAX_INTEGER = 4294967295
 
 MIN_TILE_SEED = 2000
@@ -555,3 +564,16 @@ def read_save_slots(slots_file: Optional[str] = None) -> List[Dict[str, str]]:
                 })
     return slots
 
+
+REMOTE_DRIVEABLE_VEHICLES = [
+    VehicleType.Bear,
+    VehicleType.Barge,
+    VehicleType.Seal,
+    VehicleType.Walrus,
+    VehicleType.Razorbill,
+    VehicleType.Albatross,
+    VehicleType.Petrel,
+    VehicleType.Mule,
+    VehicleType.Needlefish,
+    VehicleType.Swordfish
+]
