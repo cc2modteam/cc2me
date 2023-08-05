@@ -6,14 +6,11 @@ import tkinter
 import tkinter.messagebox
 from tkinter import filedialog
 from typing import Optional, List
-
-from tkintermapview.canvas_path import CanvasPath
-
 from .properties import Properties
 from ..savedata.constants import VehicleType, VehicleAttachmentDefinitionIndex, get_persistent_file_path, get_cc2_appdata
-from ..savedata.types.objects import MapTile, MapVehicle, get_unit, Spawn, MapWaypoint
+from ..savedata.types.objects import MapTile, MapVehicle, get_unit, Spawn
 from ..savedata.loader import load_save_file
-from cc2me.savedata.types.save import CC2XMLSave, Tile
+from ..savedata.types.save import CC2XMLSave, Tile, Waypoint
 from .cc2memapview import CC2MeMapView
 from .toolbar import Toolbar
 from .saveslotchooser import SlotChooser
@@ -143,6 +140,14 @@ class App(tkinter.Tk):
             found.append(item)
             for wpt in item.waypoints:
                 found.append(wpt)
+
+        return found
+
+    def all_map_waypoints(self) -> List[Waypoint]:
+        found = []
+        for item in self.units + self.spawns:
+            wpts = item.unit.vehicle().waypoints
+            found.extend(wpts)
 
         return found
 
@@ -304,7 +309,6 @@ class App(tkinter.Tk):
             self.save(filename)
 
     def clear(self):
-        self.map_widget.canvas_marker_list = []
         self.map_widget.selected_markers.clear()
 
         for item in self.all_markers():
@@ -317,6 +321,16 @@ class App(tkinter.Tk):
 
         self.cc2me = None
         self.map_widget.set_zoom(1, 0.0, 0.0)
+
+        for grp in [self.map_widget.canvas_marker_list, self.map_widget.canvas_path_list]:
+            for item in grp:
+                self.map_widget.delete(item)
+
+        # not totally sure why I have to do this again..
+        while len(self.map_widget.canvas_path_list):
+            first = self.map_widget.canvas_path_list[0]
+            first.delete()
+
         self.map_widget.update()
         self.dragging_marker = None
 
@@ -367,17 +381,25 @@ class App(tkinter.Tk):
             self.save_filename = filename
         self.islands.clear()
         self.map_widget.update()
-
+        added = []
         if self.cc2me:
             # islands
             for island_tile in self.cc2me.tiles:
                 self.add_island(island_tile)
             # units
             for veh in self.cc2me.vehicles:
-                self.add_unit(veh)
+                added.append(self.add_unit(veh))
         self.status_line.set(f"Loaded {filename} ({len(self.islands)} islands, {len(self.units)} units)")
         self.toolbar.enable_group("save")
         self.select_none()
+
+        for marker in added:
+            marker.update_waypoints(
+                command=self.waypoint_clicked,
+                start_hover=self.hover_waypoint,
+                end_hover=self.end_hover,
+                find_vehicle=self.find_vehicle
+            )
 
         self.map_widget.canvas.update_idletasks()
 
@@ -401,7 +423,6 @@ class App(tkinter.Tk):
         return marker
 
     def _add_unit_marker(self, unit):
-        print(str(unit))
         marker = VehicleMarker(self.map_widget, unit)
         marker.command = self.unit_clicked
         marker.on_hover_end = self.end_hover
@@ -411,9 +432,20 @@ class App(tkinter.Tk):
             if unit.vehicle() is not None:
                 marker.update_waypoints(
                     command=self.waypoint_clicked,
-                    start_hover=self.hover_waypoint, end_hover=self.end_hover)
+                    start_hover=self.hover_waypoint,
+                    end_hover=self.end_hover,
+                    find_vehicle=self.find_vehicle
+                )
 
         return marker
+
+    def find_vehicle(self, vid) -> Optional[VehicleMarker]:
+        if vid:
+            vint = int(vid)
+            for v in self.units:
+                if vint == v.unit.v_id:
+                    return v
+        return None
 
     def add_spawn(self, spawn) -> VehicleMarker:
         marker = self._add_unit_marker(spawn)
