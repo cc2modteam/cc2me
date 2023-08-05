@@ -9,7 +9,7 @@ from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from ..constants import (
     get_island_name, TileTypes, VehicleType, VehicleAttachmentDefinitionIndex,
     generate_island_seed, get_default_hitpoints, InventoryIndex,
-    BIOMES)
+    BIOMES, get_waypoint_type_kind)
 from ..rules import (
     get_unit_attachment_choices, get_unit_attachment_slots)
 
@@ -109,8 +109,28 @@ class MapWaypoint(MapItem):
         return f"waypoint of {self.unit.display_ident}"
 
     @property
+    def waypoint_order(self) -> str:
+        return get_waypoint_type_kind(self.type)
+
+    @property
+    def target_tile_id(self) -> str:
+        return self.object.element.attrib.get("target_tile_id", "")
+
+    @property
+    def target_vehicle_id(self) -> str:
+        return self.object.element.attrib.get("target_vehicle_id", "")
+
+    @property
+    def wait_group(self) -> str:
+        return self.object.element.attrib.get("wait_group", "")
+
+    @property
+    def type(self) -> str:
+        return self.object.element.attrib.get("type", "")
+
+    @property
     def viewable_properties(self) -> List[str]:
-        return ["team_owner", "loc", "alt"]
+        return ["team_owner", "waypoint_order", "loc", "alt", "target_tile_id", "target_vehicle_id", "wait_group", "type"]
 
     @property
     def alt(self) -> int:
@@ -274,6 +294,10 @@ class MapTile(MapItem):
 class MapVehicle(MapItem):
 
     show_waypoints = True
+
+    @property
+    def v_id(self) -> int:
+        return int(self.object.element.attrib.get("id", -1))
 
     def __init__(self, unit: Union[Vehicle, VehicleSpawn]):
         super(MapVehicle, self).__init__(unit)

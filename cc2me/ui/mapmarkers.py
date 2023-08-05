@@ -373,7 +373,8 @@ class VehicleMarker(MapItemMarker):
 
         self.add_shapes(back, unit)
 
-    def update_waypoints(self, start_hover=None, end_hover=None, command=None) -> None:
+    def update_waypoints(self, start_hover=None, end_hover=None, command=None,
+                         find_vehicle: Optional[Callable] = None) -> None:
         path_points = [self.position]
         unit = self.unit
 
@@ -386,13 +387,20 @@ class VehicleMarker(MapItemMarker):
             self.waypoint_path = None
 
         for wpt in unit.vehicle().waypoints:
-            wpm = WaypointMarker(self.map_widget, MapWaypoint(unit, wpt), unit, self)
+            w = MapWaypoint(unit, wpt)
+            wpm = WaypointMarker(self.map_widget, w, unit, self)
             wpm.command = command
             wpm.on_hover_start = start_hover
             wpm.on_hover_end = end_hover
             self.waypoints.append(wpm)
-            path_points.append(wpm.position)
-            self.map_widget.add_marker(wpm)
+            if w.waypoint_order == "follow":
+                target = w.target_vehicle_id
+                other = find_vehicle(target)
+                if other:
+                    path_points.append(other.position)
+            else:
+                path_points.append(wpm.position)
+                self.map_widget.add_marker(wpm)
 
         if len(path_points) > 1:
             map_path: CanvasPath = self.map_widget.set_path(path_points)

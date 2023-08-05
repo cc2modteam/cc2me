@@ -703,7 +703,8 @@ class CC2XMLSave:
 
     @property
     def _tiles(self) -> List[Element]:
-        return self.roots[SCENE_ROOT].getroot().findall("./tiles/tiles/t")
+        scene_obj = self.roots[SCENE_ROOT].getroot()
+        return scene_obj.findall("./tiles/tiles/t")
 
     @property
     def tiles(self) -> List[Tile]:

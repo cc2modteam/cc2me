@@ -577,3 +577,14 @@ REMOTE_DRIVEABLE_VEHICLES = [
     VehicleType.Needlefish,
     VehicleType.Swordfish
 ]
+
+
+def get_waypoint_type_kind(typeid: str):
+    if typeid:
+        typeint = int(typeid)
+        if typeint == 0:
+            return "move"
+        elif typeint == 2:
+            return "follow"
+
+    return f"({typeid}) unknown"
