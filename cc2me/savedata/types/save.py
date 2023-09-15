@@ -393,7 +393,16 @@ class Vehicle(ElementProxy, MovableLocationMixin):
         return self._state
 
     def sync(self):
-        self.state.state = self.state.data.to_string()
+        # re-save waypoints
+        wpts = self.waypoints
+        waypoints_parent = self.state.data.element.find("waypoints")
+        if waypoints_parent:
+            waypoints_parent.clear()
+            for w in wpts:
+                waypoints_parent.append(w.element)
+
+        newdata = self.state.data.to_string()
+        self.state.state = newdata
 
     @state.setter
     def state(self, value: Optional[VehicleStateContainer]):

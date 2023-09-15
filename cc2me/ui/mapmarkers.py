@@ -377,6 +377,8 @@ class VehicleMarker(MapItemMarker):
                          find_vehicle: Optional[Callable] = None) -> None:
         path_points = [self.position]
         unit = self.unit
+        if not unit.show_waypoints:
+            return
 
         for wpt in self.waypoints:
             self.map_widget.delete(wpt)
