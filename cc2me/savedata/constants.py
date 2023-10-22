@@ -517,6 +517,9 @@ def get_attachment_capacity(
     if attachment == VehicleAttachmentDefinitionIndex.Autocannon:
         cap = AmmunitionCapacity(attachment, 250, vehicle)
 
+    if attachment == VehicleAttachmentDefinitionIndex.SonicPulse:
+        cap = AmmunitionCapacity(attachment, 2, vehicle)
+
     return cap
 
 

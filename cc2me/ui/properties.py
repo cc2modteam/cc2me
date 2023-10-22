@@ -1,8 +1,61 @@
 import tkinter
-from typing import Optional, Any, List
+from typing import Optional, Any, List, Callable, Type
 from tkinter import ttk
-from ..savedata.types.objects import MapItem
+
+from ..savedata.constants import VehicleAttachmentDefinitionIndex
+from ..savedata.types.objects import MapItem, MapVehicle
 from .mapmarkers import MapItemMarker
+
+
+class PropertyField:
+    def __init__(self,
+                 label: str,
+                 initial_value: Any,
+                 value_type: Type,
+                 validate: Callable[[str], Any],
+                 setter: Callable[[Any], None],
+                 getter: Callable,
+                 choices: Optional[List[str]] = None,
+                 justify: str = "right",
+                 ):
+        self.label = label
+        self.initial_value = initial_value
+        self.value_type = value_type
+        self.validate = validate
+        self.setter = setter
+        self.getter = getter
+        self.entry = None
+        self.justify = justify
+        self.stringvar = None
+
+    def on_modified(self, event):
+        if self.stringvar:
+            value = self.stringvar.get()
+            valid = self.validate(value)
+            if valid:
+                print(f"set {self.label} to {valid}")
+                self.setter(valid)
+
+    def add(self, props: "Properties"):
+        parent = props.rows
+        row = tkinter.Frame(parent, width=props.width)
+        label = tkinter.Label(row,
+                              text=self.label,
+                              anchor=tkinter.W, width=20, justify=tkinter.LEFT)
+
+        self.stringvar = tkinter.StringVar(row)
+        self.stringvar.set(self.initial_value)
+        self.entry = ttk.Entry(row,
+                               justify=self.justify,
+                               textvariable=self.stringvar,
+                               width=int(props.width * 0.7))
+        self.entry.bind("<KeyRelease>", self.on_modified)
+
+        label.pack(side=tkinter.LEFT, expand=False, fill=tkinter.NONE)
+        self.entry.pack(side=tkinter.RIGHT, expand=False, fill=tkinter.NONE)
+        props.row_frames.append(row)
+        row.pack(side=tkinter.TOP, fill=tkinter.NONE, expand=False)
+        props.rows.pack(fill=tkinter.NONE, expand=False)
 
 
 class PropertyItem:
@@ -14,6 +67,8 @@ class PropertyItem:
         self.textvalue = None
         self.label = None
         self.value_widget = None
+        self.extra_value = None
+        self.extra_value_widget = None
 
     def on_modified(self, event):
         owner: Optional[Properties] = self.owner
@@ -80,6 +135,7 @@ class Properties:
 
                 for prop in obj.viewable_properties:
                     value = getattr(obj, prop)
+                    print(f"ui prop {prop} = {value}")
                     # value = obj.__getattribute__(prop)
                     choices = None
                     try:
@@ -87,6 +143,28 @@ class Properties:
                     except AttributeError:
                         pass
                     self.add_option_property(prop, value, choices)
+
+                    extra = ""
+                    if isinstance(obj, MapVehicle):
+                        if value:
+                            if prop in obj.dynamic_attachment_names:
+                                att = obj.find_attachment(prop)
+                                fitted = obj.get_attachment(att.position)
+                                if fitted:
+                                    max_ammo = obj.max_ammo(att.position)
+                                    if max_ammo > 0:
+                                        att_state = obj.get_attachment_state(att.position)
+                                        extra = att_state.get("ammo")
+                                        print(f"extra = {extra}")
+
+                                        set_ammo = lambda n: att_state.set("ammo", int(n))
+                                        get_ammo = lambda: att_state.get("ammo")
+
+                                        extra_prop = PropertyField("- ammo", extra, int,
+                                                                   lambda x: str(int(x)),
+                                                                   set_ammo, get_ammo
+                                                                   )
+                                        extra_prop.add(self)
 
                 for attr_name in sorted(obj.dynamic_attribs.keys()):
                     value = obj.dynamic_attribs[attr_name].get()
@@ -103,9 +181,9 @@ class Properties:
                 # multiple objects,
                 # allow only change of team
                 self.add_option_property("team_owner", selected="None",
-                                         values=obj.team_owner_choices)
+                                         choice_values=obj.team_owner_choices)
                 self.add_option_property("alt", selected="None",
-                                         values=[0, 50, 100, 300, 800])
+                                         choice_values=[0, 50, 100, 300, 800])
 
     def clear(self):
         for item in self.option_items:
@@ -125,10 +203,12 @@ class Properties:
         self.rows.pack_forget()
         self.title.set("")
 
-    def add_option_property(self, text: str, selected=None, values: Optional[list] = None):
+    def add_option_property(self, text: str,
+                            selected=None,
+                            choice_values: Optional[list] = None):
         row = tkinter.Frame(self.rows, width=self.width)
 
-        opt = PropertyItem(self, text, selected, values)
+        opt = PropertyItem(self, text, selected, choice_values)
         opt.label = tkinter.Label(row,
                                   text=text, anchor=tkinter.W, width=20, justify=tkinter.LEFT)
         if opt.choices is not None:
@@ -143,6 +223,8 @@ class Properties:
                                              width=int(self.width * 0.7))
 
         opt.label.pack(side=tkinter.LEFT, expand=False, fill=tkinter.NONE)
+        #if opt.extra_value_widget is not None:
+        #    opt.extra_value_widget.pack(side=tkinter.RIGHT, fill=tkinter.NONE, expand=False)
         opt.value_widget.pack(side=tkinter.RIGHT, expand=False, fill=tkinter.NONE)
 
         self.option_items.append(opt)

@@ -9,7 +9,7 @@ from .utils import ElementProxy, LocationMixin, MovableLocationMixin
 from ..constants import (
     get_island_name, TileTypes, VehicleType, VehicleAttachmentDefinitionIndex,
     generate_island_seed, get_default_hitpoints, InventoryIndex,
-    BIOMES, get_waypoint_type_kind)
+    BIOMES, get_waypoint_type_kind, get_attachment_capacity)
 from ..rules import (
     get_unit_attachment_choices, get_unit_attachment_slots)
 
@@ -242,6 +242,10 @@ class MapTile(MapItem):
     def seed_choices(self) -> List[str]:
         return [
             str(self.seed),
+            str(1),
+            str(100),
+            str(300),
+            str(400),
             str(generate_island_seed()),
             str(generate_island_seed()),
             str(generate_island_seed()),
@@ -438,6 +442,7 @@ class MapVehicle(MapItem):
             -1,
             5,
             15,
+            25,
             50,
             200,
             800,
@@ -455,6 +460,14 @@ class MapVehicle(MapItem):
     def get_attachment(self, attachment_index: int) -> Optional[VehicleAttachmentDefinitionIndex]:
         return self.vehicle().get_attachment(attachment_index)
 
+    def max_ammo(self, attachment_index: int) -> int:
+        fitted = self.get_attachment(attachment_index)
+        if fitted:
+            cap = get_attachment_capacity(self.vehicle().definition_index, fitted)
+            if cap:
+                return cap.count
+        return 0
+
     def set_attachment(self, attachment_index: int, value: Optional[VehicleAttachmentDefinitionIndex]):
         self.vehicle().set_attachment(attachment_index, value)
 
@@ -462,7 +475,9 @@ class MapVehicle(MapItem):
         a_state_container = self.vehicle().get_attachment_state(attachment_index)
         if a_state_container:
             return a_state_container.data
-        return EmbeddedAttachmentStateData(element=None)
+        st = EmbeddedAttachmentStateData(element=None)
+        st.container = self.vehicle().state.attachments
+        return st
 
     def set_attachment_state(self, attachment_index: int, data: EmbeddedAttachmentStateData):
         if self.vehicle().state.attachments[attachment_index] is not None:

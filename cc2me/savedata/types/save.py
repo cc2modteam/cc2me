@@ -173,11 +173,13 @@ class EmbeddedAttachmentStateData(EmbeddedData):
     ammo = e_property(IntAttribute("ammo"))
     fuel_capacity = e_property(FloatAttribute("fuel_capacity"))
     fuel_remaining = e_property(FloatAttribute("fuel_remaining"))
+    container: Optional["VehicleAttachmentState"] = None
 
 
 class VehicleAttachmentState(ElementProxy):
     tag = "a"
     attachment_index = e_property(IntAttribute("attachment_index"))
+    owner: Optional["Vehicle"] = None
 
     def get_updated_state(self, original_state: str) -> str:
         if self._state_data is not None:
@@ -201,6 +203,7 @@ class VehicleAttachmentState(ElementProxy):
             except ElementTree.ParseError:
                 pass
             self._state_data = EmbeddedAttachmentStateData(element=root)
+            self._state_data.container = self
         return self._state_data
 
     @data.setter

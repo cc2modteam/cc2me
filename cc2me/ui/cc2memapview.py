@@ -27,7 +27,7 @@ class CC2MeMapView(TkinterMapView):
         super(CC2MeMapView, self).__init__(width=width,
                                            height=height,
                                            corner_radius=corner_radius,
-                                           max_zoom=10,
+                                           max_zoom=16,
                                            )
         self.selection_start = None
         self.canvas.configure(bg="#000050")
