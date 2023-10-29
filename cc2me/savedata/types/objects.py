@@ -308,17 +308,6 @@ class MapVehicle(MapItem):
         self.attachments: Dict[int, UnitAttachment] = {}
         self.setup_attachments()
 
-        self.caches = {
-            "attachment_states": {},
-        }
-
-    def read_cached_attachment_state(self, attachment_index: int) -> Optional[EmbeddedAttachmentStateData]:
-        value = self.caches["attachment_states"].get(attachment_index, None)
-        return value
-
-    def keep_cached_attachment_state(self, attachment_index: int, state: EmbeddedAttachmentStateData) -> None:
-        self.caches["attachment_states"][attachment_index] = state
-
     def setup_attachments(self):
         slots = get_unit_attachment_slots(self.vehicle_type)
         for slot in slots:
@@ -423,6 +412,7 @@ class MapVehicle(MapItem):
         if default_max:
             values.append(int(default_max / 2))
             values.append(default_max)
+            values.append(default_max * 2)
 
         return values
 
@@ -486,30 +476,24 @@ class MapVehicle(MapItem):
         if att:
             max_capacity = self.max_ammo(attachment_index)
             if max_capacity and max_capacity > 0:
-                self.update_attachment_state_value(attachment_index, "ammo", max_capacity)
+                self.set_attachment_ammo(attachment_index, max_capacity)
 
     def update_attachment_state_value(self, attachment_index: int, name: str, value):
         state = self.get_attachment_state(attachment_index)
         state.set(name, value)
-        state.sync()
+
+    def set_attachment_ammo(self, attachment_index: int, value: Union[int, str]):
+        self.update_attachment_state_value(attachment_index, "ammo", int(value))
 
     def get_attachment_state(self, attachment_index: int) -> Optional[EmbeddedAttachmentStateData]:
-        st = self.read_cached_attachment_state(attachment_index)
-        if not st:
-            a_state_container = self.vehicle().get_attachment_state(attachment_index)
-            if a_state_container:
-                st = a_state_container.data
-            else:
-                st = EmbeddedAttachmentStateData(element=None)
+        v_a_state = self.vehicle().get_attachment_state(attachment_index)
+        if v_a_state:
+            st = v_a_state.data
+        else:
+            st = EmbeddedAttachmentStateData(element=None)
             st.container = self.vehicle().state.attachments
-            self.keep_cached_attachment_state(attachment_index, st)
         return st
 
-    def set_attachment_state(self, attachment_index: int, data: EmbeddedAttachmentStateData):
-        if self.vehicle().state.attachments[attachment_index] is not None:
-            # not all attachments have state
-            self.vehicle().state.attachments[attachment_index].data = data
-            self.keep_cached_attachment_state(attachment_index, data)
 
 
 class AirUnit(MapVehicle):

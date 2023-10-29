@@ -175,6 +175,11 @@ class EmbeddedAttachmentStateData(EmbeddedData):
     fuel_remaining = e_property(FloatAttribute("fuel_remaining"))
     container: Optional["VehicleAttachmentState"] = None
 
+    def set(self, attrib: str, value: Any):
+        super().set(attrib, value)
+        assert self.container
+        self.container.state = self.to_string()
+
 
 class VehicleAttachmentState(ElementProxy):
     tag = "a"
@@ -223,6 +228,13 @@ class VehicleAttachmentStates(ElementProxy):
                 return item
         return None
 
+    def __setitem__(self, attachment_index, value: VehicleAttachmentState):
+        for item in self.items():
+            if item.attachment_index == attachment_index:
+                item.element = value.element
+                return
+        self.element.append(value.element)
+
     def __delitem__(self, attachment):
         if attachment:
             a_id = str(attachment.attachment_index)
@@ -230,10 +242,6 @@ class VehicleAttachmentStates(ElementProxy):
             for child in children:
                 if child.attrib.get("attachment_index", "-1") == a_id:
                     self.element.remove(child)
-
-    def replace(self, attachment: VehicleAttachmentState):
-        del self[attachment]
-        self.element.append(attachment.element)
 
 
 class VehicleStateContainer(ElementProxy):
@@ -370,8 +378,6 @@ class SpawnData(ElementProxy, IsSetMixin):
     @property
     def vehicles(self) -> VehicleSpawnContainer:
         return cast(VehicleSpawnContainer, self.get_default_child_by_tag(VehicleSpawnContainer))
-
-
 
 
 class Team(ElementProxy):
@@ -540,12 +546,9 @@ class Vehicle(ElementProxy, MovableLocationMixin):
 
             capacity = get_attachment_capacity(self.definition_index, value)
             if capacity is not None:
-                data = new_attachment_state.data
                 for attrib_name in capacity.attribs:
-                    setattr(data, attrib_name, capacity.count)
-
-                new_attachment_state.data = data
-                self.state.attachments.replace(new_attachment_state)
+                    setattr(new_attachment_state.data, attrib_name, capacity.count)
+                self.state.attachments[attachment_index] = new_attachment_state
         else:
             del self.attachments[attachment_index]
             del self.state.attachments[attachment_index]

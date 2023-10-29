@@ -63,3 +63,10 @@ def test_add_attachments():
     saved = saved.replace("> ", ">\n")
     with open("save.xml", "w") as fd:
         fd.write(saved)
+
+    cc2_b = load_save_file("save.xml")
+    v1_copy = cc2_b.vehicle(v1.id)
+    ir = v1_copy.get_attachment_state(1)
+    assert ir
+    assert v1_copy.get_attachment(1) == VehicleAttachmentDefinitionIndex.MissileIRLauncher
+    assert ir.data.ammo == 32

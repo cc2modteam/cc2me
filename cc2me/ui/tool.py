@@ -232,11 +232,8 @@ class App(tkinter.Tk):
 
             for attachment in unit.attachments:
                 definition = unit.get_attachment(attachment)
-                state = unit.get_attachment_state(attachment)
                 if definition is not None:
                     new_unit.unit.set_attachment(attachment, definition)
-                    if state:
-                        new_unit.unit.set_attachment_state(attachment, state)
 
             new_units.append(new_unit)
 

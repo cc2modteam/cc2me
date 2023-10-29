@@ -157,7 +157,7 @@ class Properties:
                                         extra = att_state.get("ammo")
                                         print(f"extra = {extra}")
 
-                                        set_ammo = lambda n: att_state.set("ammo", int(n))
+                                        set_ammo = lambda n: obj.set_attachment_ammo(att.position, int(n))
                                         get_ammo = lambda: att_state.get("ammo")
 
                                         extra_prop = PropertyField("- ammo", extra, int,
