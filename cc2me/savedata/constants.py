@@ -342,6 +342,7 @@ VEHICLE_DEFAULT_STATE = [
     Hitpoints(400, VehicleType.Seal, VehicleType.Bear, VehicleType.Walrus, VehicleType.Mule),
     Hitpoints(1000000, VehicleType.Jetty),
     Hitpoints(800, VehicleType.Turret),
+    Hitpoints(160, VehicleType.Droid),
 ]
 
 

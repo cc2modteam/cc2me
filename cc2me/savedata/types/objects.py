@@ -445,9 +445,12 @@ class MapVehicle(MapItem):
             15,
             25,
             50,
+            75,
+            100,
             200,
             800,
             1200,
+            1900,
             10000,  # just for fun
         ]
 

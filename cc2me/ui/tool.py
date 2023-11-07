@@ -80,7 +80,11 @@ class App(tkinter.Tk):
                                 group="none-selected")
         self.toolbar.add_button("addmule", "mule", command=self.add_new_mule, state=tkinter.DISABLED,
                                 group="none-selected")
+        self.toolbar.add_button("adddroid", "droid", command=self.add_new_droid, state=tkinter.DISABLED,
+                                group="none-selected")
 
+        #self.toolbar.add_button("addlifeboat", "lifeboat", command=self.add_new_lifeboat, state=tkinter.DISABLED,
+        #                        group="none-selected")
         self.toolbar.add_button("addneedlefish", "needlefish", command=self.add_new_needlefish, state=tkinter.DISABLED,
                                 group="none-selected")
         self.toolbar.add_button("addswordfish", "swordfish", command=self.add_new_swordfish, state=tkinter.DISABLED,
@@ -89,6 +93,8 @@ class App(tkinter.Tk):
                                 group="none-selected")
         self.toolbar.add_button("addturret", "turret", command=self.add_new_turret, state=tkinter.DISABLED,
                                 group="none-selected")
+
+        self.toolbar.add_button("set1shield", icon="1s-island", command=self.set_1s_islands, group="save")
 
         self.middle = tkinter.Frame(self)
         self.map_widget = CC2MeMapView(corner_radius=0)
@@ -142,6 +148,11 @@ class App(tkinter.Tk):
                 found.append(wpt)
 
         return found
+
+    def set_1s_islands(self):
+        for item in self.islands:
+            tile = item.island
+            tile.difficulty = 0.02
 
     def all_map_waypoints(self) -> List[Waypoint]:
         found = []
@@ -214,11 +225,13 @@ class App(tkinter.Tk):
 
     def add_new_unit(self, vtype: VehicleType) -> VehicleMarker:
         loc = self.map_widget.convert_canvas_coords_to_decimal_coords(200, 200)
-        # self.map_widget.set_zoom(15)
         v = self.cc2me.new_vehicle(vtype)
         marker = self.add_unit(v)
         marker.unit.move(loc[0], loc[1])
         self.select_markers([marker])
+        z = self.map_widget.zoom
+        self.map_widget.set_zoom(z + 10.1)
+        self.map_widget.set_zoom(z)
         return marker
 
     def duplicate_units(self, units: List[MapVehicle]) -> List[VehicleMarker]:
@@ -259,6 +272,19 @@ class App(tkinter.Tk):
 
     def add_new_mule(self):
         self.add_new_unit(VehicleType.Mule)
+
+    def add_new_lifeboat(self):
+        self.add_new_unit(VehicleType.Lifeboat)
+
+    def add_new_droid(self):
+        marker = self.add_new_unit(VehicleType.Droid)
+
+        droid = marker.unit
+
+        droid.set_attachment(0, VehicleAttachmentDefinitionIndex.DriverSeat)
+        droid.set_attachment(1, VehicleAttachmentDefinitionIndex.Autocannon)
+        self.select_none()
+        self.select_markers([marker])
 
     def add_new_barge(self):
         self.add_new_unit(VehicleType.Barge)
@@ -379,13 +405,20 @@ class App(tkinter.Tk):
         self.islands.clear()
         self.map_widget.update()
         added = []
+
+        first_carrier = None
+
         if self.cc2me:
             # islands
             for island_tile in self.cc2me.tiles:
                 self.add_island(island_tile)
             # units
             for veh in self.cc2me.vehicles:
-                added.append(self.add_unit(veh))
+                marker = self.add_unit(veh)
+                if not first_carrier:
+                    if veh.definition_index == VehicleType.Carrier.int:
+                        first_carrier = marker
+                added.append(marker)
         self.status_line.set(f"Loaded {filename} ({len(self.islands)} islands, {len(self.units)} units)")
         self.toolbar.enable_group("save")
         self.select_none()
@@ -397,6 +430,9 @@ class App(tkinter.Tk):
                 end_hover=self.end_hover,
                 find_vehicle=self.find_vehicle
             )
+        if first_carrier:
+            self.map_widget.set_zoom(6)
+            self.map_widget.set_position(first_carrier.position[0], first_carrier.position[1])
 
         self.map_widget.canvas.update_idletasks()
 

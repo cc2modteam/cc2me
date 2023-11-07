@@ -119,6 +119,10 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
         SMALL_GROUND_TURRETS + LARGE_GROUND_TURRETS + HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.ShipCruiseMissile],
         SMALL_GROUND_AUX,
     ],
+    VehicleType.Droid: [
+        DRIVER,
+        [VehicleAttachmentDefinitionIndex.Autocannon]
+    ],
     VehicleType.Mule: [
         DRIVER,
         GROUND_RESUPPLY + SMALL_GROUND_TURRETS,

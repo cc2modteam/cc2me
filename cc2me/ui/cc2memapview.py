@@ -58,7 +58,7 @@ class CC2MeMapView(TkinterMapView):
         except tkinter.TclError:
             pass
 
-    def set_zoom(self, zoom: int, relative_pointer_x: float = 0.5, relative_pointer_y: float = 0.5):
+    def set_zoom(self, zoom, relative_pointer_x: float = 0.5, relative_pointer_y: float = 0.5):
         logger.info(f"zoom {zoom}")
         super().set_zoom(zoom, relative_pointer_x, relative_pointer_y)
 
