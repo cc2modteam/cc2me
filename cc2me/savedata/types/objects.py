@@ -486,7 +486,18 @@ class MapVehicle(MapItem):
         state.set(name, value)
 
     def set_attachment_ammo(self, attachment_index: int, value: Union[int, str]):
-        self.update_attachment_state_value(attachment_index, "ammo", int(value))
+        # if the attachment is a ship torpedo tube, set the tube states instead
+        attachment = self.get_attachment(attachment_index)
+        if attachment is not None:
+            if attachment == VehicleAttachmentDefinitionIndex.ShipTorpedo:
+                value = max(int(value), 2)
+                if value > 0:
+                    self.update_attachment_state_value(attachment_index, "tube_state_0", 1)
+                    if value > 1:
+                        self.update_attachment_state_value(attachment_index, "tube_state_1", 1)
+                self.update_attachment_state_value(attachment_index, "ammo", 2)
+            else:
+                self.update_attachment_state_value(attachment_index, "ammo", int(value))
 
     def get_attachment_state(self, attachment_index: int) -> Optional[EmbeddedAttachmentStateData]:
         v_a_state = self.vehicle().get_attachment_state(attachment_index)
