@@ -138,8 +138,15 @@ class Quantity(ElementProxy):
 class QuantitiyList(ElementProxy):
     tag = "item_quantities"
 
-    def items(self) -> List[int]:
-        return [Quantity(x).value for x in self.children()]
+    def items(self) -> List[Quantity]:
+        return [Quantity(x) for x in self.children()]
+
+    def __getitem__(self, item: int) -> Quantity:
+        items = self.items()
+        return items[item]
+
+    def __setitem__(self, key: int, value: int):
+        self[key].value = value
 
 
 class Inventory(ElementProxy):

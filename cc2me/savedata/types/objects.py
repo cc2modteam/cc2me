@@ -49,6 +49,9 @@ class MapItem:
         self.object = obj
         self.dynamic_attribs: Dict[str, DynamicNamedAttribute] = {}
 
+    def has_inventory(self) -> bool:
+        return False
+
     @property
     def display_ident(self) -> str:
         return "unknown"
@@ -166,6 +169,9 @@ class MapWaypoint(MapItem):
 class MapTile(MapItem):
     def __init__(self, tile: Tile):
         super(MapTile, self).__init__(tile)
+
+    def has_inventory(self) -> bool:
+        return True
 
     def tile(self) -> Tile:
         return cast(Tile, self.object)
@@ -560,6 +566,9 @@ class Ship(MapVehicle):
 
 class Carrier(Ship):
 
+    def has_inventory(self) -> bool:
+        return True
+
     def __init__(self, unit: Union[Vehicle, VehicleSpawn]):
         super(Carrier, self).__init__(unit)
         self.dynamic_attribs["stored_fuel"] = DynamicNamedAttribute(
@@ -577,18 +586,25 @@ class Carrier(Ship):
         values = cast(Inventory, embedded_data.get_default_child_by_tag(Inventory))
         return values
 
-    def get_inventory_item(self, name: str) -> int:
-        offset: int = InventoryIndex.reverse_lookup(name).value
-        return self.get_inventory().item_quantities.items()[offset]
+    def get_inventory_item(self, item: Union[str, InventoryIndex]) -> int:
+        if isinstance(item, str):
+            item: InventoryIndex = InventoryIndex.reverse_lookup(item)
+        offset: int = item.value
+        return self.get_inventory().item_quantities[offset].value
 
-    def set_inventory_item(self, name: str, count: int):
-        pass
-        #offset: int = InventoryIndex.reverse_lookup(name).value
-        #current = self.get_inventory()
-        #current.children()
+    def set_inventory_item(self, item: Union[str, InventoryIndex], count: int):
+        if isinstance(item, str):
+            item: InventoryIndex = InventoryIndex.reverse_lookup(item)
+        inventory = self.get_inventory()
+        offset: int = item.value
+        inventory.item_quantities[offset].value = count
+
 
 
 class Barge(Ship):
+
+    def has_inventory(self) -> bool:
+        return True
 
     def setup_attachments(self):
         self.define_attachment_point(

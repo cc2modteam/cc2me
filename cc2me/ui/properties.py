@@ -2,7 +2,6 @@ import tkinter
 from typing import Optional, Any, List, Callable, Type
 from tkinter import ttk
 
-from ..savedata.constants import VehicleAttachmentDefinitionIndex
 from ..savedata.types.objects import MapItem, MapVehicle
 from .mapmarkers import MapItemMarker
 
@@ -202,6 +201,15 @@ class Properties:
         self.row_frames.clear()
         self.rows.pack_forget()
         self.title.set("")
+
+    def add_button(self, text, command):
+        row = tkinter.Frame(self.rows, width=self.width)
+        tkinter.Button(row,
+                       text=text,
+                       command=command)
+        self.row_frames.append(row)
+        row.pack(side=tkinter.TOP, fill=tkinter.NONE, expand=False)
+        self.rows.pack(fill=tkinter.NONE, expand=False)
 
     def add_option_property(self, text: str,
                             selected=None,

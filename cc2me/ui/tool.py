@@ -6,6 +6,8 @@ import tkinter
 import tkinter.messagebox
 from tkinter import filedialog
 from typing import Optional, List
+
+from cc2me.ui.InventoryEditor import InventoryEditor
 from .properties import Properties
 from ..savedata.constants import VehicleType, VehicleAttachmentDefinitionIndex, get_persistent_file_path, get_cc2_appdata
 from ..savedata.types.objects import MapTile, MapVehicle, get_unit, Spawn
@@ -82,7 +84,7 @@ class App(tkinter.Tk):
                                 group="none-selected")
         self.toolbar.add_button("adddroid", "droid", command=self.add_new_droid, state=tkinter.DISABLED,
                                 group="none-selected")
-
+        self.toolbar.add_button("inventory", "inventory", command=self.edit_inventory)
         #self.toolbar.add_button("addlifeboat", "lifeboat", command=self.add_new_lifeboat, state=tkinter.DISABLED,
         #                        group="none-selected")
         self.toolbar.add_button("addneedlefish", "needlefish", command=self.add_new_needlefish, state=tkinter.DISABLED,
@@ -148,6 +150,14 @@ class App(tkinter.Tk):
                 found.append(wpt)
 
         return found
+
+    def edit_inventory(self):
+        selected = self.selected_markers()
+        if len(selected) == 1:
+            item = selected[0].mapitem
+            if item.has_inventory():
+                editor = InventoryEditor(self, item)
+                assert True
 
     def set_1s_islands(self):
         for item in self.islands:

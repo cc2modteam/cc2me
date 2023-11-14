@@ -1,8 +1,6 @@
 """Dialog to select a CC2 save slot"""
 import tkinter
 from functools import partial
-from xml.etree import ElementTree
-from xml.etree.ElementTree import Element
 from tkinter import simpledialog
 
 from cc2me.savedata.constants import read_save_slots

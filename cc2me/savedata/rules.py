@@ -121,7 +121,7 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     ],
     VehicleType.Droid: [
         DRIVER,
-        [VehicleAttachmentDefinitionIndex.Autocannon]
+        [VehicleAttachmentDefinitionIndex.Autocannon] + SMALL_GROUND_AUX
     ],
     VehicleType.Mule: [
         DRIVER,

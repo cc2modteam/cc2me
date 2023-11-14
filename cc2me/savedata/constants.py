@@ -46,7 +46,7 @@ class XEnum(Enum):
 
     @classmethod
     def reverse_lookup(cls, name):
-        for item in cls:
+        for item in list(cls):
             if item.name == name:
                 return item
         return KeyError(name)
