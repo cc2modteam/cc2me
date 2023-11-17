@@ -217,6 +217,7 @@ class InventoryIndex(IntEnum):
     Reserved10 = 58
     Mule = 59
     DeployableDroid = 60
+    GimbalGun = 61
 
 
 class WaypointTypes(IntEnum):

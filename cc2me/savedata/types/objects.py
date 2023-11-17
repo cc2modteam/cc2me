@@ -451,6 +451,9 @@ class MapVehicle(MapItem):
             15,
             25,
             50,
+            55,
+            60,
+            65,
             75,
             100,
             200,
@@ -458,6 +461,7 @@ class MapVehicle(MapItem):
             1200,
             1900,
             10000,  # just for fun
+            40000,
         ]
 
     def altitude(self, alt: float):
