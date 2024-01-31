@@ -185,7 +185,7 @@ class InventoryIndex(IntEnum):
     FlareLauncher = 26
     BattleCannon = 27
     ArtilleryGun = 28
-    CruiseMissile= 29
+    CruiseMissile = 29
     Rocket = 30
     Flares = 31
     Ammo20mm = 32
@@ -214,10 +214,9 @@ class InventoryIndex(IntEnum):
     Reserved7 = 55
     Reserved8 = 56
     Reserved9 = 57
-    Reserved10 = 58
-    Mule = 59
-    DeployableDroid = 60
-    GimbalGun = 61
+    Mule = 58
+    DeployableDroid = 59
+    GimbalGun = 60
 
 
 class WaypointTypes(IntEnum):

@@ -4,7 +4,8 @@ VERSION = "0.0.9"
 requirements = [
     "tkintermapview==1.15",
     "pillow==9.2.0",
-    "pandas"
+    "pandas",
+    "customtkinter",
 ]
 
 setup(

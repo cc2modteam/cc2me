@@ -4,6 +4,8 @@ from tkinter import simpledialog
 from tkinter.scrolledtext import ScrolledText
 from typing import Dict
 
+import customtkinter
+
 from cc2me.savedata.constants import InventoryIndex
 from cc2me.savedata.types.objects import MapItem, Carrier
 
@@ -19,17 +21,16 @@ class InventoryEditor(simpledialog.Dialog):
 
     def body(self, master) -> None:
         super().body(master)
-        self.scroll = ScrolledText(master, state="disable")
 
-        self.rows = tkinter.Frame(self.scroll)
-        self.scroll.window_create("1.0", window=self.rows)
+        self.scroll = customtkinter.CTkScrollableFrame(master)
+        self.scroll.pack(pady=5)
 
         if isinstance(self.mapitem, Carrier):
             for item in list(InventoryIndex):
                 name = item.name
                 value = self.mapitem.get_inventory_item(item)
                 self.inventory[item] = value
-                row = tkinter.Frame(self.rows, width=40)
+                row = tkinter.Frame(self.scroll, width=40)
                 label = tkinter.Label(row,
                               text=name, anchor=tkinter.W, width=20, justify=tkinter.LEFT)
                 self.string_vars[item] = tkinter.StringVar(row)
@@ -39,5 +40,5 @@ class InventoryEditor(simpledialog.Dialog):
                 entry.pack(side=tkinter.RIGHT, expand=False, fill=tkinter.NONE)
 
                 row.pack(side=tkinter.TOP, fill=tkinter.NONE, expand=False)
-        self.rows.pack(fill=tkinter.NONE, expand=False)
-        self.scroll.pack(fill="both", expand=True)
+        #self.rows.pack(fill=tkinter.NONE, expand=False)
+        #self.scroll.pack(fill="both", expand=True)

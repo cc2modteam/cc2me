@@ -594,7 +594,12 @@ class Carrier(Ship):
         if isinstance(item, str):
             item: InventoryIndex = InventoryIndex.reverse_lookup(item)
         offset: int = item.value
-        return self.get_inventory().item_quantities[offset].value
+        inventory = self.get_inventory()
+        quantities = inventory.item_quantities
+        try:
+            return quantities[offset].value
+        except Exception as err:
+            raise
 
     def set_inventory_item(self, item: Union[str, InventoryIndex], count: int):
         if isinstance(item, str):

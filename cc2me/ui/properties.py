@@ -2,6 +2,8 @@ import tkinter
 from typing import Optional, Any, List, Callable, Type
 from tkinter import ttk
 
+import customtkinter
+
 from ..savedata.types.objects import MapItem, MapVehicle
 from .mapmarkers import MapItemMarker
 
@@ -112,7 +114,7 @@ class Properties:
                                          height=1,
                                          bg="#cdcdcd")
         self.title_label.pack(side=tkinter.TOP, expand=False, fill=tkinter.X)
-        self.rows = tkinter.Frame(self.frame)
+        self.rows = customtkinter.CTkScrollableFrame(self.frame, height=600)
         self.row_frames = []
         self.option_items = []
         self._objects = None

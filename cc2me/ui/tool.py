@@ -2,6 +2,7 @@
 import argparse
 import os
 import sys
+import customtkinter
 import tkinter
 import tkinter.messagebox
 from tkinter import filedialog
@@ -23,14 +24,15 @@ APP_NAME = "cc2me.ui.tool"
 parser = argparse.ArgumentParser(description=__doc__, prog=APP_NAME)
 
 
-class App(tkinter.Tk):
+class App(customtkinter.CTk):
     WIDTH = 900
     HEIGHT = 750
     cc2dir = get_cc2_appdata()
     persistent = get_persistent_file_path()
 
     def __init__(self, *args, **kwargs):
-        tkinter.Tk.__init__(self, *args, **kwargs)
+        super().__init__(*args, **kwargs)
+
         self.menubar = tkinter.Menu()
         self.filemenu = tkinter.Menu()
 

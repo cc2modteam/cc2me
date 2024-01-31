@@ -116,7 +116,7 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     VehicleType.Bear: [
         DRIVER,
         SMALL_GROUND_AUX,
-        SMALL_GROUND_TURRETS + LARGE_GROUND_TURRETS + HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.ShipCruiseMissile],
+        SMALL_GROUND_TURRETS + LARGE_GROUND_TURRETS + HARDPOINT_ATTACHMENTS,
         SMALL_GROUND_AUX,
     ],
     VehicleType.Droid: [
