@@ -94,6 +94,12 @@ class MapItem:
                       temp.loc.y,
                       world_lat * LOC_SCALE_FACTOR)
 
+    def get_inventory_item(self, item: Union[str, InventoryIndex]) -> int:
+        return 0
+
+    def set_inventory_item(self, item: Union[str, InventoryIndex], count: int):
+        pass
+
     def __str__(self):
         out = f"{self.display_ident}:\n"
         for prop in self.viewable_properties:
@@ -607,7 +613,7 @@ class Carrier(Ship):
         inventory = self.get_inventory()
         offset: int = item.value
         inventory.item_quantities[offset].value = count
-
+        self.vehicle().sync()
 
 
 class Barge(Ship):

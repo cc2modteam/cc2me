@@ -159,7 +159,8 @@ class App(customtkinter.CTk):
             item = selected[0].mapitem
             if item.has_inventory():
                 editor = InventoryEditor(self, item)
-                assert True
+                for inventory_index, stringvar in editor.string_vars.items():
+                    item.set_inventory_item(inventory_index, int(stringvar.get()))
 
     def set_1s_islands(self):
         for item in self.islands:
