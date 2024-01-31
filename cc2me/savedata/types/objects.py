@@ -95,16 +95,34 @@ class MapItem:
                       world_lat * LOC_SCALE_FACTOR)
 
     def get_inventory_item(self, item: Union[str, InventoryIndex]) -> int:
-        return 0
+        if isinstance(item, str):
+            item: InventoryIndex = InventoryIndex.reverse_lookup(item)
+        offset: int = item.value
+        inventory = self.get_inventory()
+        quantities = inventory.item_quantities
+        try:
+            return quantities[offset].value
+        except Exception as err:
+            return 0
 
     def set_inventory_item(self, item: Union[str, InventoryIndex], count: int):
-        pass
+        if isinstance(item, str):
+            item: InventoryIndex = InventoryIndex.reverse_lookup(item)
+        inventory = self.get_inventory()
+        offset: int = item.value
+        inventory.item_quantities[offset].value = count
+        self.vehicle().sync()
 
     def __str__(self):
         out = f"{self.display_ident}:\n"
         for prop in self.viewable_properties:
             out += f" {prop} {getattr(self, prop)}\n"
         return out
+
+    def get_inventory(self) -> Inventory:
+        embedded_data = self.vehicle().state.data
+        values = cast(Inventory, embedded_data.get_default_child_by_tag(Inventory))
+        return values
 
 
 class MapWaypoint(MapItem):
@@ -591,32 +609,16 @@ class Carrier(Ship):
         for i in range(14):
             self.define_attachment_point(UnitAttachment(name="carrier", position=i, choices=None))
 
-    def get_inventory(self) -> Inventory:
-        embedded_data = self.vehicle().state.data
-        values = cast(Inventory, embedded_data.get_default_child_by_tag(Inventory))
-        return values
-
-    def get_inventory_item(self, item: Union[str, InventoryIndex]) -> int:
-        if isinstance(item, str):
-            item: InventoryIndex = InventoryIndex.reverse_lookup(item)
-        offset: int = item.value
-        inventory = self.get_inventory()
-        quantities = inventory.item_quantities
-        try:
-            return quantities[offset].value
-        except Exception as err:
-            raise
-
-    def set_inventory_item(self, item: Union[str, InventoryIndex], count: int):
-        if isinstance(item, str):
-            item: InventoryIndex = InventoryIndex.reverse_lookup(item)
-        inventory = self.get_inventory()
-        offset: int = item.value
-        inventory.item_quantities[offset].value = count
-        self.vehicle().sync()
-
 
 class Barge(Ship):
+
+    def __init__(self, unit: Union[Vehicle, VehicleSpawn]):
+        super().__init__(unit)
+        self.dynamic_attribs["stored_fuel"] = DynamicNamedAttribute(
+            InventoryIndex.Fuel.name,
+            self.get_inventory_item,
+            self.set_inventory_item
+        )
 
     def has_inventory(self) -> bool:
         return True
