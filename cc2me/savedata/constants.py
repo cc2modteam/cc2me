@@ -100,6 +100,7 @@ class VehicleType(IntEnum):
     Turret = 59
     VirusBot = 58
     Walrus = 4
+    SpaceShip = 61
 
 
 class VehicleAttachmentDefinitionIndex(IntEnum):
@@ -329,8 +330,8 @@ VEHICLE_DEFAULT_STATE = [
     InternalFuelCapacity(1200, VehicleType.Walrus, VehicleType.Bear, VehicleType.Mule),
     InternalFuelCapacity(800, VehicleType.Seal),
     InternalFuelCapacity(400, VehicleType.Razorbill),
-    InternalFuelCapacity(1000, VehicleType.Swordfish),
-    InternalFuelCapacity(800, VehicleType.Needlefish),
+    InternalFuelCapacity(2000, VehicleType.Swordfish),
+    InternalFuelCapacity(1200, VehicleType.Needlefish),
     InternalFuelCapacity(2000, VehicleType.Barge),
     Hitpoints(200, VehicleType.Razorbill, VehicleType.Albatross),
     Hitpoints(800, VehicleType.Needlefish),
@@ -348,6 +349,10 @@ VEHICLE_DEFAULT_STATE = [
 
 ATTACHMENT_CAPACITY = [
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipTorpedo, 4,
+                       VehicleType.Needlefish, VehicleType.Swordfish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Torpedo, 4,
+                       VehicleType.Needlefish, VehicleType.Swordfish),
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.Noisemaker, 2,
                        VehicleType.Needlefish, VehicleType.Swordfish),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipCIWS, 100,
                        VehicleType.Needlefish, VehicleType.Swordfish),
@@ -391,7 +396,8 @@ ATTACHMENT_CAPACITY = [
     # silly warship weapons
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileLaser, 30,
                        VehicleType.Swordfish, VehicleType.Needlefish),
-
+    AmmunitionCapacity(VehicleAttachmentDefinitionIndex.MissileTV, 4,
+                       VehicleType.Swordfish, VehicleType.Needlefish),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipCounterMeasure, 3,
                        VehicleType.Carrier, VehicleType.Swordfish, VehicleType.Needlefish),
     AmmunitionCapacity(VehicleAttachmentDefinitionIndex.ShipFlare, 10,

@@ -45,9 +45,10 @@ SHIP_ATTACHMENTS = [
     VehicleAttachmentDefinitionIndex.ShipCruiseMissile,
     VehicleAttachmentDefinitionIndex.ShipFlare,
     VehicleAttachmentDefinitionIndex.Flares,
-    VehicleAttachmentDefinitionIndex.AWACS,
+    VehicleAttachmentDefinitionIndex.Radar,
     VehicleAttachmentDefinitionIndex.MissileIRLauncher,
     VehicleAttachmentDefinitionIndex.SmokeTrail,
+    VehicleAttachmentDefinitionIndex.SmokeBomb,
     # some silly ones that work
     VehicleAttachmentDefinitionIndex.RocketPod,
     VehicleAttachmentDefinitionIndex.Gun100mm,
@@ -57,6 +58,7 @@ SHIP_ATTACHMENTS = [
     # missile truck
     VehicleAttachmentDefinitionIndex.MissileLaser,
     VehicleAttachmentDefinitionIndex.MissileAA,
+    VehicleAttachmentDefinitionIndex.MissileTV
 ]
 
 HARDPOINT_ATTACHMENTS = [
@@ -134,15 +136,15 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     ],
     VehicleType.Needlefish: [
         DRIVER,
-        SHIP_ATTACHMENTS + GROUND_RESUPPLY + [VehicleAttachmentDefinitionIndex.VirusBot],
-        SHIP_ATTACHMENTS + GROUND_RESUPPLY,
+        SHIP_ATTACHMENTS,
+        SHIP_ATTACHMENTS,
     ],
     VehicleType.Swordfish: [
         DRIVER,
         SHIP_ATTACHMENTS,
         SHIP_ATTACHMENTS,
         SHIP_ATTACHMENTS,
-        SHIP_ATTACHMENTS + GROUND_RESUPPLY,
+        SHIP_ATTACHMENTS,
     ],
     VehicleType.Razorbill: [
         DRIVER,
