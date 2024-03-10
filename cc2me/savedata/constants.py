@@ -102,6 +102,15 @@ class VehicleType(IntEnum):
     Walrus = 4
     SpaceShip = 61
 
+    def is_gnd(self) -> bool:
+        return self in [self.VirusBot, self.Walrus, self.Mule, self.Seal, self.Bear, self.Droid]
+
+    def is_air(self) -> bool:
+        return self in [self.Manta, self.Albatross, self.Petrel, self.Razorbill]
+
+    def is_sea(self) -> bool:
+        return self in [self.Carrier, self.Barge, self.Swordfish, self.Needlefish, self.Lifeboat]
+
 
 class VehicleAttachmentDefinitionIndex(IntEnum):
     AWACS = 41
@@ -154,6 +163,20 @@ class VehicleAttachmentDefinitionIndex(IntEnum):
     ShipTorpedo = 75
     VirusBot = 23
     Autocannon = 99
+
+    def is_gnd_turret(self) -> bool:
+        return self in [self.Gun30mm, self.Gun15mm, self.Gun40mm,
+                        self.Gun100mm, self.Gun100mmHeavy, self.Gun120mm,
+                        self.MissileIRLauncher, self.VirusBot,
+                        self.Radar, self.ObsCam]
+
+    def is_air_turret(self) -> bool:
+        return self in [self.GimbalGun, self.AirObsCam]
+
+    def is_air_hardpoint(self) -> bool:
+        return self in [self.Gun20mm, self.MissileIR, self.MissileAA,
+                        self.MissileTV, self.MissileLaser, self.Torpedo,
+                        self.TorpedoCountermesure, self.Noisemaker]
 
 
 class InventoryIndex(IntEnum):

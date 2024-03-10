@@ -13,6 +13,18 @@ class Attachment(ElementProxy):
     def bodies(self) -> Optional[Bodies]:
         return cast(Bodies, self.get_default_child_by_tag(Bodies))
 
+    @property
+    def attachment_type(self) -> Optional[VehicleAttachmentDefinitionIndex]:
+        if self.definition_index > 0:
+            return VehicleAttachmentDefinitionIndex(self.definition_index)
+        return None
+
+    def __str__(self):
+        a_type = self.attachment_type
+        if a_type is not None:
+            return a_type.name
+        return "[EMPTY]"
+
 
 class Attachments(ElementProxy):
     tag = "attachments"

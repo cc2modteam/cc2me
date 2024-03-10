@@ -560,6 +560,61 @@ class Vehicle(ElementProxy, MovableLocationMixin):
             del self.attachments[attachment_index]
             del self.state.attachments[attachment_index]
 
+    @property
+    def vehicle_type(self) -> VehicleType:
+        return VehicleType(self.definition_index)
+
+    def main_weapons(self) -> List[Attachment]:
+        found = []
+        for item in self.attachments.items():
+            atype = item.attachment_type
+            if atype and atype.is_gnd_turret():
+                found.append(item)
+        return found
+
+    def wing_hardpoints(self) -> List[Attachment]:
+        found = []
+        for item in self.attachments.items():
+            if item.attachment_type and item.attachment_type.is_air_hardpoint():
+                found.append(item)
+        return found
+
+    def repair(self):
+        """Attempt to sanitise the state and attachments"""
+        statedata = self.state.data
+
+        newstate = EmbeddedVehicleStateData()
+        newstate.hitpoints = statedata.hitpoints
+        newstate.attached_to_vehicle_id = statedata.attached_to_vehicle_id
+        newstate.internal_fuel_remaining = statedata.internal_fuel_remaining
+
+        self.state.data = newstate
+        types = [x.attachment_type for x in self.attachments.items()]
+
+        reset = False
+        if self.vehicle_type.is_gnd():
+            # allow one main turret only
+            main_weapons = self.main_weapons()
+            for item in types:
+                if item.is_air_hardpoint() or item.is_air_turret():
+                    reset = True
+
+            if reset or len(main_weapons) > 1:
+                self.state.attachments.element.clear()
+                self.attachments.element.clear()
+                # replace with current turret and a driver seat
+                self.set_attachment(0, VehicleAttachmentDefinitionIndex.DriverSeat)
+                if main_weapons:
+                    self.set_attachment(1, main_weapons[0].attachment_type)
+
+        if self.vehicle_type.is_air():
+            self.state.data = EmbeddedVehicleStateData()
+        self.sync()
+
+
+
+
+
 
 class Waypoint(ElementProxy, MovableLocationMixin):
 

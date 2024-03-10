@@ -11,9 +11,9 @@ from typing import Optional, List
 from cc2me.ui.InventoryEditor import InventoryEditor
 from .properties import Properties
 from ..savedata.constants import VehicleType, VehicleAttachmentDefinitionIndex, get_persistent_file_path, get_cc2_appdata
-from ..savedata.types.objects import MapTile, MapVehicle, get_unit, Spawn
+from ..savedata.types.objects import MapTile, MapVehicle, get_unit, Spawn, Vehicle
 from ..savedata.loader import load_save_file
-from ..savedata.types.save import CC2XMLSave, Tile, Waypoint
+from ..savedata.types.save import CC2XMLSave, Tile, Waypoint, EmbeddedAttachmentStateData, EmbeddedVehicleStateData
 from .cc2memapview import CC2MeMapView
 from .toolbar import Toolbar
 from .saveslotchooser import SlotChooser
@@ -100,6 +100,8 @@ class App(customtkinter.CTk):
 
         self.toolbar.add_button("set1shield", icon="1s-island", command=self.set_1s_islands, group="save")
 
+        self.toolbar.add_button("reset_vstates", icon="lifeboat", command=self.reset_vstates, group="save")
+
         self.middle = tkinter.Frame(self)
         self.map_widget = CC2MeMapView(corner_radius=0)
         self.map_widget.master = self.middle
@@ -138,6 +140,17 @@ class App(customtkinter.CTk):
 
         self.current_marker: Optional[MapItemMarker] = None
         self.dragging_marker = None
+
+    def reset_vstates(self):
+        """Fix messed up unit state and attachments"""
+
+        # we only allow 1 gun turret per ground unit, and wipe extraneous state data
+
+        for marker in self.units:
+            unit = marker.mapitem
+            if isinstance(unit.object, Vehicle):
+                v: Vehicle = unit.object
+                v.repair()
 
     def start_selection_units(self):
         self.map_widget.selection_mode = "units"
