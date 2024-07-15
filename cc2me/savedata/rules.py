@@ -93,6 +93,7 @@ AIR_GIMBAL_TURRETS = [
     VehicleAttachmentDefinitionIndex.GimbalGun,
     VehicleAttachmentDefinitionIndex.BattleDroids,
     VehicleAttachmentDefinitionIndex.Radar,
+    VehicleAttachmentDefinitionIndex.Refuel
 ]
 
 
@@ -105,13 +106,13 @@ UNIT_ATTACHMENT_OPTIONS: Dict[VehicleType, List[List[Optional[VehicleAttachmentD
     ],
     VehicleType.Seal: [
         DRIVER,
-        SMALL_GROUND_TURRETS + HARDPOINT_ATTACHMENTS,
+        SMALL_GROUND_TURRETS + HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.AWACS],
         SMALL_GROUND_AUX,
         SMALL_GROUND_AUX
     ],
     VehicleType.Walrus: [
         DRIVER,
-        SMALL_GROUND_TURRETS + HARDPOINT_ATTACHMENTS,
+        SMALL_GROUND_TURRETS + HARDPOINT_ATTACHMENTS + [VehicleAttachmentDefinitionIndex.AWACS],
         SMALL_GROUND_AUX + [VehicleAttachmentDefinitionIndex.Autocannon],
         SMALL_GROUND_AUX + [VehicleAttachmentDefinitionIndex.Autocannon],
     ],
