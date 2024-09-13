@@ -467,7 +467,7 @@ class App(customtkinter.CTk):
         marker = TileMarker(self.map_widget, island, on_click=self.island_clicked)
         marker.on_hover_start = self.hover_island
         marker.on_hover_end = self.end_hover
-        marker.text = island.display_ident
+        marker.text = "{} ({})".format(island.display_ident, marker.shield_count)
         self.map_widget.add_marker(marker)
 
         # if the island has spawns add those if the unit doesn't exist yet

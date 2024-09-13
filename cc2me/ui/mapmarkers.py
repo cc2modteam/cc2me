@@ -226,6 +226,7 @@ class TileMarker(MapItemMarker):
                           )
         box.bindable = True
         box.on_left_mouse = self.click
+
         self.label = CanvasShape(map_widget.canvas,
                                  map_widget.canvas.create_text,
                                  0, -3,
@@ -243,6 +244,18 @@ class TileMarker(MapItemMarker):
             width=1,
             fill="",
         )
+
+    @property
+    def shield_count(self) -> int:
+        tile = self.island.tile()
+        shields = 4
+        if tile.difficulty_factor >= 0.5:
+            shields = 2
+        elif tile.difficulty_factor >= 0.7:
+            shields = 3
+        elif tile.difficulty_factor < 0.5:
+            shields = 1
+        return shields
 
     def border_polygon_coords(self):
         tile = self.island.tile()
