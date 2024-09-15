@@ -248,13 +248,14 @@ class TileMarker(MapItemMarker):
     @property
     def shield_count(self) -> int:
         tile = self.island.tile()
-        shields = 4
-        if tile.difficulty_factor >= 0.5:
+        shields = 1
+        if tile.difficulty_factor >= 0.25:
             shields = 2
-        elif tile.difficulty_factor >= 0.7:
+        if tile.difficulty_factor >= 0.5:
             shields = 3
-        elif tile.difficulty_factor < 0.5:
-            shields = 1
+        if tile.difficulty_factor >= 0.75:
+            shields = 4
+
         return shields
 
     def border_polygon_coords(self):
