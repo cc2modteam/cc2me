@@ -10,7 +10,13 @@ from typing import Optional, List
 
 from cc2me.ui.InventoryEditor import InventoryEditor
 from .properties import Properties
-from ..savedata.constants import VehicleType, VehicleAttachmentDefinitionIndex, get_persistent_file_path, get_cc2_appdata
+from ..savedata.constants import (
+    VehicleType,
+    VehicleAttachmentDefinitionIndex,
+    get_persistent_file_path,
+    get_cc2_appdata,
+    INVENTORY_INDEX_MASS,
+)
 from ..savedata.types.objects import MapTile, MapVehicle, get_unit, Spawn, Vehicle
 from ..savedata.loader import load_save_file
 from ..savedata.types.save import CC2XMLSave, Tile, Waypoint, EmbeddedAttachmentStateData, EmbeddedVehicleStateData
@@ -172,8 +178,16 @@ class App(customtkinter.CTk):
             item = selected[0].mapitem
             if item.has_inventory():
                 editor = InventoryEditor(self, item)
+                inventory_mass = 0
                 for inventory_index, stringvar in editor.string_vars.items():
-                    item.set_inventory_item(inventory_index, int(stringvar.get()))
+                    count = int(stringvar.get())
+                    item.set_inventory_item(inventory_index, count)
+                    item_mass = INVENTORY_INDEX_MASS[inventory_index.value]
+                    inventory_mass += item_mass * count
+                inventory = item.get_inventory()
+                inventory.total_weight = inventory_mass
+                item.object.sync()
+
 
     def set_1s_islands(self):
         for item in self.islands:

@@ -1,13 +1,11 @@
 import tkinter
-from functools import partial
 from tkinter import simpledialog
-from tkinter.scrolledtext import ScrolledText
 from typing import Dict
 
 import customtkinter
 
 from cc2me.savedata.constants import InventoryIndex
-from cc2me.savedata.types.objects import MapItem, Carrier
+from cc2me.savedata.types.objects import MapItem
 
 
 class InventoryEditor(simpledialog.Dialog):
