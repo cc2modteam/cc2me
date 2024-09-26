@@ -402,6 +402,9 @@ class Vehicle(ElementProxy, MovableLocationMixin):
 
     _state: Optional[VehicleStateContainer] = None
 
+    def __hash__(self):
+        return hash(f"vehicle:{self.id}")
+
     @property
     def state(self) -> Optional[VehicleStateContainer]:
         if self._state is None:
@@ -681,6 +684,9 @@ class Tile(ElementProxy, MovableLocationMixin):
     team_capture = e_property(IntAttribute("team_capture", default_value=MAX_INTEGER))
     team_capture_progress = e_property(FloatAttribute("team_capture_progress"))
     difficulty_factor = e_property(FloatAttribute("difficulty_factor"))
+
+    def __hash__(self):
+        return hash(f"tile:{self.id}")
 
     @property
     def human_controlled(self) -> bool:

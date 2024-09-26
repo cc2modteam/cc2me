@@ -1,11 +1,8 @@
 from setuptools import setup, find_packages
-VERSION = "0.0.10"
+VERSION = "0.1.1"
 
 requirements = [
-    "tkintermapview==1.15",
-    "pillow==9.2.0",
-    "pandas",
-    "customtkinter",
+    "pygame==2.6.0",
 ]
 
 setup(
@@ -24,6 +21,7 @@ setup(
     package_data={"cc2me": ["ui/icons/*.png"]},
     entry_points={
         "gui_scripts": [
+            "cc2mex = cc2me.pg.app:run",
             "cc2me = cc2me.ui.tool:run"
         ],
     },

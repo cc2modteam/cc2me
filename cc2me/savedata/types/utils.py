@@ -212,6 +212,9 @@ class MovableLocationMixin(LocationMixin, ABC):
 class WorldPosition(Point3D):
     tag = "world_position"
 
+    def as_tuple(self):
+        return self.x, self.z
+
 
 class Bounds(ElementProxy):
     tag = "bounds"
