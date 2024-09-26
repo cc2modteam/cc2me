@@ -38,7 +38,8 @@ class MapRenderer:
 
 
     def reset_view(self):
-        self.origin = (0, 0)
+        _, y = self.screen_to_world_scale((0, self.surface.get_height() - 48))
+        self.origin = (0, -y)
         self.camera_size = 50000 # 50km wide
 
 
