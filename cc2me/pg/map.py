@@ -3,18 +3,17 @@ Render the CC2 map as a pan/zoom surface similar to the game
 """
 import pygame
 from typing import Optional, Tuple, List
-
-from pandas.io.formats.format import return_docstring
 from pygame.math import clamp
 
+from .gfx import GfxContext
 from ..savedata.types.save import CC2XMLSave, Tile, Vehicle
 from ..ui.cc2constants import get_team_color
 
 
 class MapRenderer:
 
-    def __init__(self, surface: pygame.Surface):
-        self.surface = surface
+    def __init__(self, gfx: GfxContext):
+        self.gfx = gfx
         self.savedata: Optional[CC2XMLSave] = None
         # east-west, south-north
         self.origin = (0, 0)
@@ -27,6 +26,10 @@ class MapRenderer:
         self.hover_items = []
         self._tiles = []
         self._vehicles = []
+
+    @property
+    def surface(self) -> pygame.Surface:
+        return self.gfx.surface
 
     @property
     def tiles(self) -> List[Tile]:
@@ -54,9 +57,9 @@ class MapRenderer:
             self._vehicles.append(vehicle)
 
     def _world_to_screen_vha(self, world: Tuple[float, float]) -> Tuple[float, float, float]:
-        screen_w = self.surface.get_width()
-        screen_h = self.surface.get_height()
-        aspect = screen_w / screen_h
+        screen_w = self.gfx.w
+        screen_h = self.gfx.h
+        aspect = self.gfx.aspect
 
         view_w = self.camera_size
         view_h = self.camera_size
@@ -92,7 +95,7 @@ class MapRenderer:
     def screen_to_world(self, screen: Tuple[float, float]) -> Tuple[float, float]:
         world_x, world_y = self.screen_to_world_scale(screen)
 
-        return world_x + self.origin[0], world_y + self.origin[1]
+        return int(world_x + self.origin[0]), int(world_y + self.origin[1])
 
 
     def render_grid(self):
@@ -161,6 +164,28 @@ class MapRenderer:
         self.render_tiles()
         self.render_units()
 
+        self.render_mouse()
+        # render the systray
+        self.render_systray()
+
+    def render_mouse(self):
+        screen = pygame.mouse.get_pos()
+        world = self.screen_to_world(screen)
+        self.gfx.update_ui_text(4, self.gfx.h - 26, f"X={world[0]:d}, Y={world[1]:d}", 256, 0, "#ababab")
+
+    def render_systray(self):
+        x = 0
+        h = 12
+        y = self.gfx.h - h
+
+        self.gfx.update_ui_rectangle(x, y, self.gfx.w, h, "#cdcdcd")
+        x += 3
+        for hover in self.hover_items:
+            text = f"{hover}"
+            text_w = 6 * len(text) + 1
+            self.gfx.update_ui_text(x, self.gfx.h - 10, text, text_w, 0, "#000000")
+            x += text_w + 6
+
     def render_tiles(self):
         if self.savedata:
             for tile in self.tiles:
@@ -212,11 +237,13 @@ class MapRenderer:
 
         return found
 
-
-
-
     def zoom(self, amount: int):
         if amount:
+            mouse = pygame.mouse.get_pos()
+            world = self.screen_to_world(mouse)
+            origin = (world[0] - self.camera_size / 2, world[1] + (self.camera_size * 0.5 / self.gfx.aspect))
+            self.origin = origin
+
             amount = int(clamp(amount, -4, 4))
             self.camera_size += 2000 * -amount
             self.camera_size = max(self.camera_size, 1000)

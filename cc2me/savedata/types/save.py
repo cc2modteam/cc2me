@@ -12,6 +12,7 @@ from .utils import (
 from ..constants import (
     BIOME_SANDY_PINES, POS_Y_SEABOTTOM, VehicleType, get_default_state, MAX_INTEGER,
     generate_island_seed, get_spawn_attachment_type, VehicleAttachmentDefinitionIndex,
+    get_island_name,
     XML_START, SCENE_ROOT, VEHICLES_ROOT, ROOT_ORDER, REMOTE_DRIVEABLE_VEHICLES, get_attachment_capacity)
 from ..logging import logger
 
@@ -405,6 +406,9 @@ class Vehicle(ElementProxy, MovableLocationMixin):
     def __hash__(self):
         return hash(f"vehicle:{self.id}")
 
+    def __str__(self):
+        return f"{self.vehicle_type.name} {self.id}"
+
     @property
     def state(self) -> Optional[VehicleStateContainer]:
         if self._state is None:
@@ -684,6 +688,9 @@ class Tile(ElementProxy, MovableLocationMixin):
     team_capture = e_property(IntAttribute("team_capture", default_value=MAX_INTEGER))
     team_capture_progress = e_property(FloatAttribute("team_capture_progress"))
     difficulty_factor = e_property(FloatAttribute("difficulty_factor"))
+
+    def __str__(self):
+        return f"{get_island_name(self.id)}".title()
 
     def __hash__(self):
         return hash(f"tile:{self.id}")

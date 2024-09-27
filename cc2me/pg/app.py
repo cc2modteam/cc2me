@@ -5,9 +5,14 @@ from pathlib import Path
 
 from cc2me.savedata.loader import load_save_file
 from .map import MapRenderer
+from .gfx import GfxContext
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("SAVE", type=Path, nargs="?")
+
+cc2 = Path("C:\Program Files (x86)\Steam\steamapps\common\Carrier Command 2")
+cc2_locale = cc2 / "mod_dev_kit"/ "source" / "locale"
+
 
 
 def run(args=None):
@@ -15,8 +20,17 @@ def run(args=None):
     filename = opts.SAVE
 
     pygame.init()
+    pygame.font.init()
+
+    lanapixel = cc2_locale / "lanapixel.ttf"
+    if lanapixel.exists():
+        font = pygame.font.Font(lanapixel, 10)
+    else:
+        font = pygame.font.SysFont("dejavusansmono", 10)
+
     screen = pygame.display.set_mode((1024, 480), pygame.RESIZABLE|pygame.DOUBLEBUF, 32)
-    world = MapRenderer(screen)
+    gfx = GfxContext(screen, [font])
+    world = MapRenderer(gfx)
     if filename:
         save = load_save_file(filename)
         world.load(save)
