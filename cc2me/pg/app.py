@@ -5,7 +5,7 @@ from pathlib import Path
 
 from cc2me.savedata.loader import load_save_file
 from .map import MapRenderer
-from .gfx import GfxContext
+from .gfx import GfxContext, Frame, Point, Label
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("SAVE", type=Path, nargs="?")
@@ -31,6 +31,14 @@ def run(args=None):
     screen = pygame.display.set_mode((720, 480), pygame.RESIZABLE|pygame.DOUBLEBUF, 32)
     gfx = GfxContext(screen, [font])
     world = MapRenderer(gfx)
+
+    toolbar = Frame(gfx,
+                    Point.new(0, 0), Point.new(gfx.w, 16),
+                    border=pygame.Color("#232323"),
+                    background=pygame.Color("#cdcdcd"))
+    Label(toolbar, Point.new(2, 2), "CC2ME",
+          color=pygame.Color("#000000"))
+
     if filename:
         save = load_save_file(filename)
         world.load(save)
@@ -41,13 +49,15 @@ def run(args=None):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
             world.event(event)
 
 
         screen.fill((0, 0, 0, 255))
         world.draw()
-
+        toolbar.draw()
         pygame.display.flip()
+        toolbar.size = Point.new(gfx.w, toolbar.size.y)
         clock.tick(20)
 
 
