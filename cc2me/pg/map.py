@@ -148,10 +148,11 @@ class MapRenderer:
                 self.mouse_move()
 
     def mouse_down(self):
-        #under = self.hover_items
-        #if under:
-        #    print(under[0])
-        self.pan = True
+        under = self.hover_items
+        if under:
+            print(under[0])
+        else:
+            self.pan = True
 
 
     def mouse_up(self):
