@@ -28,6 +28,14 @@ class MapRenderer:
         self._vehicles = []
 
     @property
+    def camera_w(self) -> int:
+        return round(self.camera_size)
+
+    @property
+    def camera_h(self) -> int:
+        return abs(round(self.camera_size / self.gfx.aspect))
+
+    @property
     def surface(self) -> pygame.Surface:
         return self.gfx.surface
 
@@ -39,6 +47,9 @@ class MapRenderer:
     def vehicles(self) -> List[Vehicle]:
         return list(self._vehicles)
 
+    @property
+    def screen_middle(self) -> Tuple[float, float]:
+        return self.origin[0] + self.camera_w / 2, self.origin[1] - self.camera_h / 2
 
     def reset_view(self):
         _, y = self.screen_to_world_scale((0, self.surface.get_height() - 48))
@@ -55,19 +66,11 @@ class MapRenderer:
             self._tiles.append(tile)
         for vehicle in self.savedata.vehicles:
             self._vehicles.append(vehicle)
+        self.pan_to(500, 500)
 
     def _world_to_screen_vha(self, world: Tuple[float, float]) -> Tuple[float, float, float]:
-        screen_w = self.gfx.w
-        screen_h = self.gfx.h
         aspect = self.gfx.aspect
-
-        view_w = self.camera_size
-        view_h = self.camera_size
-        if aspect > 1:
-            view_w = view_w * aspect
-        else:
-            view_h = view_h / aspect
-        return view_w, view_h, aspect
+        return self.camera_w, self.camera_h, aspect
 
     def world_to_screen_scale(self, world: Tuple[float, float]) -> Tuple[float, float]:
         cam_x = self.surface.get_width() / self.camera_size
@@ -239,15 +242,18 @@ class MapRenderer:
 
     def zoom(self, amount: int):
         if amount:
-            mouse = pygame.mouse.get_pos()
-            world = self.screen_to_world(mouse)
-            origin = (world[0] - self.camera_size / 2, world[1] + (self.camera_size * 0.5 / self.gfx.aspect))
-            self.origin = origin
-
+            middle = self.screen_middle
             amount = int(clamp(amount, -4, 4))
             self.camera_size += 2000 * -amount
-            self.camera_size = max(self.camera_size, 1000)
-            self.camera_size = min(self.camera_size, 200000)
+            self.camera_size = clamp(self.camera_size, 1000, 150000)
+            self.pan_to(*middle)
+
+
+    def pan_to(self, world_x, world_y) -> None:
+        self.origin = (
+            world_x - self.camera_w / 2,
+            world_y + self.camera_h / 2
+        )
 
     def pan_camera(self, screen_dx, screen_dy):
         screen_dx = clamp(screen_dx, -30, 30)

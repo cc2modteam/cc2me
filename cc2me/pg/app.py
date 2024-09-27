@@ -28,7 +28,7 @@ def run(args=None):
     else:
         font = pygame.font.SysFont("dejavusansmono", 10)
 
-    screen = pygame.display.set_mode((1024, 480), pygame.RESIZABLE|pygame.DOUBLEBUF, 32)
+    screen = pygame.display.set_mode((720, 480), pygame.RESIZABLE|pygame.DOUBLEBUF, 32)
     gfx = GfxContext(screen, [font])
     world = MapRenderer(gfx)
     if filename:
