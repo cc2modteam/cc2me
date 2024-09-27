@@ -86,14 +86,13 @@ class MapRenderer:
         return round(view_x * screen_w), round(view_y * screen_h)
 
     def screen_to_world_scale(self, screen: Tuple[float, float]) -> Tuple[float, float]:
-        screen_w = self.surface.get_width()
-        screen_h = self.surface.get_height()
-        aspect = screen_w / screen_h
+        screen_w = self.gfx.w
+        screen_h = self.gfx.h
 
         view_x = screen[0] / screen_w
         view_y = screen[1] / screen_h
 
-        return view_x * self.camera_size * aspect, -view_y * self.camera_size
+        return view_x * self.camera_w, -view_y * self.camera_h
 
     def screen_to_world(self, screen: Tuple[float, float]) -> Tuple[float, float]:
         world_x, world_y = self.screen_to_world_scale(screen)
@@ -149,12 +148,17 @@ class MapRenderer:
                 self.mouse_move()
 
     def mouse_down(self):
+        #under = self.hover_items
+        #if under:
+        #    print(under[0])
         self.pan = True
+
 
     def mouse_up(self):
         self.pan = False
 
     def mouse_move(self):
+        self.hover_items = self.under_mouse()
         if self.pan:
             dx, dy = pygame.mouse.get_rel()
             self.pan_camera(-dx, -dy)
@@ -162,7 +166,7 @@ class MapRenderer:
 
     def draw(self):
         """Render the portion of the map in view"""
-        self.hover_items = self.under_mouse()
+
         self.render_grid()
         self.render_tiles()
         self.render_units()
