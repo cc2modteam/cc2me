@@ -1,12 +1,15 @@
 """
 Render the CC2 map as a pan/zoom surface similar to the game
 """
+from xml.sax import parse
+
 import pygame
 from typing import Optional, Tuple, List
 from pygame.math import clamp
 
 from .gfx import GfxContext
-from ..savedata.types.save import CC2XMLSave, Tile, Vehicle
+from ..savedata.constants import get_island_name
+from ..savedata.types.save import CC2XMLSave, Tile, Vehicle, VehicleSpawn
 from ..ui.cc2constants import get_team_color
 
 
@@ -21,11 +24,12 @@ class MapRenderer:
         self.reset_view()
         self.grid_major = 4000
         self.grid_minor = 1000
-        self.grid_color = (0, 0, 128, 64)
+        self.grid_color = (0, 0, 128, 48)
         self.pan = False
         self.hover_items = []
         self._tiles = []
         self._vehicles = []
+        self._spawns = []
 
     @property
     def camera_w(self) -> int:
@@ -48,6 +52,10 @@ class MapRenderer:
         return list(self._vehicles)
 
     @property
+    def spawns(self) -> List[VehicleSpawn]:
+        return list(self._spawns)
+
+    @property
     def screen_middle(self) -> Tuple[float, float]:
         return self.origin[0] + self.camera_w / 2, self.origin[1] - self.camera_h / 2
 
@@ -64,9 +72,13 @@ class MapRenderer:
         self._tiles.clear()
         for tile in self.savedata.tiles:
             self._tiles.append(tile)
+            for spawn in tile.spawn_data.vehicles.items():
+                spawn.parent_object = tile
+                self._spawns.append(spawn)
         for vehicle in self.savedata.vehicles:
             self._vehicles.append(vehicle)
-        self.pan_to(500, 500)
+        first_island = self.tiles[0]
+        self.pan_to(first_island.loc.x, first_island.loc.z)
 
     def _world_to_screen_vha(self, world: Tuple[float, float]) -> Tuple[float, float, float]:
         aspect = self.gfx.aspect
@@ -128,7 +140,7 @@ class MapRenderer:
             screen_x, screen_y = self.world_to_screen((x, h_y))
             pygame.draw.line(self.surface, self.grid_color,
                              (0, screen_y),
-                             (width, screen_y))
+                             (width, screen_y), width=self.gfx.scale_strokes)
             h_y += self.grid_major
 
     def event(self, event: pygame.event.Event):
@@ -162,7 +174,7 @@ class MapRenderer:
         self.hover_items = self.under_mouse()
         if self.pan:
             dx, dy = pygame.mouse.get_rel()
-            self.pan_camera(-dx, -dy)
+            self.pan_camera(-dx * 1.5, -dy * 1.3)
 
 
     def draw(self):
@@ -179,48 +191,71 @@ class MapRenderer:
     def render_mouse(self):
         screen = pygame.mouse.get_pos()
         world = self.screen_to_world(screen)
-        self.gfx.update_ui_text(4, self.gfx.h - 26, f"X={world[0]:d}, Y={world[1]:d}", 256, 0, "#ababab")
+        self.gfx.update_ui_text(4, self.gfx.h - self.gfx.font.get_height() * 2, f"X={world[0]:d}, Y={world[1]:d}", 256, 0, "#ababab")
 
     def render_systray(self):
         x = 0
-        h = 12
+        h = self.gfx.font.get_height()
         y = self.gfx.h - h
 
         self.gfx.update_ui_rectangle(x, y, self.gfx.w, h, "#cdcdcd")
         x += 3
         for hover in self.hover_items:
             text = f"{hover}"
-            text_w = 6 * len(text) + 1
-            self.gfx.update_ui_text(x, self.gfx.h - 10, text, text_w, 0, "#000000")
+            text_w = int(self.gfx.font.get_height() * 0.5) * len(text) + 1
+            self.gfx.update_ui_text(x, y + self.gfx.scale_strokes, text, text_w, 0, "#000000")
             x += text_w + 6
+
+    def render_tile(self, tile: Tile):
+        pos = tile.world_position
+        bounds = tile.bounds
+
+        color = pygame.Color(get_team_color(tile.team_control))
+        if tile in self.hover_items:
+            color = (255, 255, 255, 255)
+        poly = [
+            self.world_to_screen((pos.x + bounds.min.x, pos.z + bounds.min.z)),
+            self.world_to_screen((pos.x + bounds.max.x, pos.z + bounds.min.z)),
+            self.world_to_screen((pos.x + bounds.max.x, pos.z + bounds.max.z)),
+            self.world_to_screen((pos.x + bounds.min.x, pos.z + bounds.max.z)),
+        ]
+        top = pos.z + bounds.max.z
+        pygame.draw.polygon(self.surface, color, poly, width=self.gfx.scale_strokes)
+        name = get_island_name(tile.id)
+        screen = self.world_to_screen((pos.x - tile.island_radius, top))
+        self.gfx.update_ui_text(screen[0], screen[1] - self.gfx.font.get_height() - 2, name, 6 * len(name), 1, color )
 
     def render_tiles(self):
         if self.savedata:
             for tile in self.tiles:
-                pos = tile.world_position
-                bounds = tile.bounds
-
-                color = pygame.Color(get_team_color(tile.team_control))
-                if tile in self.hover_items:
-                    color = (255, 255, 255, 255)
-                poly = [
-                    self.world_to_screen((pos.x + bounds.min.x, pos.z + bounds.min.z)),
-                    self.world_to_screen((pos.x + bounds.max.x, pos.z + bounds.min.z)),
-                    self.world_to_screen((pos.x + bounds.max.x, pos.z + bounds.max.z)),
-                    self.world_to_screen((pos.x + bounds.min.x, pos.z + bounds.max.z)),
-                ]
-                pygame.draw.polygon(self.surface, color, poly, width=1)
+                self.render_tile(tile)
 
 
     def render_units(self):
         if self.savedata:
+            seen_vehicles = set()
+
             for vehicle in self.vehicles:
+                seen_vehicles.add(vehicle.id)
                 color = pygame.Color(get_team_color(vehicle.team_id))
                 if vehicle in self.hover_items:
                     color = (255, 255, 255, 255)
                 pos = vehicle.loc
                 screen = self.world_to_screen((pos.x, pos.z))
-                pygame.draw.circle(self.surface, color, screen, 6, width=1)
+                pygame.draw.circle(self.surface, color, screen, 6, width=0)
+                pygame.draw.circle(self.surface, (0, 0, 0, 48), screen, 7, width=1)
+
+            for spawn in self.spawns:
+                data = spawn.data
+                if data.respawn_id not in seen_vehicles:
+                    if isinstance(spawn.parent_object, Tile):
+                        tile = spawn.parent_object
+                        color = pygame.Color(get_team_color(tile.team_control))
+                        if spawn in self.hover_items:
+                            color = (255, 255, 255, 255)
+                        pos = spawn.loc
+                        screen = self.world_to_screen((pos.x, pos.z))
+                        pygame.draw.circle(self.surface, color, screen, 6, width=self.gfx.scale_strokes)
 
 
     def under_mouse(self) -> List:
@@ -249,7 +284,8 @@ class MapRenderer:
         if amount:
             middle = self.screen_middle
             amount = int(clamp(amount, -4, 4))
-            self.camera_size += 2000 * -amount
+            frac = self.camera_size / 10
+            self.camera_size += frac * -amount
             self.camera_size = clamp(self.camera_size, 1000, 150000)
             self.pan_to(*middle)
 

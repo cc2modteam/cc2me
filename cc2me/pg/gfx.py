@@ -39,11 +39,12 @@ class Point:
 
 class GfxContext:
 
-    def __init__(self, surface: pygame.Surface, fonts: List[pygame.font.Font]):
+    def __init__(self, surface: pygame.Surface, font: pygame.font.Font):
         self.surface = surface
-        self.fonts = fonts
+        self.font = font
         self.font_x_offset = 1
         self.font_y_offset = -1
+        self.scale_strokes = 2
 
     @property
     def aspect(self) -> float:
@@ -63,7 +64,7 @@ class GfxContext:
 
     def update_ui_rectangle_outline(self, x, y, w, h, col):
         pygame.draw.rect(self.surface, col,
-                         pygame.Rect(x, y, w, h), 1)
+                         pygame.Rect(x, y, w, h), 2)
 
     def update_ui_text(self, x: float, y: float, text: str, w: int, j: int, col, rot=0):
         lpad = 0
@@ -77,7 +78,7 @@ class GfxContext:
             lpad = int(span - length)
         lpad = lpad * 4
         text = f"{' '*lpad}{text}"
-        surf = self.fonts[0].render(text, False, col)
+        surf = self.font.render(text, False, col)
 
         if rot > 0:
             rotated = pygame.transform.rotate(surf, -90 * rot)

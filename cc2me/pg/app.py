@@ -23,17 +23,24 @@ def run(args=None):
     pygame.font.init()
 
     lanapixel = cc2_locale / "lanapixel.ttf"
+    font_size = 24
     if lanapixel.exists():
-        font = pygame.font.Font(lanapixel, 10)
+        font = pygame.font.Font(lanapixel, font_size)
     else:
-        font = pygame.font.SysFont("dejavusansmono", 10)
+        font = pygame.font.SysFont("dejavusansmono", font_size)
 
-    screen = pygame.display.set_mode((720, 480), pygame.RESIZABLE|pygame.DOUBLEBUF, 32)
-    gfx = GfxContext(screen, [font])
+    pygame_flags = pygame.DOUBLEBUF|pygame.RESIZABLE# |pygame.SCALED
+    screen_width = 550
+    screen_height = 300
+
+    screen = pygame.display.set_mode((screen_width, screen_height), pygame_flags, 32)
+
+    gfx = GfxContext(screen, font)
+
     world = MapRenderer(gfx)
 
     toolbar = Frame(gfx,
-                    Point.new(0, 0), Point.new(gfx.w, 16),
+                    Point.new(0, 0), Point.new(gfx.w, gfx.font.get_height()),
                     border=pygame.Color("#232323"),
                     background=pygame.Color("#cdcdcd"))
     Label(toolbar, Point.new(2, 2), "CC2ME",
@@ -47,6 +54,11 @@ def run(args=None):
     running = True
     while running:
         for event in pygame.event.get():
+            if event.type == pygame.VIDEORESIZE:
+                pass
+                # pygame.display.set_mode((int(event.w / scale), int(event.h / scale)), pygame_flags, 32)
+                # continue
+
             if event.type == pygame.QUIT:
                 running = False
 

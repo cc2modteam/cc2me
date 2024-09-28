@@ -129,6 +129,7 @@ class ElementProxy(ABC):
         self.cc2obj: "CC2XMLSave" = cc2obj
         if apply_defaults:
             self.defaults()
+        self.parent_object = None
 
     def sync(self):
         pass
