@@ -1,16 +1,39 @@
 """
 Render the CC2 map as a pan/zoom surface similar to the game
 """
-from xml.sax import parse
 
 import pygame
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, Union
 from pygame.math import clamp
+from pygame_gui.ui_manager import UIManager
+from pygame_gui.elements import UIWindow
 
 from .gfx import GfxContext
 from ..savedata.constants import get_island_name
 from ..savedata.types.save import CC2XMLSave, Tile, Vehicle, VehicleSpawn
 from ..ui.cc2constants import get_team_color
+
+
+class UnitWindow(UIWindow):
+    def __init__(self, position, ui_manager):
+        super().__init__(pygame.Rect(position, (220, 350)), ui_manager,
+                         window_display_title="",
+                         object_id="#unit_window",
+                         draggable=True,
+                         resizable=True
+                         )
+        self._unit: Optional[Union[Tile, Vehicle, VehicleSpawn]] = None
+
+    @property
+    def unit(self) -> Optional[Union[Tile, Vehicle, VehicleSpawn]]:
+        return self._unit
+
+    @unit.setter
+    def unit(self, unit: Optional[Union[Tile, Vehicle, VehicleSpawn]]):
+        self._unit = unit
+        if unit is not None:
+            if isinstance(unit, Vehicle):
+                self.set_display_title(str(unit))
 
 
 class MapRenderer:
@@ -27,9 +50,13 @@ class MapRenderer:
         self.grid_color = (0, 0, 128, 48)
         self.pan = False
         self.hover_items = []
+        self.selected_item: Union[Tile, Vehicle, VehicleSpawn, None] = None
         self._tiles = []
         self._vehicles = []
         self._spawns = []
+        self.ui_manager = UIManager((self.gfx.w, self.gfx.h))
+        self.unit_window = UnitWindow((self.gfx.w - 125, 40), self.ui_manager)
+        self.unit_window.hide()
 
     @property
     def camera_w(self) -> int:
@@ -145,9 +172,17 @@ class MapRenderer:
 
     def event(self, event: pygame.event.Event):
         if event:
+
+            if event.type == pygame.VIDEORESIZE:
+                self.ui_manager.set_window_resolution((self.gfx.w, self.gfx.h))
+
+            if self.ui_manager.process_events(event):
+                return
+
             if event.type == pygame.MOUSEWHEEL:
                 if event.y != 0:
                     self.zoom(event.y)
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 b1, _, _ = pygame.mouse.get_pressed()
                 if b1:
@@ -162,10 +197,15 @@ class MapRenderer:
     def mouse_down(self):
         under = self.hover_items
         if under:
+            self.selected_item = under[0]
+            if self.selected_item:
+                self.unit_window.unit = self.selected_item
+                self.unit_window.show()
             print(under[0])
         else:
+            self.selected_item = None
+            self.unit_window.hide()
             self.pan = True
-
 
     def mouse_up(self):
         self.pan = False
@@ -177,12 +217,16 @@ class MapRenderer:
             self.pan_camera(-dx * 1.5, -dy * 1.3)
 
 
-    def draw(self):
+    def draw(self, time_delta: float):
         """Render the portion of the map in view"""
 
         self.render_grid()
         self.render_tiles()
         self.render_units()
+        if self.selected_item is not None:
+            self.unit_window.show()
+        self.ui_manager.update(time_delta)
+        self.ui_manager.draw_ui(self.gfx.surface)
 
         self.render_mouse()
         # render the systray

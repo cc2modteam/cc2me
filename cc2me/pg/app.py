@@ -14,7 +14,6 @@ cc2 = Path("C:\Program Files (x86)\Steam\steamapps\common\Carrier Command 2")
 cc2_locale = cc2 / "mod_dev_kit"/ "source" / "locale"
 
 
-
 def run(args=None):
     opts = parser.parse_args(args)
     filename = opts.SAVE
@@ -30,8 +29,8 @@ def run(args=None):
         font = pygame.font.SysFont("dejavusansmono", font_size)
 
     pygame_flags = pygame.DOUBLEBUF|pygame.RESIZABLE# |pygame.SCALED
-    screen_width = 550
-    screen_height = 300
+    screen_width = 640
+    screen_height = 400
 
     screen = pygame.display.set_mode((screen_width, screen_height), pygame_flags, 32)
 
@@ -52,13 +51,9 @@ def run(args=None):
 
     clock = pygame.time.Clock()
     running = True
+    time_delta = 0
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.VIDEORESIZE:
-                pass
-                # pygame.display.set_mode((int(event.w / scale), int(event.h / scale)), pygame_flags, 32)
-                # continue
-
             if event.type == pygame.QUIT:
                 running = False
 
@@ -66,11 +61,11 @@ def run(args=None):
 
 
         screen.fill((0, 0, 0, 255))
-        world.draw()
+        world.draw(time_delta)
         toolbar.draw()
         pygame.display.flip()
         toolbar.size = Point.new(gfx.w, toolbar.size.y)
-        clock.tick(20)
+        time_delta = clock.tick(20) / 1000.0
 
 
 if __name__ == "__main__":

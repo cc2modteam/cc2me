@@ -3,6 +3,7 @@ VERSION = "0.1.1"
 
 requirements = [
     "pygame==2.6.0",
+    "pygame-gui==0.6.12",
 ]
 
 setup(
