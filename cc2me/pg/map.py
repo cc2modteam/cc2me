@@ -5,11 +5,12 @@ Render the CC2 map as a pan/zoom surface similar to the game
 import pygame
 from typing import Optional, Tuple, List, Union
 from pygame.math import clamp
+from pygame_gui.core import UIElement
 from pygame_gui.ui_manager import UIManager
-from pygame_gui.elements import UIWindow
+from pygame_gui.elements import UIWindow, UILabel
 
 from .gfx import GfxContext
-from ..savedata.constants import get_island_name
+from ..savedata.constants import get_island_name, VehicleType
 from ..savedata.types.save import CC2XMLSave, Tile, Vehicle, VehicleSpawn
 from ..ui.cc2constants import get_team_color
 
@@ -20,9 +21,47 @@ class UnitWindow(UIWindow):
                          window_display_title="",
                          object_id="#unit_window",
                          draggable=True,
-                         resizable=True
+                         resizable=True,
                          )
         self._unit: Optional[Union[Tile, Vehicle, VehicleSpawn]] = None
+        self.props: List[UIElement] = []
+
+    def get_last_prop_y(self) -> int:
+        h = 0
+        for prop in self.props:
+            h += prop.get_relative_rect().height
+        return h
+
+    def add_property_string(self, label_text: str, value_text: str):
+        start_y = self.get_last_prop_y()
+        label = UILabel(relative_rect=pygame.Rect((5, start_y), (-1, 24)),
+                             text=f"{label_text}:",
+                             container=self,
+                             anchors={
+                                 "left": "left",
+                                 "top": "top",
+                                 "bottom": "bottom",
+                                 "right": "right",
+                             },
+                             manager=self.ui_manager)
+        text = UILabel(relative_rect=pygame.Rect((15, start_y + label.get_relative_rect().height + 2), (-1, 24)),
+                             text=f"{value_text}",
+                             container=self,
+                             anchors={
+                                 "left": "left",
+                                 "top": "top",
+                                 "bottom": "bottom",
+                                 "right": "right",
+                             },
+                             manager=self.ui_manager)
+        self.props.extend([label, text])
+
+    def show(self):
+        super().show()
+        self.close_window_button.hide()
+
+    def on_close_window_button_pressed(self):
+        self.hide()
 
     @property
     def unit(self) -> Optional[Union[Tile, Vehicle, VehicleSpawn]]:
@@ -31,9 +70,17 @@ class UnitWindow(UIWindow):
     @unit.setter
     def unit(self, unit: Optional[Union[Tile, Vehicle, VehicleSpawn]]):
         self._unit = unit
+        for p in self.props:
+            p.kill()
+        self.props.clear()
         if unit is not None:
             if isinstance(unit, Vehicle):
-                self.set_display_title(str(unit))
+                self.add_property_string("type", VehicleType.get_name(unit.definition_index))
+                team = unit.team_id
+                self.add_property_string("team", str(team))
+                hp = unit.state.data.hitpoints
+                self.add_property_string("hitpoints", str(hp))
+
 
 
 class MapRenderer:
@@ -55,7 +102,7 @@ class MapRenderer:
         self._vehicles = []
         self._spawns = []
         self.ui_manager = UIManager((self.gfx.w, self.gfx.h))
-        self.unit_window = UnitWindow((self.gfx.w - 125, 40), self.ui_manager)
+        self.unit_window = UnitWindow((24, 40), self.ui_manager)
         self.unit_window.hide()
 
     @property
@@ -257,14 +304,22 @@ class MapRenderer:
         color = pygame.Color(get_team_color(tile.team_control))
         if tile in self.hover_items:
             color = (255, 255, 255, 255)
+        sw = self.world_to_screen((pos.x + bounds.min.x, pos.z + bounds.min.z))
+        se = self.world_to_screen((pos.x + bounds.max.x, pos.z + bounds.min.z))
+        ne = self.world_to_screen((pos.x + bounds.max.x, pos.z + bounds.max.z))
+        nw = self.world_to_screen((pos.x + bounds.min.x, pos.z + bounds.max.z))
         poly = [
-            self.world_to_screen((pos.x + bounds.min.x, pos.z + bounds.min.z)),
-            self.world_to_screen((pos.x + bounds.max.x, pos.z + bounds.min.z)),
-            self.world_to_screen((pos.x + bounds.max.x, pos.z + bounds.max.z)),
-            self.world_to_screen((pos.x + bounds.min.x, pos.z + bounds.max.z)),
+            sw,
+            nw,
+            ne,
+            se,
         ]
         top = pos.z + bounds.max.z
         pygame.draw.polygon(self.surface, color, poly, width=self.gfx.scale_strokes)
+
+        # draw a mover box
+        pygame.draw.rect(self.surface, color, (nw[0], nw[1], 16, 16))
+
         name = get_island_name(tile.id)
         screen = self.world_to_screen((pos.x - tile.island_radius, top))
         self.gfx.update_ui_text(screen[0], screen[1] - self.gfx.font.get_height() - 2, name, 6 * len(name), 1, color )
@@ -316,9 +371,13 @@ class MapRenderer:
 
             world_x, world_y = self.screen_to_world(mouse)
             for tile in self.tiles:
-                # get tile under the mouse
-                if tile.loc.x + tile.bounds.min.x < world_x < tile.loc.x + tile.bounds.max.x:
-                    if tile.loc.z + tile.bounds.min.z < world_y < tile.loc.z + tile.bounds.max.z:
+                # get tile under the mouse using the NW corner box
+                nw = (tile.loc.x + tile.bounds.min.x, tile.loc.z + tile.bounds.max.z)
+                box_size = self.screen_to_world_scale((16, 16))
+                box_se = (nw[0] + box_size[0], nw[1] + box_size[1])
+                if nw[0] < world_x < nw[0] + box_size[0]:
+                    print(f"in x bounds  {nw[1]} {world_y} {box_se[1]}")
+                    if box_se[1] < world_y < nw[1]:
                         found.append(tile)
                         break
 
