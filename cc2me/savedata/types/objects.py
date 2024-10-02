@@ -70,15 +70,12 @@ class InventoryMixin:
 
     def get_inventory_item(self, item: Union[str, InventoryIndex]) -> int:
         if self.has_inventory():
+            content = self.get_inventory_content()
             if isinstance(item, str):
                 item: InventoryIndex = InventoryIndex.reverse_lookup(item)
-            offset: int = item.value
-            inventory = self.get_inventory()
-            quantities = inventory.item_quantities
-            try:
-                return quantities[offset].value
-            except Exception as err:
-                return 0
+            if item in content:
+                return content[item].value
+        return 0
 
 
 class MapItem:

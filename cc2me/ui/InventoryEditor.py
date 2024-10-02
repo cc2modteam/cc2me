@@ -5,7 +5,7 @@ from typing import Dict
 import customtkinter
 
 from cc2me.savedata.constants import InventoryIndex
-from cc2me.savedata.types.objects import MapItem
+from cc2me.savedata.types.objects import MapItem, InventoryMixin
 
 
 class InventoryEditor(simpledialog.Dialog):
@@ -23,7 +23,7 @@ class InventoryEditor(simpledialog.Dialog):
         self.scroll = customtkinter.CTkScrollableFrame(master)
         self.scroll.pack(pady=5)
 
-        if isinstance(self.mapitem, MapItem) and self.mapitem.has_inventory():
+        if isinstance(self.mapitem, InventoryMixin) and self.mapitem.has_inventory():
             for item in list(InventoryIndex):
                 name = item.name
                 value = self.mapitem.get_inventory_item(item)

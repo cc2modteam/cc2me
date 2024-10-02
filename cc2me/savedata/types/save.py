@@ -14,7 +14,8 @@ from ..constants import (
     TileTypes,
     generate_island_seed, get_spawn_attachment_type, VehicleAttachmentDefinitionIndex,
     get_island_name,
-    XML_START, SCENE_ROOT, VEHICLES_ROOT, ROOT_ORDER, REMOTE_DRIVEABLE_VEHICLES, get_attachment_capacity)
+    XML_START, SCENE_ROOT, VEHICLES_ROOT, ROOT_ORDER, REMOTE_DRIVEABLE_VEHICLES, get_attachment_capacity,
+    InventoryIndex)
 from ..logging import logger
 
 
@@ -151,12 +152,15 @@ class QuantitiyList(ElementProxy):
     tag = "item_quantities"
 
     def items(self) -> List[Quantity]:
-        return [Quantity(x) for x in self.children()]
+        content = [Quantity(x) for x in self.children()]
+        for number in InventoryIndex:
+            content[number.value].index = number.value
+
+        return content
 
     def __getitem__(self, item: int) -> Quantity:
         items = self.items()
         value = items[item]
-        value.index = item
         return value
 
     def __setitem__(self, key: int, value: int):
@@ -170,11 +174,14 @@ class TileQuantityList(QuantitiyList):
         return children
 
     def __getitem__(self, item: int) -> Quantity:
-        for item in self.items():
-            q = cast(TileQuantity, item)
+        for ident in self.items():
+            q = cast(TileQuantity, ident)
             if q.index == item:
                 return q
-        q = TileQuantity()
+        q = TileQuantity(Element("q"))
+        q.index = item
+        q.value = 0
+        self.element.append(q.element)
         return q
 
     def __setitem__(self, key, value):
@@ -188,7 +195,8 @@ class Inventory(ElementProxy):
 
     @property
     def item_quantities(self) -> QuantitiyList:
-        return cast(QuantitiyList, self.get_default_child_by_tag(QuantitiyList))
+        items = cast(QuantitiyList, self.get_default_child_by_tag(QuantitiyList))
+        return items
 
 
 class TileInventory(Inventory):
