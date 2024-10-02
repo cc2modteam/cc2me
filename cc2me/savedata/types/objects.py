@@ -1,11 +1,12 @@
 import abc
+from abc import abstractmethod
 from typing import Tuple, cast, Optional, List, Union, Dict, Any, Protocol
 
 from .attachment_attributes import UnitAttachment
 from .save import (
     VehicleSpawn, VehicleSpawnAttachment, Tile, Vehicle, Waypoint,
-    EmbeddedAttachmentStateData, Inventory)
-from .utils import ElementProxy, LocationMixin, MovableLocationMixin
+    EmbeddedAttachmentStateData, Inventory, Quantity)
+from .utils import ElementProxy, LocationMixin, MovableLocationMixin, Location
 from ..constants import (
     get_island_name, TileTypes, VehicleType, VehicleAttachmentDefinitionIndex,
     generate_island_seed, get_default_hitpoints, InventoryIndex,
@@ -44,10 +45,49 @@ class DynamicNamedAttribute:
         self.setter(self.argname, value)
 
 
+class InventoryMixin:
+    @staticmethod
+    def has_inventory() -> bool:
+        return True
+
+    @abstractmethod
+    def get_inventory(self) -> Optional[Inventory]:
+        pass
+
+    def get_inventory_content(self) -> Dict[InventoryIndex, Quantity]:
+        inventory = self.get_inventory()
+        ret = {}
+        for q in inventory.item_quantities.items():
+            ret[InventoryIndex(q.index)] = q
+        return ret
+
+    def set_inventory_item(self, item: Union[str, InventoryIndex], count: int):
+        if isinstance(item, str):
+            item: InventoryIndex = InventoryIndex.reverse_lookup(item)
+        inventory = self.get_inventory()
+        offset: int = item.value
+        inventory.item_quantities[offset].value = count
+
+    def get_inventory_item(self, item: Union[str, InventoryIndex]) -> int:
+        if self.has_inventory():
+            if isinstance(item, str):
+                item: InventoryIndex = InventoryIndex.reverse_lookup(item)
+            offset: int = item.value
+            inventory = self.get_inventory()
+            quantities = inventory.item_quantities
+            try:
+                return quantities[offset].value
+            except Exception as err:
+                return 0
+
+
 class MapItem:
     def __init__(self, obj: ElementProxy):
         self.object = obj
         self.dynamic_attribs: Dict[str, DynamicNamedAttribute] = {}
+
+    def __hash__(self):
+        return hash("MapItem:") + hash(self.object)
 
     def has_inventory(self) -> bool:
         return False
@@ -79,6 +119,13 @@ class MapItem:
         return None
 
     @property
+    def location(self) -> Location:
+        if isinstance(self.object, LocationMixin):
+            temp = cast(LocationMixin, self.object)
+            return temp.loc
+        raise KeyError("LocationMixin")
+
+    @property
     def loc(self) -> Optional[Tuple[float, float]]:
         if isinstance(self.object, LocationMixin):
             temp = cast(LocationMixin, self.object)
@@ -94,35 +141,12 @@ class MapItem:
                       temp.loc.y,
                       world_lat * LOC_SCALE_FACTOR)
 
-    def get_inventory_item(self, item: Union[str, InventoryIndex]) -> int:
-        if isinstance(item, str):
-            item: InventoryIndex = InventoryIndex.reverse_lookup(item)
-        offset: int = item.value
-        inventory = self.get_inventory()
-        quantities = inventory.item_quantities
-        try:
-            return quantities[offset].value
-        except Exception as err:
-            return 0
-
-    def set_inventory_item(self, item: Union[str, InventoryIndex], count: int):
-        if isinstance(item, str):
-            item: InventoryIndex = InventoryIndex.reverse_lookup(item)
-        inventory = self.get_inventory()
-        offset: int = item.value
-        inventory.item_quantities[offset].value = count
-        self.vehicle().sync()
 
     def __str__(self):
         out = f"{self.display_ident}:\n"
         for prop in self.viewable_properties:
             out += f" {prop} {getattr(self, prop)}\n"
         return out
-
-    def get_inventory(self) -> Inventory:
-        embedded_data = self.vehicle().state.data
-        values = cast(Inventory, embedded_data.get_default_child_by_tag(Inventory))
-        return values
 
 
 class MapWaypoint(MapItem):
@@ -190,12 +214,12 @@ class MapWaypoint(MapItem):
         self.object.sync()
 
 
-class MapTile(MapItem):
+class MapTile(InventoryMixin, MapItem):
     def __init__(self, tile: Tile):
         super(MapTile, self).__init__(tile)
 
-    def has_inventory(self) -> bool:
-        return True
+    def get_inventory(self) -> Inventory:
+        return self.tile().facility.inventory
 
     def tile(self) -> Tile:
         return cast(Tile, self.object)
@@ -207,6 +231,18 @@ class MapTile(MapItem):
     @property
     def difficulty(self) -> float:
         return self.tile().difficulty_factor
+
+    @property
+    def shields(self) -> int:
+        value = self.difficulty
+        count = 1
+        if value >= 0.75:
+            count = 4
+        elif value >= 0.5:
+            count = 3
+        elif value >= 0.25:
+            count = 2
+        return count
 
     @difficulty.setter
     def difficulty(self, value):
@@ -325,9 +361,12 @@ class MapTile(MapItem):
         ]
 
 
-class MapVehicle(MapItem):
+class MapVehicle(InventoryMixin, MapItem):
 
     show_waypoints = True
+
+    def has_inventory(self) -> bool:
+        return False
 
     @property
     def v_id(self) -> int:
@@ -542,6 +581,14 @@ class MapVehicle(MapItem):
             st.container = self.vehicle().state.attachments
         return st
 
+    def set_inventory_item(self, item: Union[str, InventoryIndex], count: int):
+        super().set_inventory_item(item, count)
+        self.vehicle().sync()
+
+    def get_inventory(self) -> Inventory:
+        embedded_data = self.vehicle().state.data
+        values = cast(Inventory, embedded_data.get_default_child_by_tag(Inventory))
+        return values
 
 
 class AirUnit(MapVehicle):

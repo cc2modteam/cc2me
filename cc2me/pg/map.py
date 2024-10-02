@@ -3,27 +3,28 @@ Render the CC2 map as a pan/zoom surface similar to the game
 """
 
 import pygame
-from typing import Optional, Tuple, List, Union
+from typing import Optional, Tuple, List, Union, cast
 from pygame.math import clamp
 from pygame_gui.core import UIElement
 from pygame_gui.ui_manager import UIManager
 from pygame_gui.elements import UIWindow, UILabel
 
 from .gfx import GfxContext
-from ..savedata.constants import get_island_name, VehicleType
 from ..savedata.types.save import CC2XMLSave, Tile, Vehicle, VehicleSpawn
+from ..savedata.types.objects import MapItem, MapTile, MapVehicle, Spawn, Carrier, Barge, InventoryMixin
+from ..savedata.constants import get_biome_name, InventoryIndex, VehicleType
 from ..ui.cc2constants import get_team_color
 
 
 class UnitWindow(UIWindow):
     def __init__(self, position, ui_manager):
-        super().__init__(pygame.Rect(position, (220, 350)), ui_manager,
+        super().__init__(pygame.Rect(position, (220, 450)), ui_manager,
                          window_display_title="",
                          object_id="#unit_window",
-                         draggable=True,
-                         resizable=True,
+                         draggable=False,
+                         resizable=False,
                          )
-        self._unit: Optional[Union[Tile, Vehicle, VehicleSpawn]] = None
+        self._unit: Optional[MapItem] = None
         self.props: List[UIElement] = []
 
     def get_last_prop_y(self) -> int:
@@ -64,22 +65,38 @@ class UnitWindow(UIWindow):
         self.hide()
 
     @property
-    def unit(self) -> Optional[Union[Tile, Vehicle, VehicleSpawn]]:
+    def unit(self) -> Optional[MapItem]:
         return self._unit
 
     @unit.setter
-    def unit(self, unit: Optional[Union[Tile, Vehicle, VehicleSpawn]]):
+    def unit(self, unit: Optional[MapItem]):
         self._unit = unit
         for p in self.props:
             p.kill()
         self.props.clear()
         if unit is not None:
-            if isinstance(unit, Vehicle):
-                self.add_property_string("type", VehicleType.get_name(unit.definition_index))
-                team = unit.team_id
+            if isinstance(unit, MapVehicle):
+                self.add_property_string("id", str(unit.vehicle().id))
+                self.add_property_string("type", unit.vehicle_type.name)
+                team = unit.team_owner
                 self.add_property_string("team", str(team))
-                hp = unit.state.data.hitpoints
+                hp = unit.hitpoints
                 self.add_property_string("hitpoints", str(hp))
+
+            elif isinstance(unit, MapTile):
+                tile = cast(MapTile, unit)
+                self.add_property_string("id", str(tile.tile().id))
+                self.add_property_string("type", tile.island_type.name)
+                self.add_property_string("team", str(tile.team_owner))
+                self.add_property_string("name", f"{tile.name} ({tile.shields})")
+                self.add_property_string("size", f"{tile.size/1000:2.1f}km")
+                self.add_property_string("biome", get_biome_name(tile.biome))
+
+            if unit.has_inventory() and isinstance(unit, InventoryMixin):
+                container = cast(InventoryMixin, unit)
+                content = container.get_inventory_content()
+                inventory_weight = unit.get_inventory().total_weight
+                self.add_property_string("cargo", f"{inventory_weight:6d} kg")
 
 
 
@@ -118,15 +135,15 @@ class MapRenderer:
         return self.gfx.surface
 
     @property
-    def tiles(self) -> List[Tile]:
+    def tiles(self) -> List[MapTile]:
         return list(self._tiles)
 
     @property
-    def vehicles(self) -> List[Vehicle]:
+    def vehicles(self) -> List[MapVehicle]:
         return list(self._vehicles)
 
     @property
-    def spawns(self) -> List[VehicleSpawn]:
+    def spawns(self) -> List[Spawn]:
         return list(self._spawns)
 
     @property
@@ -145,14 +162,21 @@ class MapRenderer:
         self.reset_view()
         self._tiles.clear()
         for tile in self.savedata.tiles:
-            self._tiles.append(tile)
+            self._tiles.append(MapTile(tile))
             for spawn in tile.spawn_data.vehicles.items():
                 spawn.parent_object = tile
-                self._spawns.append(spawn)
+                self._spawns.append(Spawn(spawn, tile))
         for vehicle in self.savedata.vehicles:
-            self._vehicles.append(vehicle)
+            if vehicle.vehicle_type == VehicleType.Carrier:
+                obj = Carrier(vehicle)
+            elif vehicle.vehicle_type == VehicleType.Barge:
+                obj = Barge(vehicle)
+            else:
+                obj = MapVehicle(vehicle)
+            self._vehicles.append(obj)
+
         first_island = self.tiles[0]
-        self.pan_to(first_island.loc.x, first_island.loc.z)
+        self.pan_to(first_island.tile().loc.x, first_island.tile().loc.z)
 
     def _world_to_screen_vha(self, world: Tuple[float, float]) -> Tuple[float, float, float]:
         aspect = self.gfx.aspect
@@ -297,11 +321,11 @@ class MapRenderer:
             self.gfx.update_ui_text(x, y + self.gfx.scale_strokes, text, text_w, 0, "#000000")
             x += text_w + 6
 
-    def render_tile(self, tile: Tile):
-        pos = tile.world_position
-        bounds = tile.bounds
+    def render_tile(self, tile: MapTile):
+        pos = tile.tile().world_position
+        bounds = tile.tile().bounds
 
-        color = pygame.Color(get_team_color(tile.team_control))
+        color = pygame.Color(get_team_color(tile.team_owner))
         if tile in self.hover_items:
             color = (255, 255, 255, 255)
         sw = self.world_to_screen((pos.x + bounds.min.x, pos.z + bounds.min.z))
@@ -319,9 +343,8 @@ class MapRenderer:
 
         # draw a mover box
         pygame.draw.rect(self.surface, color, (nw[0], nw[1], 16, 16))
-
-        name = get_island_name(tile.id)
-        screen = self.world_to_screen((pos.x - tile.island_radius, top))
+        name = tile.name
+        screen = self.world_to_screen((pos.x - tile.tile().island_radius, top))
         self.gfx.update_ui_text(screen[0], screen[1] - self.gfx.font.get_height() - 2, name, 6 * len(name), 1, color )
 
     def render_tiles(self):
@@ -335,11 +358,11 @@ class MapRenderer:
             seen_vehicles = set()
 
             for vehicle in self.vehicles:
-                seen_vehicles.add(vehicle.id)
-                color = pygame.Color(get_team_color(vehicle.team_id))
+                seen_vehicles.add(vehicle.v_id)
+                color = pygame.Color(get_team_color(vehicle.team_owner))
                 if vehicle in self.hover_items:
                     color = (255, 255, 255, 255)
-                pos = vehicle.loc
+                pos = vehicle.vehicle().loc
                 screen = self.world_to_screen((pos.x, pos.z))
                 pygame.draw.circle(self.surface, color, screen, 6, width=0)
                 pygame.draw.circle(self.surface, (0, 0, 0, 48), screen, 7, width=1)
@@ -352,7 +375,7 @@ class MapRenderer:
                         color = pygame.Color(get_team_color(tile.team_control))
                         if spawn in self.hover_items:
                             color = (255, 255, 255, 255)
-                        pos = spawn.loc
+                        pos = spawn.spawn().loc
                         screen = self.world_to_screen((pos.x, pos.z))
                         pygame.draw.circle(self.surface, color, screen, 6, width=self.gfx.scale_strokes)
 
@@ -364,7 +387,7 @@ class MapRenderer:
 
             for unit in self.vehicles:
                 # get units within 10 screen pixels of this mouse point
-                screen = self.world_to_screen((unit.loc.x, unit.loc.z))
+                screen = self.world_to_screen((unit.location.x, unit.location.z))
                 if screen[0] - 5 < mouse[0] < screen[0] + 5:
                     if screen[1] - 5 < mouse[1] < screen[1] + 5:
                         found.append(unit)
@@ -372,7 +395,7 @@ class MapRenderer:
             world_x, world_y = self.screen_to_world(mouse)
             for tile in self.tiles:
                 # get tile under the mouse using the NW corner box
-                nw = (tile.loc.x + tile.bounds.min.x, tile.loc.z + tile.bounds.max.z)
+                nw = (tile.tile().loc.x + tile.tile().bounds.min.x, tile.tile().loc.z + tile.tile().bounds.max.z)
                 box_size = self.screen_to_world_scale((16, 16))
                 box_se = (nw[0] + box_size[0], nw[1] + box_size[1])
                 if nw[0] < world_x < nw[0] + box_size[0]:

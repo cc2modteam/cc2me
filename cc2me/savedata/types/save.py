@@ -11,6 +11,7 @@ from .utils import (
     FloatAttribute, Bounds, WorldPosition, IsSetMixin, StrAttribute, Transform, Bodies)
 from ..constants import (
     BIOME_SANDY_PINES, POS_Y_SEABOTTOM, VehicleType, get_default_state, MAX_INTEGER,
+    TileTypes,
     generate_island_seed, get_spawn_attachment_type, VehicleAttachmentDefinitionIndex,
     get_island_name,
     XML_START, SCENE_ROOT, VEHICLES_ROOT, ROOT_ORDER, REMOTE_DRIVEABLE_VEHICLES, get_attachment_capacity)
@@ -133,7 +134,17 @@ class EmbeddedData(ElementProxy):
 
 class Quantity(ElementProxy):
     tag = "q"
+    index = 0
     value = e_property(IntAttribute("value"))
+
+    def __str__(self):
+        return f"{self.value}"
+
+
+class TileQuantity(Quantity):
+    tag = "q"
+    index = e_property(IntAttribute("i"))
+    value = e_property(IntAttribute("q"))
 
 
 class QuantitiyList(ElementProxy):
@@ -144,10 +155,31 @@ class QuantitiyList(ElementProxy):
 
     def __getitem__(self, item: int) -> Quantity:
         items = self.items()
-        return items[item]
+        value = items[item]
+        value.index = item
+        return value
 
     def __setitem__(self, key: int, value: int):
         self[key].value = value
+
+class TileQuantityList(QuantitiyList):
+    tag = "quantities"
+
+    def items(self) -> List[Quantity]:
+        children = [TileQuantity(x) for x in self.children()]
+        return children
+
+    def __getitem__(self, item: int) -> Quantity:
+        for item in self.items():
+            q = cast(TileQuantity, item)
+            if q.index == item:
+                return q
+        q = TileQuantity()
+        return q
+
+    def __setitem__(self, key, value):
+        q = self[key]
+        q.value = value
 
 
 class Inventory(ElementProxy):
@@ -157,6 +189,14 @@ class Inventory(ElementProxy):
     @property
     def item_quantities(self) -> QuantitiyList:
         return cast(QuantitiyList, self.get_default_child_by_tag(QuantitiyList))
+
+
+class TileInventory(Inventory):
+
+    @property
+    def item_quantities(self) -> QuantitiyList:
+        qlist = cast(TileQuantityList, self.get_default_child_by_tag(TileQuantityList))
+        return qlist
 
 
 class EmbeddedVehicleStateData(EmbeddedData):
@@ -676,6 +716,19 @@ class Facility(ElementProxy):
     def defaults(self):
         self.category = random.randint(1, 7)
         self.fitting = 60
+
+
+    @property
+    def production(self) -> TileTypes:
+        return TileTypes(self.category)
+
+    @production.setter
+    def production(self, value: TileTypes):
+        self.category = value.int
+
+    @property
+    def inventory(self):
+        return cast(Inventory, self.get_default_child_by_tag(TileInventory))
 
 
 class Tile(ElementProxy, MovableLocationMixin):

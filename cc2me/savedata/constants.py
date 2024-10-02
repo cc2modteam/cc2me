@@ -32,6 +32,18 @@ BIOMES = [BIOME_DARK_MESAS, BIOME_GREEN_PINES, BIOME_SNOW_PINES, BIOME_SANDY_PIN
 VEHICLE_DEF_CARRIER = 0
 
 
+def get_biome_name(value: int) -> str:
+    if value == BIOME_SANDY_PINES:
+        return "sandy pines"
+    elif value == BIOME_GREEN_PINES:
+        return "green pines"
+    elif value == BIOME_SNOW_PINES:
+        return "snow pines"
+    elif value == BIOME_DARK_MESAS:
+        return "dark mesas"
+    return f"biome {value}"
+
+
 def generate_island_seed() -> int:
     return random.randint(MIN_TILE_SEED, MAX_TILE_SEED)
 
