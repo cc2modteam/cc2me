@@ -128,9 +128,13 @@ class EmbeddedData(ElementProxy):
     tag = "data"
 
     def to_string(self):
-        buf = '<?xml version="1.0" encoding="UTF-8"?>'
-        buf += ElementTree.tostring(self.element, short_empty_elements=False, encoding="unicode")
-        return buf
+        ElementTree.indent(self.element)
+        buf = ElementTree.tostring(self.element,
+                                   xml_declaration=True,
+                                   short_empty_elements=False,
+                                   encoding="UTF-8")
+        txt = buf.decode(encoding="UTF-8")
+        return txt
 
 
 class Quantity(ElementProxy):
@@ -1093,6 +1097,8 @@ class CC2XMLSave:
             else:
                 # empty, probably missiles
                 buf.write(f"<{root}></{root}>\n")
-        return buf.getvalue()
+        output = buf.getvalue()
+        output = output.replace("&#10;", "\n")
+        return output
 
 
