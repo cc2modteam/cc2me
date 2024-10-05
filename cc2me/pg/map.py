@@ -368,7 +368,7 @@ class MapRenderer:
                 pygame.draw.circle(self.surface, (0, 0, 0, 48), screen, 7, width=1)
 
             for spawn in self.spawns:
-                data = spawn.data
+                data = spawn.spawn().data
                 if data.respawn_id not in seen_vehicles:
                     if isinstance(spawn.parent_object, Tile):
                         tile = spawn.parent_object
