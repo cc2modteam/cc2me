@@ -1088,11 +1088,11 @@ class CC2XMLSave:
             buf.write("\n")
             subdoc = self.roots[root]
             if subdoc.getroot() is not None:
+                ElementTree.indent(subdoc)
                 subdoc.write(buf, encoding="unicode")
             else:
                 # empty, probably missiles
                 buf.write(f"<{root}></{root}>\n")
-
         return buf.getvalue()
 
 
