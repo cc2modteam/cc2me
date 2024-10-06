@@ -122,6 +122,7 @@ class MapRenderer:
         self.unit_window = UnitWindow((24, 40), self.ui_manager)
         self.unit_window.hide()
 
+
     @property
     def camera_w(self) -> int:
         return round(self.camera_size)
@@ -285,7 +286,7 @@ class MapRenderer:
         self.hover_items = self.under_mouse()
         if self.pan:
             dx, dy = pygame.mouse.get_rel()
-            self.pan_camera(-dx * 1.5, -dy * 1.3)
+            self.pan_camera(-dx * 1.6, -dy * 1.3)
 
 
     def draw(self, time_delta: float):
@@ -415,6 +416,8 @@ class MapRenderer:
             self.camera_size = clamp(self.camera_size, 1000, 150000)
             self.pan_to(*middle)
 
+    def set_origin(self, new_x, new_y) -> None:
+        self.origin = (new_x, new_y)
 
     def pan_to(self, world_x, world_y) -> None:
         self.origin = (
@@ -423,9 +426,10 @@ class MapRenderer:
         )
 
     def pan_camera(self, screen_dx, screen_dy):
-        screen_dx = clamp(screen_dx, -30, 30)
-        screen_dy = clamp(screen_dy, -30, 30)
+        screen_dx = clamp(screen_dx, -60, 60)
+        screen_dy = clamp(screen_dy, -40, 40)
         world = self.screen_to_world_scale((screen_dx, screen_dy))
-        x = int(self.origin[0] + world[0])
-        y = int(self.origin[1] + world[1])
+
+        x = int(round(self.origin[0] + world[0]))
+        y = int(round(self.origin[1] + world[1]))
         self.origin = (x, y)
