@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-VERSION = "0.1.1"
+VERSION = "0.2.1"
 
 requirements = [
     "pygame==2.6.0",
