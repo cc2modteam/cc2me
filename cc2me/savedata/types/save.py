@@ -131,7 +131,7 @@ class EmbeddedData(ElementProxy):
         ElementTree.indent(self.element)
         buf = ElementTree.tostring(self.element,
                                    xml_declaration=True,
-                                   short_empty_elements=False,
+                                   short_empty_elements=True,
                                    encoding="UTF-8")
         txt = buf.decode(encoding="UTF-8")
         return txt
