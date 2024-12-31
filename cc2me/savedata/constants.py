@@ -361,9 +361,9 @@ class Hitpoints(Capacity):
 
 
 VEHICLE_DEFAULT_STATE = [
-    InternalFuelCapacity(2000, VehicleType.Petrel, VehicleType.Manta, VehicleType.Albatross),
-    InternalFuelCapacity(1200, VehicleType.Walrus, VehicleType.Bear, VehicleType.Mule),
-    InternalFuelCapacity(800, VehicleType.Seal),
+    InternalFuelCapacity(2000, VehicleType.Petrel, VehicleType.Mule),
+    InternalFuelCapacity(1200, VehicleType.Walrus, VehicleType.Manta),
+    InternalFuelCapacity(800, VehicleType.Seal, VehicleType.Albatross),
     InternalFuelCapacity(400, VehicleType.Razorbill),
     InternalFuelCapacity(2000, VehicleType.Swordfish),
     InternalFuelCapacity(1200, VehicleType.Needlefish),
@@ -660,8 +660,8 @@ INVENTORY_INDEX_MASS = {
     21: 2500, # fixed camera
     InventoryIndex.GimbalCamera.value: 200,
     InventoryIndex.ObservationCamera.value: 200,
-    InventoryIndex.AWACS.value: 8000,
-    InventoryIndex.FuelTankAircraft.value: 5000,
+    InventoryIndex.AWACS.value: 500,
+    InventoryIndex.FuelTankAircraft.value: 500,
     InventoryIndex.FlareLauncher.value: 100,
     InventoryIndex.BattleCannon.value: 2000,
     InventoryIndex.ArtilleryGun.value: 4000,
@@ -677,7 +677,7 @@ INVENTORY_INDEX_MASS = {
     InventoryIndex.TVMissile.value: 1000,
     InventoryIndex.TorpedoNoise.value: 2000,
     InventoryIndex.TorpedoCountermeasure.value: 2000,
-    InventoryIndex.Radar.value: 8000,
+    InventoryIndex.Radar.value: 500,
     InventoryIndex.SonicPulseGenerator.value: 400,
     InventoryIndex.SmokeLauncherStream.value: 200,
     InventoryIndex.SmokeLauncherExplosive.value: 200,
@@ -695,6 +695,6 @@ INVENTORY_INDEX_MASS = {
     56: 10000,
     57: 10000,
     InventoryIndex.Mule.value: 20000,
-    InventoryIndex.DeployableDroid.value: 5000,
+    InventoryIndex.DeployableDroid.value: 500,
     InventoryIndex.GimbalGun.value: 500,
 }

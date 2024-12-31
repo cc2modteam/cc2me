@@ -453,7 +453,11 @@ class MapVehicle(InventoryMixin, MapItem):
     @property
     def viewable_properties(self) -> List[str]:
         attachment_names = self.dynamic_attachment_names
-        return super(MapVehicle, self).viewable_properties + ["vehicle_type", "alt", "hitpoints"] + list(attachment_names)
+        return super(MapVehicle, self).viewable_properties + ["vehicle_type", "alt", "hitpoints", "internal_fuel"] + list(attachment_names)
+
+    @property
+    def internal_fuel(self) -> float:
+        return self.vehicle().state.data.internal_fuel_remaining
 
     @property
     def hitpoints(self) -> float:
