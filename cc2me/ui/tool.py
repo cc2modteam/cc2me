@@ -176,11 +176,14 @@ class App(customtkinter.CTk):
         if item.has_inventory():
             inventory_mass = 0
             inventory = item.get_inventory()
-            for item, quantity in item.get_inventory_content().items():
-                item_mass = INVENTORY_INDEX_MASS[item] * quantity
+            initial_total = inventory.total_weight
+            for inventory_item, quantity in item.get_inventory_content().items():
+                item_mass = INVENTORY_INDEX_MASS[inventory_item.value] * int(quantity.value)
                 inventory_mass += item_mass
-            inventory.total_weight = inventory_mass
-            item.object.sync()
+
+            if initial_total != inventory_mass:
+                inventory.total_weight = inventory_mass
+                item.object.sync()
 
     def edit_inventory(self):
         selected = self.selected_markers()
