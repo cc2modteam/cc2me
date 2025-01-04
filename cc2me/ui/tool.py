@@ -172,20 +172,29 @@ class App(customtkinter.CTk):
 
         return found
 
+    def sync_inventory(self, item):
+        if item.has_inventory():
+            inventory_mass = 0
+            inventory = item.get_inventory()
+            for item, quantity in item.get_inventory_content().items():
+                item_mass = INVENTORY_INDEX_MASS[item] * quantity
+                inventory_mass += item_mass
+            inventory.total_weight = inventory_mass
+            item.object.sync()
+
     def edit_inventory(self):
         selected = self.selected_markers()
         if len(selected) == 1:
             item = selected[0].mapitem
             if item.has_inventory():
+                self.sync_inventory(item)
                 editor = InventoryEditor(self, item)
-                inventory_mass = 0
+
                 for inventory_index, stringvar in editor.string_vars.items():
                     count = int(stringvar.get())
                     item.set_inventory_item(inventory_index, count)
-                    item_mass = INVENTORY_INDEX_MASS[inventory_index.value]
-                    inventory_mass += item_mass * count
-                inventory = item.get_inventory()
-                inventory.total_weight = inventory_mass
+
+                self.sync_inventory(item)
                 item.object.sync()
 
 
@@ -363,6 +372,11 @@ class App(customtkinter.CTk):
 
     def save(self, filename):
         print(f"Saving {filename}")
+
+        for item in self.units:
+            if item.mapitem.has_inventory():
+                self.sync_inventory(item.mapitem)
+
         with open(filename, "w") as fd:
             fd.write(self.cc2me.export())
 
