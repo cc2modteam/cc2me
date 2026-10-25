@@ -582,13 +582,17 @@ def get_default_state(v_type: VehicleType) -> List[Capacity]:
 
 
 def get_cc2_appdata() -> str:
-    cc2dir = os.path.expandvars(r'%APPDATA%\\Carrier Command 2')
+    cc2dir = os.path.join(os.path.expandvars('%APPDATA%'), 'Carrier Command 2')
     return cc2dir
 
 
 def get_persistent_file_path() -> str:
-    persistent = os.path.join(get_cc2_appdata(), "persistent_data.xml")
-    return persistent
+    folders = [get_cc2_appdata(), os.path.join(os.getenv("HOME"), "Desktop", "CC2 Appdata")]
+    for folder in folders:
+        persistent = os.path.join(folder, "persistent_data.xml")
+        if os.path.isfile(persistent):
+            return persistent
+    return None
 
 
 def read_save_slots(slots_file: Optional[str] = None) -> List[Dict[str, str]]:

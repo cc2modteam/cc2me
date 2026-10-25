@@ -436,18 +436,22 @@ class App(customtkinter.CTk):
 
     def open_slot(self):
         choice = {}
-        SlotChooser(self, persistent_file=self.persistent, choice=choice)
-        if choice:
-            filename = os.path.join(self.cc2dir, "saved_games", choice[1]["filename"], "save.xml")
-            self.read_file(filename)
+        if self.persistent:
+            SlotChooser(self, persistent_file=self.persistent, choice=choice)
+            game_dir = os.path.dirname(self.persistent)
+            if choice:
+                filename = os.path.join(game_dir, "saved_games", choice[1]["filename"], "save.xml")
+                self.read_file(filename)
 
     def save_slot(self):
         choice = {}
-        SlotChooser(self, persistent_file=self.persistent, choice=choice, title="Overwrite CC2 Save Slot")
-        if choice:
-            filename = os.path.join(self.cc2dir, "saved_games", choice[1]["filename"], "save.xml")
-            self.save_filename = filename
-            self.save(filename)
+        if self.persistent:
+            SlotChooser(self, persistent_file=self.persistent, choice=choice, title="Overwrite CC2 Save Slot")
+            game_dir = os.path.dirname(self.persistent)
+            if choice:                
+                filename = os.path.join(game_dir, "saved_games", choice[1]["filename"], "save.xml")
+                self.save_filename = filename
+                self.save(filename)
 
     def open_file(self):
         filename = filedialog.askopenfilename(title="Open CC2 Save",
