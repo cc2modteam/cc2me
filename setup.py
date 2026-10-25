@@ -2,8 +2,12 @@ from setuptools import setup, find_packages
 VERSION = "0.2.1"
 
 requirements = [
-    "pygame==2.6.0",
-    "pygame-gui==0.6.12",
+    #"pygame==2.6.0",
+    #"pygame-gui==0.6.12",
+    "tkintermapview==1.15",
+    "pillow",
+    "pandas",
+    "customtkinter",
 ]
 
 setup(

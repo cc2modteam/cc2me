@@ -52,11 +52,11 @@ class PropertyField:
                                width=int(props.width * 0.7))
         self.entry.bind("<KeyRelease>", self.on_modified)
 
-        label.pack(side=tkinter.LEFT, expand=False, fill=tkinter.NONE)
-        self.entry.pack(side=tkinter.RIGHT, expand=False, fill=tkinter.NONE)
+        label.pack(side=tkinter.LEFT, expand=True, fill=tkinter.BOTH)
+        self.entry.pack(side=tkinter.RIGHT, expand=True, fill=tkinter.BOTH)
         props.row_frames.append(row)
-        row.pack(side=tkinter.TOP, fill=tkinter.NONE, expand=False)
-        props.rows.pack(fill=tkinter.NONE, expand=False)
+        row.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=True)
+        props.rows.pack(fill=tkinter.BOTH, expand=True)
 
 
 class PropertyItem:
@@ -232,13 +232,13 @@ class Properties:
             opt.value_widget = tkinter.Label(row, text=str(selected), anchor=tkinter.W,
                                              width=int(self.width * 0.7))
 
-        opt.label.pack(side=tkinter.LEFT, expand=False, fill=tkinter.NONE)
-        #if opt.extra_value_widget is not None:
-        #    opt.extra_value_widget.pack(side=tkinter.RIGHT, fill=tkinter.NONE, expand=False)
-        opt.value_widget.pack(side=tkinter.RIGHT, expand=False, fill=tkinter.NONE)
+        opt.label.pack(side=tkinter.LEFT, expand=True, fill=tkinter.X)
+        if opt.extra_value_widget is not None:
+            opt.extra_value_widget.pack(side=tkinter.RIGHT, fill=tkinter.X, expand=True)
+        opt.value_widget.pack(side=tkinter.RIGHT, expand=True, fill=tkinter.X)
 
         self.option_items.append(opt)
         self.row_frames.append(row)
-        row.pack(side=tkinter.TOP, fill=tkinter.NONE, expand=False)
-        self.rows.pack(fill=tkinter.NONE, expand=False)
+        row.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=True)
+        self.rows.pack(fill=tkinter.BOTH, expand=True)
 
